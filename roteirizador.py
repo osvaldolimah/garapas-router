@@ -29,7 +29,7 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Trava Geral de Tela */
+    /* 1. Trava Global de Tela */
     html, body, [data-testid="stAppViewContainer"] { 
         overflow-x: hidden !important; 
         width: 100vw !important; 
@@ -48,24 +48,24 @@ st.markdown("""
     .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
     .metric-value { font-size: 14px; color: #111; font-weight: 800; display: block; }
 
-    /* 3. HACK NUCLEAR PARA COLUNAS (INCLUI FRAGMENTOS) */
-    /* Forçamos todas as colunas horizontais a não quebrarem e não transbordarem */
-    div[data-testid="stHorizontalBlock"] {
+    /* 3. HACK NUCLEAR PARA COLUNAS (DENTRO E FORA DO FRAGMENTO) */
+    [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
+        flex-wrap: nowrap !important; /* Proíbe quebra de linha */
         width: 100% !important;
         gap: 4px !important;
         align-items: center !important;
     }
 
-    /* Definindo larguras fixas em % para garantir o encaixe no Android */
+    /* Forçamos as colunas a encolherem sem dó */
     div[data-testid="column"] {
         min-width: 0 !important;
-        flex-shrink: 1 !important;
+        flex-basis: 0 !important;
+        flex-grow: 1 !important;
     }
     
-    /* ✅ e 🚗 ocupam 18% cada, Sequence ocupa o resto */
+    /* ✅ e 🚗 ocupam 18% cada, Ordem ocupa o resto (64%) */
     div[data-testid="column"]:nth-of-type(1), 
     div[data-testid="column"]:nth-of-type(2) {
         flex: 0 0 18% !important;
@@ -90,6 +90,7 @@ st.markdown("""
         color: black !important; font-size: 13px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
         padding: 0px !important; border: 1px solid #ccc !important;
+        width: 100% !important;
     }
     
     .stButton button { 
@@ -127,7 +128,7 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA (SEM PISCADA & SEM VAZAMENTO) ---
+# --- 5. FRAGMENTO DA LISTA (SUAVE E TRAVADO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -142,7 +143,7 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # Aqui forçamos o encaixe lateral
+            # Aqui forçamos o encaixe lateral absoluto
             c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
             
             with c_done:
@@ -162,7 +163,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Fixado em 320px)
+    # A. MAPA (320px)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -175,7 +176,7 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS (HTML ESTÁVEL)
+    # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
