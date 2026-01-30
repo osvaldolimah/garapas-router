@@ -24,12 +24,12 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: RESPONSIVIDADE MILIMÉTRICA ---
+# --- 2. DESIGN SYSTEM: CONTROLE DE LARGURA ABSOLUTO ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Trava Global */
+    /* Trava de segurança total contra scroll */
     html, body, [data-testid="stAppViewContainer"] { 
         overflow-x: hidden !important; 
         width: 100vw !important; 
@@ -37,6 +37,21 @@ st.markdown("""
     .block-container { padding: 0rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
+
+    /* --- TÉCNICA DAS MÉTRICAS APLICADA À LISTA --- */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        gap: 2px !important; /* Espaço mínimo entre colunas */
+    }
+    
+    /* Força as colunas a serem espremidas sem limite mínimo */
+    [data-testid="column"] {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
 
     /* BARRA DE MÉTRICAS (HTML) */
     .custom-metrics-container {
@@ -48,42 +63,25 @@ st.markdown("""
     .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
     .metric-value { font-size: 14px; color: #111; font-weight: 800; display: block; }
 
-    /* --- TRAVA DE BOTÕES LADO A LADO --- */
-    /* Garante que os botões e a ordem nunca quebrem a linha */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        width: 100% !important;
-        gap: 4px !important;
-    }
-    
-    /* Colunas espremidas para caber no celular */
-    [data-testid="column"] {
-        min-width: 0 !important;
-        flex-grow: 1 !important;
-    }
-
-    /* Cards e Fontes */
+    /* Estilo dos Cards */
     .delivery-card { 
-        border-radius: 8px 8px 0 0; padding: 8px 10px; margin-bottom: 0px; 
+        border-radius: 8px; padding: 6px 10px; margin-bottom: 2px; 
         background-color: white; border-left: 5px solid #FF4B4B;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.1; }
+    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    /* Input Sequence (Foco na largura) */
+    /* Ajuste fino dos inputs para não estourarem */
     .stTextInput input {
-        height: 36px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 14px !important;
-        text-align: center; font-weight: 900 !important; border-radius: 0 6px 6px 0 !important;
-        padding: 0px !important;
+        height: 34px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 13px !important;
+        text-align: center; font-weight: 900 !important;
+        border-radius: 6px !important; padding: 0px !important;
     }
     
-    /* Botões Quadrados para ganhar espaço */
     .stButton button { 
-        height: 36px !important; font-size: 14px !important; 
-        width: 100% !important; border-radius: 0px !important;
+        height: 34px !important; font-size: 14px !important; 
+        width: 100% !important; border-radius: 6px !important;
         padding: 0px !important;
     }
     </style>
@@ -95,7 +93,7 @@ if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA ---
+# --- 4. ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -116,12 +114,12 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. INTERFACE OPERACIONAL ---
+# --- 5. OPERAÇÃO ---
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Aumentado para 320px conforme pedido)
+    # A. MAPA (Fixado em 320px como solicitado)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -137,9 +135,9 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS (HTML)
+    # B. MÉTRICAS (HTML ESTÁVEL)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
-    st.markdown(f'<div class="custom-metrics-container"><div class="metric-item"><span class="metric-label">📦 Faltam</span><span class="metric-value">{len(restantes)}</span></div><div class="metric-item"><span class="metric-label">🛤️ KM</span><span class="metric-value">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="custom-metrics-container"><div class="metric-item"><span class="metric-label">📦 Faltam</span><span class="metric-value">{len(restantes)} paradas</span></div><div class="metric-item"><span class="metric-label">🛤️ KM</span><span class="metric-value">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
     if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
         if restantes:
@@ -157,24 +155,20 @@ if st.session_state['df_final'] is not None:
             entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
-            # 1. Endereço (Sempre no topo do card)
+            # Endereço em cima
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # 2. Barra de Ações (Forçada lado a lado)
-            # Done(15%) | Waze(15%) | Sequence(70%)
-            c_done, c_waze, c_seq = st.columns([0.15, 0.15, 0.7])
+            # Barra de Ações (A mesma técnica das métricas agora aqui)
+            c_done, c_waze, c_seq = st.columns([1, 1, 3]) # Divisão proporcional 20% / 20% / 60%
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
                     st.rerun()
-            
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
-            
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
-            st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_allow_html=True)
