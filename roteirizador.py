@@ -5,8 +5,39 @@ from streamlit_folium import st_folium
 import numpy as np
 from folium.features import DivIcon
 import requests
+import pickle
+import os
 
-# --- 1. FUNÇÕES TÉCNICAS ---
+# --- 1. FUNÇÕES DE PERSISTÊNCIA (A SOLUÇÃO PARA O SEU BUG) ---
+SAVE_FILE = "garapas_progress.pkl"
+
+def save_state():
+    """Salva o estado atual em um arquivo físico no servidor"""
+    state = {
+        'df_final': st.session_state.get('df_final'),
+        'road_path': st.session_state.get('road_path'),
+        'entregues': st.session_state.get('entregues'),
+        'manual_sequences': st.session_state.get('manual_sequences')
+    }
+    with open(SAVE_FILE, 'wb') as f:
+        pickle.dump(state, f)
+
+def load_state():
+    """Carrega o estado do arquivo se ele existir"""
+    if os.path.exists(SAVE_FILE):
+        try:
+            with open(SAVE_FILE, 'rb') as f:
+                state = pickle.load(f)
+                st.session_state['df_final'] = state.get('df_final')
+                st.session_state['road_path'] = state.get('road_path')
+                st.session_state['entregues'] = state.get('entregues')
+                st.session_state['manual_sequences'] = state.get('manual_sequences')
+                return True
+        except:
+            return False
+    return False
+
+# --- 2. FUNÇÕES TÉCNICAS ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -24,7 +55,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM (GRID DO CLAUDE + CORREÇÕES) ---
+# --- 3. DESIGN SYSTEM (GRID DO CLAUDE + CENTRALIZAÇÃO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -35,7 +66,6 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* GRID DA LISTA (A SOLUÇÃO QUE DEU CERTO) */
     [data-testid="stHorizontalBlock"] {
         display: grid !important; grid-template-columns: 56px 64px 1fr !important;
         gap: 3px !important; width: 100% !important; align-items: center !important;
@@ -56,18 +86,19 @@ st.markdown("""
     .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin: 6px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.3; }
-
     .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO ---
-if 'df_final' not in st.session_state: st.session_state['df_final'] = None
-if 'road_path' not in st.session_state: st.session_state['road_path'] = []
-if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
-if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
+# --- 4. INICIALIZAÇÃO DE ESTADO ---
+if 'df_final' not in st.session_state:
+    if not load_state(): # Tenta carregar o progresso salvo antes de começar do zero
+        st.session_state['df_final'] = None
+        st.session_state['road_path'] = []
+        st.session_state['entregues'] = set()
+        st.session_state['manual_sequences'] = {}
 
-# --- 4. FRAGMENTO DA LISTA (SUAVIDADE NOS CHECKBOXES) ---
+# --- 5. FRAGMENTO DA LISTA ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -87,6 +118,7 @@ def render_delivery_list():
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
+                    save_state() # Salva o progresso no arquivo imediatamente
                     st.rerun(scope="fragment")
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
@@ -94,12 +126,13 @@ def render_delivery_list():
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
+                    save_state() # Salva a edição da ordem
 
-# --- 5. INTERFACE PRINCIPAL ---
+# --- 6. INTERFACE PRINCIPAL ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
-    uploaded_file = st.file_uploader("", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Otimizar Rota", use_container_width=True):
+    uploaded_file = st.file_uploader("Carregar Planilha do Dia", type=['xlsx'])
+    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
@@ -114,13 +147,14 @@ if st.session_state['df_final'] is None:
         final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['df_final'] = final_df
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
+        save_state() # Salva o início da rota
         st.rerun()
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Sem 'key' estática para não bugar o zoom)
+    # A. MAPA
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -140,14 +174,21 @@ if st.session_state['df_final'] is not None:
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
-    # C. BOTÃO LIMPAR (SIMPLIFICADO PARA NÃO BUGAR)
-    if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
-        if restantes:
-            # Salvamos os novos dados no estado antes de recarregar
-            st.session_state['df_final'] = df_res.iloc[restantes].reset_index(drop=True)
-            st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-            st.session_state['entregues'] = set()
-            st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-            st.rerun() # O rerun limpo vai forçar o 'fit_bounds' a funcionar de novo
+    # C. BOTÕES DE CONTROLE
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
+            if restantes:
+                st.session_state['df_final'] = df_res.iloc[restantes].reset_index(drop=True)
+                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+                st.session_state['entregues'] = set()
+                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+                save_state()
+                st.rerun()
+    with c2:
+        if st.button("🔴 RESET TOTAL", use_container_width=True):
+            if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
+            st.session_state.clear()
+            st.rerun()
 
     render_delivery_list()
