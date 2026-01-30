@@ -24,70 +24,74 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE DE FLUXO E LARGURA ---
+# --- 2. DESIGN SYSTEM: CONTROLE DE LARGURA ABSOLUTO ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Trava Total Anti-Scroll */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stVerticalBlock"] {
+    /* 1. Trava Global Anti-Scroll Lateral */
+    html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
         margin: 0 !important;
         padding: 0 !important;
     }
-    .block-container { padding: 0rem 0.2rem !important; }
+    .block-container { padding: 0rem 0.2rem !important; max-width: 100vw !important; }
     header, footer, #MainMenu { visibility: hidden; }
-    .leaflet-control-attribution { display: none !important; }
 
-    /* 2. BARRA DE MÉTRICAS (HTML PURO) */
-    .custom-metrics-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: white; padding: 4px 8px; border-radius: 8px; margin: 4px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
-    }
-    .metric-item { text-align: center; flex: 1; }
-    .metric-label { font-size: 8px; color: #888; font-weight: bold; text-transform: uppercase; }
-    .metric-value { font-size: 13px; color: #111; font-weight: 800; display: block; }
-
-    /* 3. COLUNAS BLINDADAS (LADO A LADO REAL) */
+    /* 2. FORÇAR COLUNAS LADO A LADO (TÉCNICA DAS MÉTRICAS) */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
+        flex-wrap: nowrap !important; /* Proíbe quebra de linha */
+        align-items: center !important;
         width: 100% !important;
-        gap: 2px !important;
-        padding: 0 !important;
+        gap: 4px !important;
     }
     
-    [data-testid="column"] {
+    /* 3. LARGURAS FIXAS PARA OS BOTÕES (EVITA VAZAMENTO) */
+    /* Coluna 1 e 2 (Botões) */
+    [data-testid="stHorizontalBlock"] > div:nth-child(1),
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) {
+        flex: 0 0 15% !important; /* Ocupa exatamente 15% cada */
+        min-width: 15% !important;
+    }
+    /* Coluna 3 (Sequence) */
+    [data-testid="stHorizontalBlock"] > div:nth-child(3) {
+        flex: 0 0 65% !important; /* Ocupa exatamente 65% */
         min-width: 0 !important;
-        flex-grow: 1 !important;
-        padding: 0 !important;
     }
 
     /* 4. ESTILO DOS CARDS */
     .delivery-card { 
-        border-radius: 6px; padding: 4px 8px; margin-bottom: 2px; 
+        border-radius: 8px 8px 0 0; padding: 6px 10px; 
         background-color: white; border-left: 5px solid #FF4B4B;
+        margin-top: 10px;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    /* Input Sequence Compacto */
-    div[data-baseweb="input"] { height: 36px !important; }
+    /* Input Compacto */
     .stTextInput input {
-        height: 36px !important; background-color: #f1f3f5 !important;
+        height: 38px !important; background-color: #f1f3f5 !important;
         color: black !important; font-size: 13px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
         padding: 0px !important; border: 1px solid #ccc !important;
+        width: 100% !important;
     }
     
     /* Botões ✅ e 🚗 */
     .stButton button { 
-        height: 36px !important; font-size: 15px !important; 
+        height: 38px !important; font-size: 16px !important; 
         width: 100% !important; border-radius: 6px !important;
         padding: 0px !important; margin: 0px !important;
+    }
+
+    /* Métricas HTML */
+    .custom-metrics-container {
+        display: flex; justify-content: space-between; align-items: center;
+        background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -98,7 +102,7 @@ if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA ---
+# --- 4. ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -119,12 +123,12 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. INTERFACE OPERACIONAL ---
+# --- 5. INTERFACE ---
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (320px + Trava de Zoom)
+    # A. MAPA (320px)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -142,7 +146,7 @@ if st.session_state['df_final'] is not None:
 
     # B. MÉTRICAS (HTML)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
-    st.markdown(f'<div class="custom-metrics-container"><div class="metric-item"><span class="metric-label">📦 Faltam</span><span class="metric-value">{len(restantes)}</span></div><div class="metric-item"><span class="metric-label">🛤️ KM</span><span class="metric-value">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
     if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
         if restantes:
@@ -161,12 +165,11 @@ if st.session_state['df_final'] is not None:
             entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
-            # 1. Linha do Endereço
+            # Endereço em cima
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # 2. Barra de Ações (PROPORÇÕES TÉCNICAS: 18% | 18% | 64%)
-            # O Streamlit columns somam 1.0 total. [0.18, 0.18, 0.64]
-            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
+            # Barra de Ações Travada em 100% da Largura
+            c_done, c_waze, c_seq = st.columns(3) # O CSS vai ignorar o '3' e aplicar 15%/15%/65%
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -179,5 +182,3 @@ if st.session_state['df_final'] is not None:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
-            
-            st.markdown("<div style='margin-bottom:8px;'></div>", unsafe_allow_html=True)
