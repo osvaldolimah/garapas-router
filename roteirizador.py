@@ -6,7 +6,7 @@ import numpy as np
 from folium.features import DivIcon
 import requests
 
-# --- 1. INTELIGÊNCIA DE ROTA ---
+# --- 1. INTELIGÊNCIA DE ROTA (ESCOPO GLOBAL) ---
 
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
@@ -25,15 +25,27 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM RESPONSIVO (UX Sênior) ---
+# --- 2. DESIGN SYSTEM: MAPA FIXO E RESPONSIVIDADE ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Base e Fundo */
+    /* Fundo Geral */
     .stApp { background-color: #f8f9fa; }
-    
+
+    /* --- EFEITO STICKY (MAPA FIXO) --- */
+    .sticky-map-container {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: #f8f9fa;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
     /* Card de Entrega Refinado */
     .delivery-card { 
         border-radius: 12px; 
@@ -45,48 +57,38 @@ st.markdown("""
     }
     .next-target { border-left: 8px solid #007BFF !important; background-color: #f0f7ff !important; }
     
-    /* Tipografia Ajustada para não cortar */
+    /* Tipografia e Ajustes de Mobile */
     .address-header { 
-        font-size: 20px !important; 
+        font-size: 19px !important; 
         font-weight: 700 !important; 
         color: #212529; 
         line-height: 1.2;
-        margin-bottom: 5px;
     }
-    .bairro-label { font-size: 15px; color: #6c757d; margin-bottom: 12px; }
+    .bairro-label { font-size: 14px; color: #6c757d; margin-bottom: 10px; }
     
     /* Input de Ordem (Sem cortes) */
-    div[data-baseweb="input"] {
-        height: 45px !important;
-    }
     .stTextInput input {
         background-color: #212529 !important; 
         color: #39FF14 !important;
         font-family: 'Roboto Mono', monospace; 
         font-size: 18px !important; 
         text-align: center;
-        padding: 5px !important;
         border-radius: 8px !important;
     }
 
     /* Botões Operacionais */
     .stButton button {
-        height: 45px !important;
+        height: 48px !important;
         border-radius: 10px !important;
         font-weight: 700 !important;
-        font-size: 14px !important;
-        text-transform: uppercase;
     }
 
-    /* Ajuste para telas muito pequenas */
-    @media (max-width: 480px) {
-        .address-header { font-size: 18px !important; }
-        .delivery-card { padding: 12px; }
-    }
+    /* Esconde o menu do Streamlit para ganhar espaço */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
-
-st.title("🚚 Garapas Router")
 
 # --- 3. MEMÓRIA ---
 
@@ -96,7 +98,9 @@ if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 if 'versao_lista' not in st.session_state: st.session_state['versao_lista'] = 0
 
-# --- 4. OTIMIZAÇÃO ---
+# --- 4. FLUXO DE ENTRADA ---
+
+st.title("🚚 Garapas Router")
 
 with st.expander("📂 Carregar Planilha", expanded=(st.session_state['df_final'] is None)):
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -105,7 +109,7 @@ with st.expander("📂 Carregar Planilha", expanded=(st.session_state['df_final'
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
 
-        if st.button("🚀 INICIAR ROTA", use_container_width=True):
+        if st.button("🚀 INICIAR OPERAÇÃO", use_container_width=True):
             df_temp = df_clean.copy().reset_index()
             rota = []
             p_atual = df_temp.iloc[0]
@@ -129,21 +133,24 @@ with st.expander("📂 Carregar Planilha", expanded=(st.session_state['df_final'
             st.session_state['versao_lista'] += 1
             st.rerun()
 
-# --- 5. INTERFACE ---
+# --- 5. INTERFACE OPERACIONAL (COM MAPA STICKY) ---
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     entregues_list = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_list]
 
-    # Métricas
+    # --- BLOCO FIXO NO TOPO (Métricas + Mapa) ---
+    st.markdown('<div class="sticky-map-container">', unsafe_allow_html=True)
+    
+    # Métricas Compactas
+    m1, m2, m3 = st.columns([1, 1, 1])
     km_vovo = 0.0
     for k in range(len(restantes) - 1):
         p1 = df_res.iloc[restantes[k]]
         p2 = df_res.iloc[restantes[k+1]]
         km_vovo += fast_haversine(p1['LATITUDE'], p1['LONGITUDE'], p2['LATITUDE'], p2['LONGITUDE'])
     
-    m1, m2, m3 = st.columns([1, 1, 1])
     m1.metric("📦 Faltam", len(restantes))
     m2.metric("🛤️ KM (Est.)", f"{km_vovo * 1.3:.1f}")
     if m3.button("🗑️ LIMPAR", use_container_width=True):
@@ -157,7 +164,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['versao_lista'] += 1
             st.rerun()
 
-    # Mapa
+    # O Mapa Fixo
     m = folium.Map(location=[df_res['LATITUDE'].mean(), df_res['LONGITUDE'].mean()], zoom_start=13, tiles="cartodbpositron")
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=5, opacity=0.7).add_to(m)
@@ -169,11 +176,13 @@ if st.session_state['df_final'] is not None:
                         display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; 
                         font-size: 12px;">{int(row['ORDEM_PARADA'])}</div>'''
         folium.Marker(location=[row['LATITUDE'], row['LONGITUDE']], icon=DivIcon(icon_size=(28,28), icon_anchor=(14,14), html=icon_html)).add_to(m)
-    st_folium(m, width=1400, height=400, key=f"map_v{st.session_state['versao_lista']}")
+    st_folium(m, width=1400, height=350, key=f"map_v{st.session_state['versao_lista']}")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    # --- FIM DO BLOCO FIXO ---
 
-    st.markdown("---")
-
-    # Lista de Entregas Otimizada
+    # Lista de Entregas (Esta parte desliza)
+    st.markdown("### 📋 Sequência")
     for i, row in df_res.iterrows():
         rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
         seq_v = st.session_state['custom_sequences'].get(i, str(row.get('SEQUENCE', '---')))
@@ -191,7 +200,6 @@ if st.session_state['df_final'] is not None:
                 </div>
             ''', unsafe_allow_html=True)
             
-            # Layout de controles: Botões em cima, Input embaixo para ganhar largura
             c1, c2 = st.columns([1, 1])
             with c1:
                 if not entregue:
@@ -203,8 +211,7 @@ if st.session_state['df_final'] is not None:
             with c2:
                 st.link_button("🚗 WAZE", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True, disabled=entregue)
             
-            # Input de Ordem ocupando toda a largura para não cortar
             st.session_state['custom_sequences'][i] = st.text_input("ORDEM (MANIFESTO):", value=seq_v, key=f"s_{i}_{st.session_state['versao_lista']}")
-            
             st.markdown("---")
+
 
