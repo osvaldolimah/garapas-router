@@ -25,7 +25,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: FOCO EM ESPAÇO ---
+# --- 2. DESIGN SYSTEM: COMPACTAÇÃO TOTAL ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
@@ -35,43 +35,49 @@ st.markdown("""
     .block-container { padding-top: 0rem !important; padding-bottom: 0rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* Métricas e Botão na mesma linha */
-    [data-testid="stMetricValue"] { font-size: 16px !important; font-weight: 800 !important; }
-    [data-testid="stMetricLabel"] { font-size: 10px !important; }
+    /* --- HACK PARA COLUNAS LADO A LADO NO MOBILE --- */
+    /* Isso impede que o Streamlit empilhe os elementos em telas pequenas */
+    [data-testid="column"] {
+        width: 33% !important;
+        flex: 1 1 33% !important;
+        min-width: 33% !important;
+    }
+    
+    [data-testid="stMetricValue"] { font-size: 15px !important; font-weight: 800 !important; }
+    [data-testid="stMetricLabel"] { font-size: 9px !important; }
     
     .stButton button {
-        height: 32px !important;
-        font-size: 11px !important;
-        padding: 0px 5px !important;
-        margin-top: 15px !important; /* Alinha com a métrica */
+        height: 30px !important;
+        font-size: 10px !important;
+        padding: 0px 2px !important;
+        margin-top: 18px !important;
     }
 
-    /* Cards Minimalistas */
+    /* Cards Ultra-Slim */
     .delivery-card { 
-        border-radius: 6px; padding: 8px 10px; margin-bottom: 4px; 
+        border-radius: 6px; padding: 6px 10px; margin-bottom: 3px; 
         background-color: white; border-left: 5px solid #FF4B4B;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 13px !important; font-weight: 600 !important; color: #222; }
+    .address-header { font-size: 13px !important; font-weight: 600 !important; color: #222; line-height: 1.1; }
     
-    /* Input Ordem Extra-Pequeno */
-    div[data-baseweb="input"] { height: 28px !important; }
+    /* Input Compacto */
+    div[data-baseweb="input"] { height: 26px !important; }
     .stTextInput input {
         background-color: #f1f3f5 !important; color: #2ecc71 !important;
-        font-size: 12px !important; text-align: center;
+        font-size: 11px !important; text-align: center; padding: 0px !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO ---
+# --- 3. LOGICA ---
 
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. TELA DE ENTRADA ---
+# --- 4. TELA INICIAL ---
 
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
@@ -90,18 +96,18 @@ if st.session_state['df_final'] is None:
             final_df = pd.DataFrame(rota).reset_index(drop=True)
             final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
             st.session_state['df_final'] = final_df
-            with st.spinner("Traçando..."):
+            with st.spinner("..."):
                 st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-# --- 5. INTERFACE (O MAPA NO TOPO) ---
+# --- 5. INTERFACE ---
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     entregues_list = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_list]
 
-    # 1. MAPA (TOPO)
+    # MAPA NO TOPO
     m = folium.Map(tiles="cartodbpositron")
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -117,28 +123,29 @@ if st.session_state['df_final'] is not None:
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
-    st_folium(m, width=None, height=280, use_container_width=True)
+    st_folium(m, width=None, height=250, use_container_width=True)
 
-    # 2. MÉTRICAS E BOTÃO LADO A LADO (ECONOMIA DE ESPAÇO)
-    c1, c2, c3 = st.columns([1, 1, 1.2])
+    # MÉTRICAS LADO A LADO (FORÇADO PELO CSS)
+    c1, c2, c3 = st.columns(3) # Três colunas iguais
     
     km_vovo = 0.0
     for k in range(len(restantes) - 1):
         p1, p2 = df_res.iloc[restantes[k]], df_res.iloc[restantes[k+1]]
         km_vovo += fast_haversine(p1['LATITUDE'], p1['LONGITUDE'], p2['LATITUDE'], p2['LONGITUDE'])
     
-    c1.metric("📦 Restam", f"{len(restantes)}")
+    c1.metric("📦 Faltam", f"{len(restantes)}")
     c2.metric("🛤️ KM", f"{km_vovo * 1.3:.1f}")
-    if c3.button("🗑️ Limpar", use_container_width=True):
-        if restantes:
-            novo_df = df_res.iloc[restantes].reset_index(drop=True)
-            novo_df['ORDEM_PARADA'] = range(1, len(novo_df) + 1)
-            st.session_state['df_final'] = novo_df; st.session_state['entregues'] = set()
-            with st.spinner("..."):
-                st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
-            st.rerun()
+    with c3:
+        if st.button("🗑️ Limpar", use_container_width=True):
+            if restantes:
+                novo_df = df_res.iloc[restantes].reset_index(drop=True)
+                novo_df['ORDEM_PARADA'] = range(1, len(novo_df) + 1)
+                st.session_state['df_final'] = novo_df; st.session_state['entregues'] = set()
+                with st.spinner("..."):
+                    st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
+                st.rerun()
 
-    # 3. LISTA (MAIS ESPAÇO)
+    # LISTA
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
@@ -150,7 +157,7 @@ if st.session_state['df_final'] is not None:
 
             st.markdown(f'''
                 <div class="delivery-card {card_class}">
-                    <div class="address-header">{id_p}ª - {rua} <span style="font-size:10px; color:#999; font-weight:normal;">({bairro})</span></div>
+                    <div class="address-header">{id_p}ª - {rua} <span style="font-size:10px; color:#999;">({bairro})</span></div>
                 </div>
             ''', unsafe_allow_html=True)
             
