@@ -89,11 +89,11 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    /* 4. GRID COM BOTÕES MAIORES */
+    /* 4. GRID COM BOTÕES AUMENTADOS - DIMINUINDO O GAP */
     [data-testid="stHorizontalBlock"] {
         display: grid !important;
-        grid-template-columns: 50px 58px 1fr !important;
-        gap: 4px !important;
+        grid-template-columns: 56px 64px 1fr !important;
+        gap: 3px !important;
         width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -107,18 +107,18 @@ st.markdown("""
         overflow: hidden !important;
     }
     
-    /* Coluna 1: ✅ (mantém 50px) */
+    /* Coluna 1: ✅ (aumenta para 56px) */
     [data-testid="column"]:nth-of-type(1) {
-        width: 50px !important;
-        max-width: 50px !important;
-        min-width: 50px !important;
+        width: 56px !important;
+        max-width: 56px !important;
+        min-width: 56px !important;
     }
     
-    /* Coluna 2: 🚗 (aumenta para 58px) */
+    /* Coluna 2: 🚗 (aumenta para 64px) */
     [data-testid="column"]:nth-of-type(2) {
-        width: 58px !important;
-        max-width: 58px !important;
-        min-width: 58px !important;
+        width: 64px !important;
+        max-width: 64px !important;
+        min-width: 64px !important;
     }
     
     /* Coluna 3: Input (pega o resto) */
@@ -156,10 +156,10 @@ st.markdown("""
         margin: 0 !important;
     }
     
-    /* Botão ✅ - CENTRALIZAÇÃO PERFEITA */
+    /* Botão ✅ - CENTRALIZAÇÃO PERFEITA COM LARGURA AUMENTADA */
     [data-testid="column"]:nth-of-type(1) .stButton > button { 
         height: 36px !important; 
-        font-size: 15px !important; 
+        font-size: 16px !important; 
         width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
@@ -170,12 +170,13 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         line-height: 1 !important;
+        overflow: hidden !important;
     }
     
-    /* Botão 🚗 Waze - CENTRALIZAÇÃO PERFEITA */
+    /* Botão 🚗 Waze - CENTRALIZAÇÃO PERFEITA COM LARGURA AUMENTADA */
     [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
         height: 44px !important; 
-        font-size: 16px !important; 
+        font-size: 17px !important; 
         width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
@@ -204,27 +205,28 @@ st.markdown("""
     /* 6. MEDIA QUERIES */
     @media screen and (max-width: 400px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 45px 53px 1fr !important;
+            grid-template-columns: 50px 58px 1fr !important;
+            gap: 2px !important;
         }
         
         [data-testid="column"]:nth-of-type(1) {
-            width: 45px !important;
-            max-width: 45px !important;
-            min-width: 45px !important;
+            width: 50px !important;
+            max-width: 50px !important;
+            min-width: 50px !important;
         }
         
         [data-testid="column"]:nth-of-type(2) {
-            width: 53px !important;
-            max-width: 53px !important;
-            min-width: 53px !important;
+            width: 58px !important;
+            max-width: 58px !important;
+            min-width: 58px !important;
         }
         
         [data-testid="column"]:nth-of-type(1) .stButton > button { 
-            font-size: 14px !important; 
+            font-size: 15px !important; 
             height: 34px !important;
         }
         [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
-            font-size: 15px !important;
+            font-size: 16px !important;
             height: 42px !important;
         }
         .stTextInput input {
@@ -238,37 +240,37 @@ st.markdown("""
     
     @media screen and (min-width: 401px) and (max-width: 600px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 55px 63px 1fr !important;
+            grid-template-columns: 58px 66px 1fr !important;
         }
         
         [data-testid="column"]:nth-of-type(1) {
-            width: 55px !important;
-            max-width: 55px !important;
-            min-width: 55px !important;
+            width: 58px !important;
+            max-width: 58px !important;
+            min-width: 58px !important;
         }
         
         [data-testid="column"]:nth-of-type(2) {
-            width: 63px !important;
-            max-width: 63px !important;
-            min-width: 63px !important;
+            width: 66px !important;
+            max-width: 66px !important;
+            min-width: 66px !important;
         }
     }
     
     @media screen and (min-width: 601px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 60px 68px 1fr !important;
+            grid-template-columns: 62px 70px 1fr !important;
         }
         
         [data-testid="column"]:nth-of-type(1) {
-            width: 60px !important;
-            max-width: 60px !important;
-            min-width: 60px !important;
+            width: 62px !important;
+            max-width: 62px !important;
+            min-width: 62px !important;
         }
         
         [data-testid="column"]:nth-of-type(2) {
-            width: 68px !important;
-            max-width: 68px !important;
-            min-width: 68px !important;
+            width: 70px !important;
+            max-width: 70px !important;
+            min-width: 70px !important;
         }
     }
     </style>
