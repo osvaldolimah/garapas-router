@@ -24,37 +24,21 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: TRAVA HORIZONTAL TOTAL ---
+# --- 2. DESIGN SYSTEM: RESPONSIVIDADE MILIMÉTRICA ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Trava contra scroll lateral */
-    html, body, [data-testid="stAppViewContainer"] {
-        overflow-x: hidden !important;
-        width: 100vw !important;
+    /* Trava Global */
+    html, body, [data-testid="stAppViewContainer"] { 
+        overflow-x: hidden !important; 
+        width: 100vw !important; 
     }
-    .block-container { padding: 0rem 0.4rem !important; }
+    .block-container { padding: 0rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- TÉCNICA NUCLEAR: LADO A LADO EM TUDO --- */
-    /* Força métricas E botões da lista a ficarem sempre na horizontal */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        width: 100% !important;
-        gap: 4px !important;
-    }
-    
-    [data-testid="column"] {
-        flex: 1 1 auto !important;
-        min-width: 0 !important;
-    }
-
-    /* Barra de métricas */
+    /* BARRA DE MÉTRICAS (HTML) */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
@@ -62,27 +46,44 @@ st.markdown("""
     }
     .metric-item { text-align: center; flex: 1; }
     .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
-    .metric-value { font-size: 15px; color: #111; font-weight: 800; display: block; }
+    .metric-value { font-size: 14px; color: #111; font-weight: 800; display: block; }
 
-    /* Cards e Lista */
+    /* --- TRAVA DE BOTÕES LADO A LADO --- */
+    /* Garante que os botões e a ordem nunca quebrem a linha */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        gap: 4px !important;
+    }
+    
+    /* Colunas espremidas para caber no celular */
+    [data-testid="column"] {
+        min-width: 0 !important;
+        flex-grow: 1 !important;
+    }
+
+    /* Cards e Fontes */
     .delivery-card { 
-        border-radius: 8px; padding: 6px 10px; margin-bottom: 2px; 
+        border-radius: 8px 8px 0 0; padding: 8px 10px; margin-bottom: 0px; 
         background-color: white; border-left: 5px solid #FF4B4B;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
+    .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    /* Sequence em Preto e Borda de Destaque */
+    /* Input Sequence (Foco na largura) */
     .stTextInput input {
-        height: 32px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 13px !important;
-        text-align: center; font-weight: 900 !important; border-radius: 6px !important;
+        height: 36px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 14px !important;
+        text-align: center; font-weight: 900 !important; border-radius: 0 6px 6px 0 !important;
         padding: 0px !important;
     }
     
+    /* Botões Quadrados para ganhar espaço */
     .stButton button { 
-        height: 34px !important; font-size: 12px !important; 
-        width: 100% !important; border-radius: 6px !important;
+        height: 36px !important; font-size: 14px !important; 
+        width: 100% !important; border-radius: 0px !important;
         padding: 0px !important;
     }
     </style>
@@ -120,7 +121,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (AUMENTADO PARA 320PX)
+    # A. MAPA (Aumentado para 320px conforme pedido)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -148,7 +149,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA DE ENTREGAS (BOTÕES E SEQUENCE LADO A LADO)
+    # C. LISTA DE ENTREGAS
     with st.container(height=450):
         for i, row in df_res.iterrows():
             rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
@@ -156,10 +157,12 @@ if st.session_state['df_final'] is not None:
             entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
+            # 1. Endereço (Sempre no topo do card)
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # --- TRES COLUNAS LADO A LADO ---
-            c_done, c_waze, c_seq = st.columns([0.6, 0.6, 1.8])
+            # 2. Barra de Ações (Forçada lado a lado)
+            # Done(15%) | Waze(15%) | Sequence(70%)
+            c_done, c_waze, c_seq = st.columns([0.15, 0.15, 0.7])
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -174,3 +177,4 @@ if st.session_state['df_final'] is not None:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
+            st.markdown("<div style='margin-bottom:10px;'></div>", unsafe_allow_html=True)
