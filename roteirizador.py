@@ -8,8 +8,8 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA (MEMÓRIA BLINDADA) ---
-SAVE_FILE = "sessao_waze.pkl"
+# --- 1. FUNÇÕES DE MEMÓRIA (NÃO PERDE DADOS NO WAZE) ---
+SAVE_FILE = "sessao_garapas.pkl"
 
 def salvar_progresso():
     dados = {
@@ -26,15 +26,16 @@ def carregar_progresso():
         try:
             with open(SAVE_FILE, 'rb') as f:
                 dados = pickle.load(f)
-                for chave, valor in dados.items():
-                    st.session_state[chave] = valor
+                for k, v in dados.items(): st.session_state[k] = v
                 return True
         except: return False
     return False
 
-# --- 2. FUNÇÕES TÉCNICAS ---
+# --- 2. CÁLCULO DE ROTA (HAVERSINE) ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
+    # Cálculo da distância ortodrômica entre dois pontos
+    # $$d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos\phi_1\cos\phi_2\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)$$
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
     return 12742 * np.arcsin(np.sqrt(a))
 
@@ -50,12 +51,12 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE - 100% PRESERVADO) ---
+# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE PARA ANDROID) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    * { box-sizing: border-box !important; }
+    * { box-sizing: border-box !important; margin: 0 !important; }
     html, body, [data-testid="stAppViewContainer"], .main, .block-container {
         overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important;
     }
@@ -63,37 +64,34 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    .custom-metrics-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: white; padding: 8px 10px; border-radius: 8px; margin: 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; 
-    }
-
-    .delivery-card { 
-        border-radius: 8px; padding: 6px; background-color: white; 
-        border-left: 4px solid #FF4B4B; margin: 6px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 100%;
-    }
-    .next-target { 
-        border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important;
-        box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
-    }
-    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.3; }
-    
+    /* GRID DO CLAUDE - TRAVADO */
     [data-testid="stHorizontalBlock"] {
-        display: grid !important; grid-template-columns: 56px 64px 1fr !important;
-        gap: 3px !important; width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 56px 64px 1fr !important;
+        gap: 3px !important; width: 100% !important; align-items: center !important;
     }
-    [data-testid="column"]:nth-of-type(1) { width: 56px !important; }
-    [data-testid="column"]:nth-of-type(2) { width: 64px !important; }
-    
+    [data-testid="column"] { padding: 0 !important; min-width: 0 !important; }
+
+    /* BOTÕES E INPUTS */
+    .stButton > button, .stLinkButton > a {
+        height: 44px !important; width: 100% !important; display: flex !important; 
+        align-items: center !important; justify-content: center !important;
+        border-radius: 6px !important; border: 1px solid #dee2e6 !important;
+    }
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
         text-align: center; font-weight: 700 !important; border-radius: 6px !important;
-        border: 1px solid #dee2e6 !important; font-size: 13px !important;
     }
-    .stButton > button { height: 36px !important; font-size: 16px !important; border-radius: 6px !important; }
-    .stLinkButton > a { height: 44px !important; font-size: 17px !important; border-radius: 6px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+
+    /* CARDS */
+    .delivery-card { 
+        border-radius: 8px; padding: 6px; background-color: white; 
+        border-left: 4px solid #FF4B4B; margin: 6px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.3; }
+    .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
 
@@ -101,35 +99,31 @@ st.markdown("""
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
-if 'map_center' not in st.session_state: st.session_state['map_center'] = None
 
-# --- 5. FRAGMENTO OPERACIONAL (SINCRONIZAÇÃO SEM PISCADA) ---
+# --- 5. OPERAÇÃO (FRAGMENTADA PARA SER SUAVE) ---
 @st.fragment
-def render_operacao_completa():
+def render_app():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA COM CHAVE FIXA (Evita o Iframe reload)
+    # A. MAPA (TRAVADO NA ROTA)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
-    all_coords = []
+    coords_para_zoom = []
     for i, row in df_res.iterrows():
         foi = i in st.session_state['entregues']
         cor = "#2ecc71" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
-        all_coords.append(loc)
+        coords_para_zoom.append(loc)
         icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # Só centraliza automaticamente se o mapa ainda não foi mexido nesta sessão
-    if all_coords and st.session_state.get('zoom_needed', True):
-        m.fit_bounds(all_coords, padding=(30, 30))
-        st.session_state['zoom_needed'] = False
-
-    # A 'key' estática impede o Iframe de recarregar do zero a cada clique
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_waze_estavel")
+    if coords_para_zoom:
+        m.fit_bounds(coords_para_zoom, padding=(30, 30))
+    
+    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_garapas")
 
     # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
@@ -138,12 +132,12 @@ def render_operacao_completa():
     # C. LISTA DE ENTREGAS
     with st.container(height=450):
         for i, row in df_res.iterrows():
-            rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
+            rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
             entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
@@ -160,7 +154,7 @@ def render_operacao_completa():
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
 
-# --- 6. INTERFACE PRINCIPAL ---
+# --- 6. FLUXO PRINCIPAL ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -175,10 +169,9 @@ if st.session_state['df_final'] is None:
         while not df_temp.empty:
             dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
             idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
-        st.session_state['df_final'] = final_df = pd.DataFrame(rota).reset_index(drop=True)
-        st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(final_df) + 1)
+        st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
+        st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
         st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-        st.session_state['zoom_needed'] = True
         salvar_progresso()
         st.rerun()
 
@@ -190,8 +183,6 @@ if st.session_state['df_final'] is not None:
             st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
             st.session_state['entregues'] = set()
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-            st.session_state['zoom_needed'] = True
-            salvar_progresso()
-            st.rerun()
+            salvar_progresso(); st.rerun()
 
-    render_operacao_completa()
+    render_app()
