@@ -24,28 +24,33 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE DE LARGURA NUCLEAR ---
+# --- 2. DESIGN SYSTEM: SOLUÇÃO NUCLEAR ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Reset de Tela e Travas */
-    * { box-sizing: border-box !important; }
-    html, body, [data-testid="stAppViewContainer"] {
-        overflow-x: hidden !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
+    /* 1. RESET TOTAL - ZERANDO TUDO */
+    * { 
+        box-sizing: border-box !important; 
         margin: 0 !important;
+    }
+    
+    html, body, [data-testid="stAppViewContainer"], 
+    [data-testid="stApp"], .main, .block-container {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
         padding: 0 !important;
     }
+    
     .block-container { 
-        padding: 0.5rem 0.5rem !important; 
-        max-width: 100% !important;
+        padding: 0.5rem 0.3rem !important; 
     }
+    
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. BARRA DE MÉTRICAS (HTML ESTÁVEL) */
+    /* 2. BARRA DE MÉTRICAS */
     .custom-metrics-container {
         display: flex; 
         justify-content: space-between; 
@@ -56,51 +61,17 @@ st.markdown("""
         margin: 8px 0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
         width: 100%; 
-        max-width: 100%;
     }
 
-    /* 3. SISTEMA DE COLUNAS RESPONSIVO - A SOLUÇÃO DEFINITIVA */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 4px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-    /* Colunas com controle total */
-    [data-testid="column"] {
-        min-width: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        flex-shrink: 1 !important;
-    }
-
-    /* Distribuição inteligente: botões menores, input maior */
-    [data-testid="column"]:nth-of-type(1) { 
-        flex: 0 0 calc(18% - 3px) !important; 
-        max-width: calc(18% - 3px) !important;
-    }
-    [data-testid="column"]:nth-of-type(2) { 
-        flex: 0 0 calc(18% - 3px) !important; 
-        max-width: calc(18% - 3px) !important;
-    }
-    [data-testid="column"]:nth-of-type(3) { 
-        flex: 0 0 calc(64% - 2px) !important; 
-        max-width: calc(64% - 2px) !important;
-    }
-
-    /* 4. ESTILO DOS CARDS */
+    /* 3. CARDS */
     .delivery-card { 
         border-radius: 8px; 
-        padding: 8px 10px; 
+        padding: 6px 6px; 
         background-color: white; 
         border-left: 4px solid #FF4B4B;
-        margin: 8px 0;
+        margin: 6px 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        width: 100%;
     }
     .next-target { 
         border-left: 4px solid #007BFF !important; 
@@ -108,76 +79,150 @@ st.markdown("""
         box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
     }
     .address-header { 
-        font-size: 13px !important; 
+        font-size: 12px !important; 
         font-weight: 700; 
         color: #111; 
         line-height: 1.3;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        margin-bottom: 4px !important;
+        padding: 0 !important;
     }
     
-    /* 5. Inputs e Botões - AJUSTE CRÍTICO */
+    /* 4. ANIQUILAÇÃO TOTAL DE COLUNAS - ABORDAGEM GRID */
+    [data-testid="stHorizontalBlock"] {
+        display: grid !important;
+        grid-template-columns: 50px 50px 1fr !important;
+        gap: 4px !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+    
+    [data-testid="column"] {
+        padding: 0 !important;
+        margin: 0 !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    /* Forçando cada coluna individualmente */
+    [data-testid="column"]:nth-of-type(1),
+    [data-testid="column"]:nth-of-type(2) {
+        width: 50px !important;
+        max-width: 50px !important;
+        min-width: 50px !important;
+    }
+    
+    [data-testid="column"]:nth-of-type(3) {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    /* 5. BOTÕES E INPUTS - CONTROLE ABSOLUTO */
+    .stButton, .stLinkButton, .stTextInput {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .stButton > div, .stLinkButton > div, .stTextInput > div {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
     .stTextInput input {
-        height: 40px !important; 
+        height: 36px !important; 
         background-color: #f8f9fa !important;
         color: #000 !important; 
-        font-size: 14px !important;
+        font-size: 12px !important;
         text-align: center; 
         font-weight: 700 !important; 
         border-radius: 6px !important;
-        padding: 0 4px !important; 
+        padding: 0 2px !important; 
         border: 1px solid #dee2e6 !important;
         width: 100% !important;
-        max-width: 100% !important;
         box-sizing: border-box !important;
+        margin: 0 !important;
     }
     
-    .stButton button { 
-        height: 40px !important; 
-        font-size: 18px !important; 
-        width: 100% !important; 
-        max-width: 100% !important;
+    .stButton > button { 
+        height: 36px !important; 
+        font-size: 15px !important; 
+        width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
+        margin: 0 !important;
         box-sizing: border-box !important;
         white-space: nowrap !important;
     }
-
-    /* 6. MEDIA QUERIES PARA DISPOSITIVOS PEQUENOS */
-    @media screen and (max-width: 480px) {
-        [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 calc(20% - 3px) !important; 
-            max-width: calc(20% - 3px) !important;
-        }
-        [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 calc(20% - 3px) !important; 
-            max-width: calc(20% - 3px) !important;
-        }
-        [data-testid="column"]:nth-of-type(3) { 
-            flex: 0 0 calc(60% - 2px) !important; 
-            max-width: calc(60% - 2px) !important;
-        }
-        
-        .stButton button { 
-            font-size: 16px !important; 
-            height: 38px !important;
-        }
-        .stTextInput input {
-            font-size: 13px !important;
-            height: 38px !important;
-        }
+    
+    .stLinkButton > a {
+        height: 36px !important; 
+        font-size: 15px !important; 
+        width: 100% !important;
+        border-radius: 6px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
     }
 
-    /* 7. Para tablets em landscape */
-    @media screen and (min-width: 768px) and (max-width: 1024px) {
-        [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 calc(15% - 3px) !important; 
+    /* 6. MEDIA QUERIES */
+    @media screen and (max-width: 400px) {
+        [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 45px 45px 1fr !important;
         }
-        [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 calc(15% - 3px) !important; 
+        
+        [data-testid="column"]:nth-of-type(1),
+        [data-testid="column"]:nth-of-type(2) {
+            width: 45px !important;
+            max-width: 45px !important;
+            min-width: 45px !important;
         }
-        [data-testid="column"]:nth-of-type(3) { 
-            flex: 0 0 calc(70% - 2px) !important; 
+        
+        .stButton > button,
+        .stLinkButton > a { 
+            font-size: 14px !important; 
+            height: 34px !important;
+        }
+        .stTextInput input {
+            font-size: 11px !important;
+            height: 34px !important;
+        }
+        .address-header {
+            font-size: 11px !important;
+        }
+    }
+    
+    @media screen and (min-width: 401px) and (max-width: 600px) {
+        [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 55px 55px 1fr !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(1),
+        [data-testid="column"]:nth-of-type(2) {
+            width: 55px !important;
+            max-width: 55px !important;
+            min-width: 55px !important;
+        }
+    }
+    
+    @media screen and (min-width: 601px) {
+        [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 60px 60px 1fr !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(1),
+        [data-testid="column"]:nth-of-type(2) {
+            width: 60px !important;
+            max-width: 60px !important;
+            min-width: 60px !important;
         }
     }
     </style>
@@ -210,7 +255,7 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA (SUAVE E TRAVADO) ---
+# --- 5. FRAGMENTO DA LISTA ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -225,8 +270,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # --- AS COLUNAS RESPONSIVAS ---
-            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
+            # --- COLUNAS COM GRID (NÃO USAR st.columns COM PROPORÇÕES) ---
+            c_done, c_waze, c_seq = st.columns(3)
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -245,7 +290,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Fixado em 320px)
+    # A. MAPA
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -258,7 +303,7 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS (HTML)
+    # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
@@ -270,5 +315,5 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. CHAMADA DA LISTA
+    # C. LISTA
     render_delivery_list()
