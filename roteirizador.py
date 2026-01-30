@@ -6,7 +6,7 @@ import numpy as np
 from folium.features import DivIcon
 import requests
 
-# --- 1. INTELIGÊNCIA DE ROTA ---
+# --- 1. FUNÇÕES TÉCNICAS ---
 
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
@@ -25,7 +25,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: COMPACTAÇÃO TOTAL ---
+# --- 2. DESIGN SYSTEM: O "HACK" DE FIXAÇÃO ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
@@ -35,49 +35,56 @@ st.markdown("""
     .block-container { padding-top: 0rem !important; padding-bottom: 0rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* --- HACK PARA COLUNAS LADO A LADO NO MOBILE --- */
-    /* Isso impede que o Streamlit empilhe os elementos em telas pequenas */
+    /* --- SOLUÇÃO NUCLEAR PARA COLUNAS NO MOBILE --- */
+    /* Força o container de colunas a NUNCA empilhar verticalmente */
+    [data-testid="stHorizontalBlock"] {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+    }
+    
     [data-testid="column"] {
         width: 33% !important;
         flex: 1 1 33% !important;
         min-width: 33% !important;
     }
-    
-    [data-testid="stMetricValue"] { font-size: 15px !important; font-weight: 800 !important; }
+
+    /* Ajuste fino das métricas para caberem lado a lado */
+    [data-testid="stMetricValue"] { font-size: 14px !important; font-weight: 800 !important; }
     [data-testid="stMetricLabel"] { font-size: 9px !important; }
     
     .stButton button {
         height: 30px !important;
         font-size: 10px !important;
-        padding: 0px 2px !important;
-        margin-top: 18px !important;
+        padding: 0px 5px !important;
+        margin-top: 0px !important;
     }
 
-    /* Cards Ultra-Slim */
+    /* Cards e Fontes Minimalistas */
     .delivery-card { 
-        border-radius: 6px; padding: 6px 10px; margin-bottom: 3px; 
-        background-color: white; border-left: 5px solid #FF4B4B;
+        border-radius: 6px; padding: 6px 10px; margin-bottom: 2px; 
+        background-color: white; border-left: 4px solid #FF4B4B;
     }
-    .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 13px !important; font-weight: 600 !important; color: #222; line-height: 1.1; }
+    .next-target { border-left: 4px solid #007BFF !important; background-color: #f8fbff !important; }
+    .address-header { font-size: 13px !important; font-weight: 600 !important; color: #222; }
     
-    /* Input Compacto */
+    /* Input Ordem Compacto */
     div[data-baseweb="input"] { height: 26px !important; }
     .stTextInput input {
         background-color: #f1f3f5 !important; color: #2ecc71 !important;
-        font-size: 11px !important; text-align: center; padding: 0px !important;
+        font-size: 11px !important; text-align: center;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. LOGICA ---
+# --- 3. ESTADO ---
 
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. TELA INICIAL ---
+# --- 4. FLUXO DE ENTRADA ---
 
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
@@ -100,7 +107,7 @@ if st.session_state['df_final'] is None:
                 st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-# --- 5. INTERFACE ---
+# --- 5. INTERFACE (O MAPA É O TOPO ABSOLUTO) ---
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
@@ -125,8 +132,8 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
     st_folium(m, width=None, height=250, use_container_width=True)
 
-    # MÉTRICAS LADO A LADO (FORÇADO PELO CSS)
-    c1, c2, c3 = st.columns(3) # Três colunas iguais
+    # BARRA DE MÉTRICAS TRAVADA NA HORIZONTAL (HACK APLICADO)
+    c1, c2, c3 = st.columns(3)
     
     km_vovo = 0.0
     for k in range(len(restantes) - 1):
@@ -145,7 +152,7 @@ if st.session_state['df_final'] is not None:
                     st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
                 st.rerun()
 
-    # LISTA
+    # LISTA COM ROLAGEM
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
