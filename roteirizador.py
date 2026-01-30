@@ -5,8 +5,37 @@ from streamlit_folium import st_folium
 import numpy as np
 from folium.features import DivIcon
 import requests
+import pickle
+import os
 
-# --- 1. FUNÇÕES TÉCNICAS ---
+# --- 1. MOTOR DE PERSISTÊNCIA (INVISÍVEL) ---
+SAVE_FILE = "sessao_waze.pkl"
+
+def salvar_progresso():
+    """Salva os dados atuais sem alterar o layout"""
+    dados = {
+        'df_final': st.session_state.get('df_final'),
+        'road_path': st.session_state.get('road_path'),
+        'entregues': st.session_state.get('entregues'),
+        'manual_sequences': st.session_state.get('manual_sequences')
+    }
+    with open(SAVE_FILE, 'wb') as f:
+        pickle.dump(dados, f)
+
+def carregar_progresso():
+    """Carrega os dados se o app reiniciar sozinho"""
+    if os.path.exists(SAVE_FILE):
+        try:
+            with open(SAVE_FILE, 'rb') as f:
+                dados = pickle.load(f)
+                for chave, valor in dados.items():
+                    st.session_state[chave] = valor
+                return True
+        except:
+            return False
+    return False
+
+# --- 2. FUNÇÕES TÉCNICAS ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -24,7 +53,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: SOLUÇÃO NUCLEAR ---
+# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE - 100% PRESERVADO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -107,27 +136,24 @@ st.markdown("""
         overflow: hidden !important;
     }
     
-    /* Coluna 1: ✅ (aumenta para 56px) */
     [data-testid="column"]:nth-of-type(1) {
         width: 56px !important;
         max-width: 56px !important;
         min-width: 56px !important;
     }
     
-    /* Coluna 2: 🚗 (aumenta para 64px) */
     [data-testid="column"]:nth-of-type(2) {
         width: 64px !important;
         max-width: 64px !important;
         min-width: 64px !important;
     }
     
-    /* Coluna 3: Input (pega o resto) */
     [data-testid="column"]:nth-of-type(3) {
         width: 100% !important;
         min-width: 0 !important;
     }
     
-    /* 5. BOTÕES E INPUTS - CONTROLE ABSOLUTO */
+    /* 5. BOTÕES E INPUTS */
     .stButton, .stLinkButton, .stTextInput {
         width: 100% !important;
         margin: 0 !important;
@@ -140,7 +166,6 @@ st.markdown("""
         margin: 0 !important;
     }
     
-    /* Input com altura aumentada */
     .stTextInput input {
         height: 44px !important; 
         background-color: #f8f9fa !important;
@@ -156,7 +181,6 @@ st.markdown("""
         margin: 0 !important;
     }
     
-    /* Botão ✅ - CENTRALIZAÇÃO PERFEITA COM LARGURA AUMENTADA */
     [data-testid="column"]:nth-of-type(1) .stButton > button { 
         height: 36px !important; 
         font-size: 16px !important; 
@@ -173,7 +197,6 @@ st.markdown("""
         overflow: hidden !important;
     }
     
-    /* Botão 🚗 Waze - CENTRALIZAÇÃO PERFEITA COM LARGURA AUMENTADA */
     [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
         height: 44px !important; 
         font-size: 17px !important; 
@@ -190,7 +213,6 @@ st.markdown("""
         overflow: hidden !important;
     }
     
-    /* Forçando centralização dos emojis/ícones */
     [data-testid="column"]:nth-of-type(1) .stButton > button > div,
     [data-testid="column"]:nth-of-type(2) .stLinkButton > a > div {
         display: flex !important;
@@ -276,13 +298,46 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO ---
-if 'df_final' not in st.session_state: st.session_state['df_final'] = None
-if 'road_path' not in st.session_state: st.session_state['road_path'] = []
-if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
-if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
+# --- 4. INICIALIZAÇÃO DE ESTADO (COM CARREGAMENTO AUTOMÁTICO) ---
+if 'df_final' not in st.session_state:
+    if not carregar_progresso():
+        st.session_state['df_final'] = None
+        st.session_state['road_path'] = []
+        st.session_state['entregues'] = set()
+        st.session_state['manual_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA ---
+# --- 5. FRAGMENTO DA LISTA ---
+@st.fragment
+def render_delivery_list():
+    df_res = st.session_state['df_final']
+    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
+    
+    with st.container(height=500):
+        for i, row in df_res.iterrows():
+            rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
+            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
+            card_class = "next-target" if is_next else ""
+
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
+            
+            c_done, c_waze, c_seq = st.columns(3)
+            
+            with c_done:
+                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
+                    if entregue: st.session_state['entregues'].remove(i)
+                    else: st.session_state['entregues'].add(i)
+                    salvar_progresso() # SALVA SILENCIOSAMENTE
+                    st.rerun(scope="fragment")
+            with c_waze:
+                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+            with c_seq:
+                nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
+                if nova_seq != val_padrao:
+                    st.session_state['manual_sequences'][uid] = nova_seq
+                    salvar_progresso() # SALVA SILENCIOSAMENTE
+
+# --- 6. INTERFACE PRINCIPAL ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -301,39 +356,9 @@ if st.session_state['df_final'] is None:
         final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['df_final'] = final_df
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
+        salvar_progresso() # SALVA SILENCIOSAMENTE O INÍCIO DO DIA
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA ---
-@st.fragment
-def render_delivery_list():
-    df_res = st.session_state['df_final']
-    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
-    
-    with st.container(height=500):
-        for i, row in df_res.iterrows():
-            rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
-            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
-            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
-            card_class = "next-target" if is_next else ""
-
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
-            
-            # --- COLUNAS COM GRID ---
-            c_done, c_waze, c_seq = st.columns(3)
-            
-            with c_done:
-                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                    if entregue: st.session_state['entregues'].remove(i)
-                    else: st.session_state['entregues'].add(i)
-                    st.rerun(scope="fragment")
-            with c_waze:
-                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
-            with c_seq:
-                nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
-                if nova_seq != val_padrao:
-                    st.session_state['manual_sequences'][uid] = nova_seq
-
-# --- 6. INTERFACE PRINCIPAL ---
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
@@ -361,6 +386,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
             st.session_state['entregues'] = set()
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+            salvar_progresso() # SALVA SILENCIOSAMENTE
             st.rerun()
 
     # C. LISTA
