@@ -25,13 +25,17 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM ---
+# --- 2. DESIGN SYSTEM RESPONSIVO ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
     .stApp { background-color: #f8f9fa; }
+    
+    /* Força o mapa a ocupar toda a largura no celular */
+    iframe { width: 100% !important; border-radius: 12px; }
+
     .delivery-card { 
         border-radius: 12px; padding: 15px; margin-bottom: 8px; 
         background-color: white; border-left: 8px solid #FF4B4B;
@@ -39,6 +43,7 @@ st.markdown("""
     }
     .next-target { border-left: 8px solid #007BFF !important; background-color: #f0f7ff !important; }
     .address-header { font-size: 18px !important; font-weight: 700 !important; color: #212529; }
+    
     .stTextInput input {
         background-color: #212529 !important; color: #39FF14 !important;
         font-family: 'Roboto Mono', monospace; font-size: 18px !important; text-align: center;
@@ -48,7 +53,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. INICIALIZAÇÃO ---
+# --- 3. MEMÓRIA ---
 
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
@@ -92,7 +97,7 @@ if st.session_state['df_final'] is not None:
     entregues_list = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_list]
 
-    # --- TOPO FIXO ---
+    # --- MÉTRICAS ---
     st.subheader(f"📍 {len(restantes)} paradas restantes")
     
     col_met, col_btn = st.columns([1, 1])
@@ -112,35 +117,30 @@ if st.session_state['df_final'] is not None:
                 st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # --- MAPA INTELIGENTE (AUTO-ZOOM) ---
-    # Inicializamos sem centro fixo
+    # --- MAPA INTELIGENTE COM PADDING ---
     m = folium.Map(tiles="cartodbpositron")
     
-    # Adicionamos a rota
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=5, opacity=0.7).add_to(m)
 
-    # Coletamos todas as coordenadas para o fit_bounds
     all_coords = []
-
     for i, row in df_res.iterrows():
         foi = i in entregues_list
         cor = "#28A745" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#FF4B4B")
         id_p = int(row['ORDEM_PARADA'])
-        
         loc = [row['LATITUDE'], row['LONGITUDE']]
-        all_coords.append(loc) # Guarda para calcular os limites
+        all_coords.append(loc)
         
         icon_html = f'''<div style="background-color: {cor}; border: 2px solid white; border-radius: 50%; width: 24px; height: 24px; 
                         display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; 
                         font-size: 10px;">{id_p}</div>'''
         folium.Marker(location=loc, icon=DivIcon(icon_size=(24,24), icon_anchor=(12,12), html=icon_html)).add_to(m)
     
-    # A MÁGICA ACONTECE AQUI: O mapa se ajusta para mostrar todos os pontos
     if all_coords:
-        m.fit_bounds(all_coords)
+        # PADDING: 50 pixels de folga para não cortar no celular
+        m.fit_bounds(all_coords, padding=(50, 50))
 
-    st_folium(m, width=1400, height=300, key=f"map_v{st.session_state['versao_lista']}")
+    st_folium(m, width=None, height=350, key=f"map_v{st.session_state['versao_lista']}", use_container_width=True)
 
     # --- LISTA COM ROLAGEM INTERNA ---
     st.markdown("### 📋 Sequência de Entrega")
