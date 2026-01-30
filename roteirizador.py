@@ -24,35 +24,79 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE DE FLUXO ---
+# --- 2. DESIGN SYSTEM: CONTROLE TOTAL ANTI-VAZAMENTO ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100vw !important; }
+    /* 1. Trava Geral de Tela */
+    html, body, [data-testid="stAppViewContainer"] { 
+        overflow-x: hidden !important; 
+        width: 100vw !important; 
+    }
     .block-container { padding: 0rem 0.2rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* Forçar colunas lado a lado */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important; flex-direction: row !important;
-        flex-wrap: nowrap !important; align-items: center !important;
-        width: 100% !important; gap: 4px !important;
+    /* 2. BARRA DE MÉTRICAS (HTML) */
+    .custom-metrics-container {
+        display: flex; justify-content: space-between; align-items: center;
+        background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
+    }
+    .metric-item { text-align: center; flex: 1; }
+    .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
+    .metric-value { font-size: 14px; color: #111; font-weight: 800; display: block; }
+
+    /* 3. HACK NUCLEAR PARA COLUNAS (INCLUI FRAGMENTOS) */
+    /* Forçamos todas as colunas horizontais a não quebrarem e não transbordarem */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        gap: 4px !important;
+        align-items: center !important;
+    }
+
+    /* Definindo larguras fixas em % para garantir o encaixe no Android */
+    div[data-testid="column"] {
+        min-width: 0 !important;
+        flex-shrink: 1 !important;
     }
     
-    [data-testid="column"] { flex: 0 0 auto !important; min-width: 0 !important; }
-    [data-testid="column"]:nth-child(1), [data-testid="column"]:nth-child(2) { width: 15% !important; }
-    [data-testid="column"]:nth-child(3) { width: 65% !important; }
+    /* ✅ e 🚗 ocupam 18% cada, Sequence ocupa o resto */
+    div[data-testid="column"]:nth-of-type(1), 
+    div[data-testid="column"]:nth-of-type(2) {
+        flex: 0 0 18% !important;
+        max-width: 18% !important;
+    }
+    div[data-testid="column"]:nth-of-type(3) {
+        flex: 0 0 60% !important;
+        max-width: 60% !important;
+    }
 
-    .delivery-card { border-radius: 8px 8px 0 0; padding: 6px 10px; background-color: white; border-left: 5px solid #FF4B4B; margin-top: 10px; }
+    /* 4. ESTILO DOS CARDS */
+    .delivery-card { 
+        border-radius: 8px 8px 0 0; padding: 6px 10px; 
+        background-color: white; border-left: 5px solid #FF4B4B;
+        margin-top: 10px;
+    }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    .stTextInput input { height: 38px !important; background-color: #f1f3f5 !important; color: black !important; font-size: 13px !important; text-align: center; font-weight: 900 !important; border-radius: 6px !important; padding: 0px !important; border: 1px solid #ccc !important; }
-    .stButton button { height: 38px !important; font-size: 16px !important; width: 100% !important; border-radius: 6px !important; padding: 0px !important; }
+    .stTextInput input {
+        height: 38px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 13px !important;
+        text-align: center; font-weight: 900 !important; border-radius: 6px !important;
+        padding: 0px !important; border: 1px solid #ccc !important;
+    }
     
-    .custom-metrics-container { display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
+    .stButton button { 
+        height: 38px !important; font-size: 16px !important; 
+        width: 100% !important; border-radius: 6px !important;
+        padding: 0px !important; 
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -83,13 +127,12 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA (O SEGREDO DA SUAVIDADE) ---
+# --- 5. FRAGMENTO DA LISTA (SEM PISCADA & SEM VAZAMENTO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
-    # Lista de Entregas
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
@@ -99,13 +142,14 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            c_done, c_waze, c_seq = st.columns(3)
+            # Aqui forçamos o encaixe lateral
+            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
+            
             with c_done:
-                # Aqui o clique NÃO recarrega o mapa
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
-                    st.rerun(scope="fragment") # Atualiza apenas este bloco!
+                    st.rerun(scope="fragment")
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
@@ -118,7 +162,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Fixado no topo)
+    # A. MAPA (Fixado em 320px)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -131,7 +175,7 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS (HTML)
+    # B. MÉTRICAS (HTML ESTÁVEL)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
@@ -143,5 +187,5 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. CHAMADA DA LISTA (FRAGMENTADA)
+    # C. LISTA FRAGMENTADA
     render_delivery_list()
