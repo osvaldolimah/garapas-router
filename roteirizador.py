@@ -24,56 +24,55 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE TOTAL ANTI-VAZAMENTO ---
+# --- 2. DESIGN SYSTEM: CONTROLE TOTAL DE PIXELS ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Trava Global de Tela */
-    html, body, [data-testid="stAppViewContainer"] { 
-        overflow-x: hidden !important; 
-        width: 100vw !important; 
+    /* 1. Reset Total de Largura */
+    html, body, [data-testid="stAppViewContainer"] {
+        overflow-x: hidden !important;
+        width: 100vw !important;
     }
     .block-container { padding: 0rem 0.2rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. BARRA DE MÉTRICAS (HTML) */
+    /* 2. BARRA DE MÉTRICAS HTML (ESTÁVEL) */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
     }
-    .metric-item { text-align: center; flex: 1; }
-    .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
-    .metric-value { font-size: 14px; color: #111; font-weight: 800; display: block; }
 
-    /* 3. HACK NUCLEAR PARA COLUNAS (DENTRO E FORA DO FRAGMENTO) */
-    [data-testid="stHorizontalBlock"] {
+    /* 3. A "MÁQUINA" DE LADO A LADO (HACK AVANÇADO) */
+    /* Eliminamos qualquer espaço entre as colunas do Streamlit */
+    div[data-testid="stHorizontalBlock"] {
+        gap: 0px !important; 
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important; /* Proíbe quebra de linha */
+        flex-wrap: nowrap !important;
         width: 100% !important;
-        gap: 4px !important;
-        align-items: center !important;
+        padding: 0px !important;
     }
 
-    /* Forçamos as colunas a encolherem sem dó */
+    /* Forçamos larguras milimétricas */
     div[data-testid="column"] {
+        padding: 0px 2px !important; /* Mínimo de respiro entre botões */
         min-width: 0 !important;
-        flex-basis: 0 !important;
-        flex-grow: 1 !important;
+        flex-shrink: 1 !important;
     }
-    
-    /* ✅ e 🚗 ocupam 18% cada, Ordem ocupa o resto (64%) */
+
+    /* ✅ e 🚗 ocupam exatamente 18% da tela */
     div[data-testid="column"]:nth-of-type(1), 
     div[data-testid="column"]:nth-of-type(2) {
         flex: 0 0 18% !important;
-        max-width: 18% !important;
+        width: 18% !important;
     }
+    /* Ordem ocupa exatamente 64% da tela */
     div[data-testid="column"]:nth-of-type(3) {
-        flex: 0 0 60% !important;
-        max-width: 60% !important;
+        flex: 0 0 64% !important;
+        width: 64% !important;
     }
 
     /* 4. ESTILO DOS CARDS */
@@ -85,18 +84,16 @@ st.markdown("""
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
+    /* Input e Botões */
     .stTextInput input {
-        height: 38px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 13px !important;
+        height: 40px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 14px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
-        padding: 0px !important; border: 1px solid #ccc !important;
-        width: 100% !important;
+        border: 1px solid #ccc !important; width: 100% !important;
     }
-    
     .stButton button { 
-        height: 38px !important; font-size: 16px !important; 
+        height: 40px !important; font-size: 18px !important; 
         width: 100% !important; border-radius: 6px !important;
-        padding: 0px !important; 
     }
     </style>
     """, unsafe_allow_html=True)
@@ -128,7 +125,7 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA (SUAVE E TRAVADO) ---
+# --- 5. FRAGMENTO DA LISTA (O PONTO CRÍTICO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -143,8 +140,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # Aqui forçamos o encaixe lateral absoluto
-            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
+            # --- AS 3 COLUNAS BLINDADAS ---
+            c_done, c_waze, c_seq = st.columns([1, 1, 3.5]) # Proporção interna ajustada
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -163,7 +160,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (320px)
+    # A. MAPA
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -188,5 +185,5 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA FRAGMENTADA
+    # C. CHAMADA DA LISTA
     render_delivery_list()
