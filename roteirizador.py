@@ -70,21 +70,19 @@ st.markdown("""
     }
     [data-testid="column"] { padding: 0 !important; min-width: 0 !important; }
 
-    /* CENTRALIZAÇÃO ABSOLUTA DOS ÍCONES */
+    /* CENTRALIZAÇÃO DOS ÍCONES */
     .stButton > button, .stLinkButton > a {
         height: 44px !important; width: 100% !important; 
         display: flex !important; align-items: center !important; justify-content: center !important;
         border-radius: 6px !important; border: 1px solid #dee2e6 !important;
-        padding: 0 !important;
     }
     .stButton > button div, .stLinkButton > a div, .stButton > button p {
         display: flex !important; align-items: center !important; justify-content: center !important;
-        margin: 0 !important; padding: 0 !important; width: 100% !important;
     }
 
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
-        text-align: center; font-weight: 800 !important; border-radius: 6px !important; font-size: 14px !important;
+        text-align: center; font-weight: 800 !important; border-radius: 6px !important;
     }
 
     .delivery-card { border-radius: 8px; padding: 8px; background-color: white; border-left: 5px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -97,17 +95,21 @@ st.markdown("""
 # --- 4. INICIALIZAÇÃO ---
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
-        st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}, 'need_zoom': True})
+        st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. OPERAÇÃO (FRAGMENTO OTIMIZADO) ---
+# --- 5. OPERAÇÃO (FRAGMENTO SINCRONIZADO) ---
 @st.fragment
 def render_app():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA ESTÁVEL
-    # Usamos o centro da rota para evitar que o mapa "pule" para o mundo todo
-    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
+    # A. MAPA COM FOCO AUTOMÁTICO
+    # Definimos um centro inicial baseado na média das coordenadas para evitar o "mapa do mundo"
+    avg_lat = df_res['LATITUDE'].mean()
+    avg_lon = df_res['LONGITUDE'].mean()
+    
+    m = folium.Map(location=[avg_lat, avg_lon], zoom_start=13, tiles="cartodbpositron", attribution_control=False)
+    
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
@@ -120,13 +122,10 @@ def render_app():
         icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # SÓ APLICA O ZOOM SE FOR NECESSÁRIO (CARGA OU LIMPEZA)
-    if coords and st.session_state.get('need_zoom', True):
+    if coords:
         m.fit_bounds(coords, padding=(30, 30))
-        st.session_state['need_zoom'] = False # Trava o zoom para os próximos cliques ✅
-
-    # Key fixa é o segredo contra a piscada branca
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_estatico_garapas")
+    
+    st_folium(m, width=None, height=320, use_container_width=True)
 
     # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
@@ -147,7 +146,6 @@ def render_app():
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
-                    # NÃO resetamos o need_zoom aqui para evitar a piscada
                     salvar_progresso()
                     st.rerun(scope="fragment")
             with c_waze:
@@ -176,7 +174,6 @@ if st.session_state['df_final'] is None:
         st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
         st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
         st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-        st.session_state['need_zoom'] = True # Ativa o zoom inicial
         salvar_progresso(); st.rerun()
 
 if st.session_state['df_final'] is not None:
@@ -187,7 +184,6 @@ if st.session_state['df_final'] is not None:
             st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
             st.session_state['entregues'] = set()
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-            st.session_state['need_zoom'] = True # Ativa o zoom após limpeza
             salvar_progresso(); st.rerun()
 
     render_app()
