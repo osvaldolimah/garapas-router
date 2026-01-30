@@ -6,7 +6,7 @@ import numpy as np
 from folium.features import DivIcon
 import requests
 
-# --- 1. FUNÇÕES TÉCNICAS (ESTÁVEIS) ---
+# --- 1. FUNÇÕES TÉCNICAS ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -24,76 +24,73 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE TOTAL DE PIXELS ---
+# --- 2. DESIGN SYSTEM: CONTROLE DE LARGURA NUCLEAR ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Reset Total de Largura */
+    /* 1. Reset de Tela e Travas */
     html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     .block-container { padding: 0rem 0.2rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. BARRA DE MÉTRICAS HTML (ESTÁVEL) */
+    /* 2. BARRA DE MÉTRICAS (HTML ESTÁVEL) */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
     }
 
-    /* 3. A "MÁQUINA" DE LADO A LADO (HACK AVANÇADO) */
-    /* Eliminamos qualquer espaço entre as colunas do Streamlit */
-    div[data-testid="stHorizontalBlock"] {
-        gap: 0px !important; 
+    /* 3. A MÁQUINA DE LADO A LADO (HACK DEFINITIVO) */
+    /* Zeramos o gap e forçamos o display grid para precisão de pixels */
+    [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
+        gap: 2px !important;
         width: 100% !important;
         padding: 0px !important;
     }
-
-    /* Forçamos larguras milimétricas */
-    div[data-testid="column"] {
-        padding: 0px 2px !important; /* Mínimo de respiro entre botões */
+    
+    /* Forçamos o encolhimento total das colunas */
+    [data-testid="column"] {
         min-width: 0 !important;
-        flex-shrink: 1 !important;
+        flex-basis: 0 !important;
+        flex-grow: 1 !important;
+        padding: 0px !important;
     }
 
-    /* ✅ e 🚗 ocupam exatamente 18% da tela */
-    div[data-testid="column"]:nth-of-type(1), 
-    div[data-testid="column"]:nth-of-type(2) {
-        flex: 0 0 18% !important;
-        width: 18% !important;
-    }
-    /* Ordem ocupa exatamente 64% da tela */
-    div[data-testid="column"]:nth-of-type(3) {
-        flex: 0 0 64% !important;
-        width: 64% !important;
-    }
+    /* Definindo larguras fixas em porcentagem da tela (vw) */
+    [data-testid="column"]:nth-of-type(1) { flex: 0 0 16vw !important; } /* ✅ */
+    [data-testid="column"]:nth-of-type(2) { flex: 0 0 16vw !important; } /* 🚗 */
+    [data-testid="column"]:nth-of-type(3) { flex: 0 0 62vw !important; } /* ORDEM */
 
     /* 4. ESTILO DOS CARDS */
     .delivery-card { 
-        border-radius: 8px 8px 0 0; padding: 6px 10px; 
+        border-radius: 8px; padding: 6px 10px; 
         background-color: white; border-left: 5px solid #FF4B4B;
         margin-top: 10px;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    /* Input e Botões */
+    /* Inputs e Botões Adaptáveis */
     .stTextInput input {
-        height: 40px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 14px !important;
+        height: 38px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 13px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
-        border: 1px solid #ccc !important; width: 100% !important;
+        padding: 0px !important; border: 1px solid #ccc !important;
     }
     .stButton button { 
-        height: 40px !important; font-size: 18px !important; 
+        height: 38px !important; font-size: 16px !important; 
         width: 100% !important; border-radius: 6px !important;
+        padding: 0px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -125,7 +122,7 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. FRAGMENTO DA LISTA (O PONTO CRÍTICO) ---
+# --- 5. FRAGMENTO DA LISTA (SUAVE E TRAVADO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -140,8 +137,9 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # --- AS 3 COLUNAS BLINDADAS ---
-            c_done, c_waze, c_seq = st.columns([1, 1, 3.5]) # Proporção interna ajustada
+            # --- AS COLUNAS COM LARGURA EM VW (VIEWPORT WIDTH) ---
+            # Aqui garantimos que a soma não passe de 100% da largura da tela
+            c_done, c_waze, c_seq = st.columns([0.16, 0.16, 0.62])
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -160,7 +158,7 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA
+    # A. MAPA (Fixado em 320px)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -173,7 +171,7 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS
+    # B. MÉTRICAS (HTML)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
