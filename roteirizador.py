@@ -25,50 +25,57 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: O "HACK" DE FIXAÇÃO ---
+# --- 2. DESIGN SYSTEM: RESPONSIVIDADE REAL ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    .stApp { background-color: #f8f9fa; }
-    .block-container { padding-top: 0rem !important; padding-bottom: 0rem !important; }
+    .stApp { background-color: #f8f9fa; overflow-x: hidden; }
+    .block-container { padding: 0rem 0.5rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* --- SOLUÇÃO NUCLEAR PARA COLUNAS NO MOBILE --- */
-    /* Força o container de colunas a NUNCA empilhar verticalmente */
+    /* --- AJUSTE DE COLUNAS RESPONSIVAS --- */
+    /* Força o container a ocupar exatamente 100% da largura, sem sobrar */
     [data-testid="stHorizontalBlock"] {
+        display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        align-items: center !important;
+        width: 100% !important;
+        gap: 5px !important;
     }
     
+    /* Faz cada coluna encolher o necessário para caber na tela */
     [data-testid="column"] {
-        width: 33% !important;
-        flex: 1 1 33% !important;
-        min-width: 33% !important;
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+        padding: 0px !important;
     }
 
-    /* Ajuste fino das métricas para caberem lado a lado */
-    [data-testid="stMetricValue"] { font-size: 14px !important; font-weight: 800 !important; }
-    [data-testid="stMetricLabel"] { font-size: 9px !important; }
+    /* Diminuindo métricas para caber em telas pequenas */
+    [data-testid="stMetric"] {
+        padding: 5px !important;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-testid="stMetricValue"] { font-size: 13px !important; font-weight: 800 !important; }
+    [data-testid="stMetricLabel"] { font-size: 8px !important; text-transform: uppercase; }
     
     .stButton button {
-        height: 30px !important;
+        height: 35px !important;
         font-size: 10px !important;
-        padding: 0px 5px !important;
-        margin-top: 0px !important;
+        width: 100% !important;
     }
 
-    /* Cards e Fontes Minimalistas */
+    /* Cards e Lista */
     .delivery-card { 
         border-radius: 6px; padding: 6px 10px; margin-bottom: 2px; 
         background-color: white; border-left: 4px solid #FF4B4B;
     }
     .next-target { border-left: 4px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 13px !important; font-weight: 600 !important; color: #222; }
+    .address-header { font-size: 12px !important; font-weight: 600 !important; color: #222; }
     
-    /* Input Ordem Compacto */
     div[data-baseweb="input"] { height: 26px !important; }
     .stTextInput input {
         background-color: #f1f3f5 !important; color: #2ecc71 !important;
@@ -84,7 +91,7 @@ if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA ---
+# --- 4. TELA INICIAL ---
 
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
@@ -107,7 +114,7 @@ if st.session_state['df_final'] is None:
                 st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-# --- 5. INTERFACE (O MAPA É O TOPO ABSOLUTO) ---
+# --- 5. INTERFACE ---
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
@@ -130,9 +137,9 @@ if st.session_state['df_final'] is not None:
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
-    st_folium(m, width=None, height=250, use_container_width=True)
+    st_folium(m, width=None, height=220, use_container_width=True)
 
-    # BARRA DE MÉTRICAS TRAVADA NA HORIZONTAL (HACK APLICADO)
+    # MÉTRICAS LADO A LADO (ESPREMIDAS PARA CABER)
     c1, c2, c3 = st.columns(3)
     
     km_vovo = 0.0
@@ -140,10 +147,10 @@ if st.session_state['df_final'] is not None:
         p1, p2 = df_res.iloc[restantes[k]], df_res.iloc[restantes[k+1]]
         km_vovo += fast_haversine(p1['LATITUDE'], p1['LONGITUDE'], p2['LATITUDE'], p2['LONGITUDE'])
     
-    c1.metric("📦 Faltam", f"{len(restantes)}")
+    c1.metric("📦 FALTAM", f"{len(restantes)}")
     c2.metric("🛤️ KM", f"{km_vovo * 1.3:.1f}")
     with c3:
-        if st.button("🗑️ Limpar", use_container_width=True):
+        if st.button("🗑️ LIMPAR", use_container_width=True):
             if restantes:
                 novo_df = df_res.iloc[restantes].reset_index(drop=True)
                 novo_df['ORDEM_PARADA'] = range(1, len(novo_df) + 1)
@@ -152,8 +159,8 @@ if st.session_state['df_final'] is not None:
                     st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
                 st.rerun()
 
-    # LISTA COM ROLAGEM
-    with st.container(height=500):
+    # LISTA
+    with st.container(height=450):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
             seq_v = st.session_state['custom_sequences'].get(i, str(row.get('SEQUENCE', '---')))
@@ -164,7 +171,7 @@ if st.session_state['df_final'] is not None:
 
             st.markdown(f'''
                 <div class="delivery-card {card_class}">
-                    <div class="address-header">{id_p}ª - {rua} <span style="font-size:10px; color:#999;">({bairro})</span></div>
+                    <div class="address-header">{id_p}ª - {rua} <span style="font-size:9px; color:#999;">({bairro})</span></div>
                 </div>
             ''', unsafe_allow_html=True)
             
