@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA (MEMÓRIA PARA NÃO PERDER DADOS NO WAZE) ---
+# --- 1. MEMÓRIA (PERSISTÊNCIA PARA O WAZE) ---
 SAVE_FILE = "sessao_garapas.pkl"
 
 def salvar_progresso():
@@ -26,16 +26,14 @@ def carregar_progresso():
         try:
             with open(SAVE_FILE, 'rb') as f:
                 dados = pickle.load(f)
-                for k, v in dados.items():
-                    st.session_state[k] = v
+                for k, v in dados.items(): st.session_state[k] = v
                 return True
         except: return False
     return False
 
-# --- 2. CÁLCULO DE DISTÂNCIA E ROTA ---
+# --- 2. FUNÇÕES TÉCNICAS ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
-    # Fórmula de Haversine para distância entre coordenadas
     # $$d = 12742 \cdot \arcsin\left(\sqrt{0.5 - \cos((lat_2-lat_1)p)/2 + \cos(lat_1 p)\cos(lat_2 p)(1-\cos((lon_2-lon_1)p))/2}\right)$$
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
     return 12742 * np.arcsin(np.sqrt(a))
@@ -52,7 +50,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT TRAVADO + ÍCONES CENTRALIZADOS) ---
+# --- 3. DESIGN SYSTEM (REGRAS SEPARADAS PARA NÃO DESCONFIGURAR) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -66,15 +64,21 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* GRID DO CLAUDE (56px 64px 1fr) */
-    [data-testid="stHorizontalBlock"] {
+    /* --- REGRA DA LISTA (O LAYOUT DO CLAUDE) --- */
+    .delivery-list-row [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
         gap: 3px !important; width: 100% !important; align-items: center !important;
     }
-    [data-testid="column"] { padding: 0 !important; min-width: 0 !important; }
+    .delivery-list-row [data-testid="column"] { padding: 0 !important; min-width: 0 !important; }
 
-    /* CENTRALIZAÇÃO DOS ÍCONES ✅ e 🚗 */
+    /* --- REGRA DOS BOTÕES DE TOPO (CONTROLE) --- */
+    .top-controls [data-testid="column"] {
+        flex: 1 1 0% !important;
+        width: 100% !important;
+    }
+
+    /* CENTRALIZAÇÃO DOS ÍCONES NOS BOTÕES */
     .stButton > button, .stLinkButton > a {
         height: 44px !important; width: 100% !important; 
         display: flex !important; align-items: center !important; justify-content: center !important;
@@ -83,48 +87,37 @@ st.markdown("""
     }
     .stButton > button div, .stLinkButton > a div, .stButton > button p {
         display: flex !important; align-items: center !important; justify-content: center !important;
-        margin: 0 !important; padding: 0 !important;
     }
 
-    /* INPUT SEQUENCE */
+    /* ESTILO DO INPUT */
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
-        text-align: center; font-weight: 800 !important; border-radius: 6px !important;
-        font-size: 14px !important;
+        text-align: center; font-weight: 800 !important; border-radius: 6px !important; font-size: 14px !important;
     }
 
     /* CARDS */
-    .delivery-card { 
-        border-radius: 8px; padding: 8px; background-color: white; 
-        border-left: 5px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-    }
-    .next-target { border-left: 5px solid #007BFF !important; background-color: #f0f8ff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.2; color: #111; }
-    
-    /* MÉTRICAS E CONTROLES */
+    .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.3; }
     .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .control-area { margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 4. INICIALIZAÇÃO DE ESTADO ---
+# --- 4. INICIALIZAÇÃO ---
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. OPERAÇÃO (FRAGMENTO SINCRONIZADO) ---
+# --- 5. OPERAÇÃO (FRAGMENTO OTIMIZADO) ---
 @st.fragment
 def render_app():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA COM FOCO NA ROTA
-    avg_lat, avg_lon = df_res['LATITUDE'].mean(), df_res['LONGITUDE'].mean()
-    m = folium.Map(location=[avg_lat, avg_lon], zoom_start=13, tiles="cartodbpositron", attribution_control=False)
-    
+    # A. MAPA
+    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
-    
     coords = []
     for i, row in df_res.iterrows():
         foi = i in st.session_state['entregues']
@@ -132,15 +125,14 @@ def render_app():
         loc = [row['LATITUDE'], row['LONGITUDE']]; coords.append(loc)
         icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
-    
     if coords: m.fit_bounds(coords, padding=(30, 30))
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_waze_humano")
+    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_estatico")
 
     # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
-    # C. LISTA DE ENTREGAS
+    # C. LISTA DE ENTREGAS (COM TRAVA DE CSS)
     with st.container(height=450):
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
@@ -150,6 +142,8 @@ def render_app():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
+            # DIV QUE PROTEGE O LAYOUT DO CLAUDE
+            st.markdown('<div class="delivery-list-row">', unsafe_allow_html=True)
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -163,6 +157,7 @@ def render_app():
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FLUXO PRINCIPAL ---
 if st.session_state['df_final'] is None:
@@ -185,7 +180,8 @@ if st.session_state['df_final'] is None:
         salvar_progresso(); st.rerun()
 
 else:
-    # BOTÕES DE CONTROLE SUPERIOR
+    # ÁREA DE BOTÕES DE TOPO (PROTEGIDA)
+    st.markdown('<div class="top-controls">', unsafe_allow_html=True)
     col_limpar, col_novo = st.columns(2)
     with col_limpar:
         if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
@@ -200,5 +196,6 @@ else:
         if st.button("📁 NOVA PLANILHA", use_container_width=True):
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear(); st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
     render_app()
