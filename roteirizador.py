@@ -24,7 +24,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM (UX SEGURO) ---
+# --- 2. DESIGN SYSTEM ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -50,12 +50,11 @@ st.markdown("""
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    /* Input da Sequence (A chave do seu sucesso) */
     .stTextInput input {
-        height: 32px !important; background-color: #f1f3f5 !important;
+        height: 32px !important; background-color: white !important;
         color: black !important; font-size: 14px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
-        border: 1px solid #ccc !important;
+        border: 1px solid #FF4B4B !important; /* Borda vermelha para indicar que é editável */
     }
     
     .stButton button { height: 36px !important; font-size: 11px !important; width: 100% !important; border-radius: 8px !important; }
@@ -66,29 +65,24 @@ st.markdown("""
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
+# Memória para as edições manuais
+if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA (Onde "colamos" os dados) ---
+# --- 4. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
     if uploaded_file and st.button("🚀 Otimizar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
-        
-        # Garantir que a coluna SEQUENCE existe e é tratada como texto/ID
-        if 'SEQUENCE' not in df_raw.columns:
-            st.error("Erro: A coluna 'SEQUENCE' não foi encontrada na planilha!")
-            st.stop()
-            
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
         
-        # O PULO DO GATO: Criamos um ID único combinando endereço e sequência original
-        df_clean['UNIQUE_ID'] = df_clean['DESTINATION ADDRESS'].astype(str) + "_" + df_clean['SEQUENCE'].astype(str)
+        # O PULO DO GATO: Criamos uma chave única para cada entrega
+        df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean['SEQUENCE'].astype(str)
         
         df_temp = df_clean.copy().reset_index()
         rota = []
         p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
-        
         while not df_temp.empty:
             dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
             idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
@@ -132,15 +126,15 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA DE ENDEREÇOS COM SEQUENCE TRAVADA
+    # C. LISTA DE ENDEREÇOS
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua = str(row.get('DESTINATION ADDRESS', '---'))
             bairro = str(row.get('BAIRRO', ''))
+            uid = str(row.get('UID', ''))
             
-            # AGORA PEGAMOS A SEQUENCE DIRETAMENTE DA LINHA DO DATAFRAME
-            # Ela nunca mais se solta do endereço
-            seq_original = str(row.get('SEQUENCE', '---'))
+            # Valor padrão é o da planilha, a menos que o usuário tenha editado
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
             
             entregue = i in st.session_state['entregues']
             is_next = (restantes and i == restantes[0])
@@ -157,5 +151,8 @@ if st.session_state['df_final'] is not None:
             with cb:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with cc:
-                # Exibimos a sequence que veio do manifesto e travamos ela
-                st.text_input("ORDEM NO CARRO:", value=seq_original, key=f"s_{i}", label_visibility="collapsed", disabled=True)
+                # O CAMPO VOLTOU A SER EDITÁVEL
+                nova_seq = st.text_input("ORDEM:", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
+                # Se o usuário digitar algo diferente, salvamos no estado global
+                if nova_seq != val_padrao:
+                    st.session_state['manual_sequences'][uid] = nova_seq
