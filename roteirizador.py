@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA (PARA NÃO PERDER DADOS NO WAZE) ---
+# --- 1. PERSISTÊNCIA (MEMÓRIA BLINDADA) ---
 SAVE_FILE = "sessao_waze.pkl"
 
 def salvar_progresso():
@@ -50,27 +50,25 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE PRESERVADO) ---
+# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE - 100% PRESERVADO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    * { box-sizing: border-box !important; margin: 0 !important; }
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, .block-container {
+    * { box-sizing: border-box !important; }
+    html, body, [data-testid="stAppViewContainer"], .main, .block-container {
         overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important;
     }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* BARRA DE MÉTRICAS */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 8px 10px; border-radius: 8px; margin: 8px 0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; 
     }
 
-    /* CARDS */
     .delivery-card { 
         border-radius: 8px; padding: 6px; background-color: white; 
         border-left: 4px solid #FF4B4B; margin: 6px 0;
@@ -82,16 +80,13 @@ st.markdown("""
     }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.3; }
     
-    /* GRID CLAUDE (56px 64px 1fr) */
     [data-testid="stHorizontalBlock"] {
         display: grid !important; grid-template-columns: 56px 64px 1fr !important;
-        gap: 3px !important; width: 100% !important; padding: 0 !important; margin: 0 !important;
+        gap: 3px !important; width: 100% !important;
     }
-    [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
     [data-testid="column"]:nth-of-type(1) { width: 56px !important; }
     [data-testid="column"]:nth-of-type(2) { width: 64px !important; }
     
-    /* BOTÕES E INPUTS */
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
         text-align: center; font-weight: 700 !important; border-radius: 6px !important;
@@ -106,14 +101,15 @@ st.markdown("""
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
+if 'map_center' not in st.session_state: st.session_state['map_center'] = None
 
-# --- 5. O SUPER FRAGMENTO (SINCRONIZA MAPA + LISTA) ---
+# --- 5. FRAGMENTO OPERACIONAL (SINCRONIZAÇÃO SEM PISCADA) ---
 @st.fragment
 def render_operacao_completa():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA DENTRO DO FRAGMENTO
+    # A. MAPA COM CHAVE FIXA (Evita o Iframe reload)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -127,8 +123,13 @@ def render_operacao_completa():
         icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional")
+    # Só centraliza automaticamente se o mapa ainda não foi mexido nesta sessão
+    if all_coords and st.session_state.get('zoom_needed', True):
+        m.fit_bounds(all_coords, padding=(30, 30))
+        st.session_state['zoom_needed'] = False
+
+    # A 'key' estática impede o Iframe de recarregar do zero a cada clique
+    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_waze_estavel")
 
     # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
@@ -146,7 +147,6 @@ def render_operacao_completa():
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
-                # O CLIQUE AQUI ATUALIZA O MAPA ACIMA INSTANTANEAMENTE
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
@@ -175,14 +175,14 @@ if st.session_state['df_final'] is None:
         while not df_temp.empty:
             dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
             idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
-        st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
-        st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+        st.session_state['df_final'] = final_df = pd.DataFrame(rota).reset_index(drop=True)
+        st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+        st.session_state['zoom_needed'] = True
         salvar_progresso()
         st.rerun()
 
 if st.session_state['df_final'] is not None:
-    # BOTÃO LIMPAR FEITAS (FORA DO FRAGMENTO POIS MUDA OS DADOS BRUTOS)
     if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
         restantes = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
         if restantes:
@@ -190,8 +190,8 @@ if st.session_state['df_final'] is not None:
             st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
             st.session_state['entregues'] = set()
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+            st.session_state['zoom_needed'] = True
             salvar_progresso()
             st.rerun()
 
-    # CHAMA A OPERAÇÃO COMPLETA (MAPA + LISTA)
     render_operacao_completa()
