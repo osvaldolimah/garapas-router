@@ -6,7 +6,7 @@ import numpy as np
 from folium.features import DivIcon
 import requests
 
-# --- 1. FUNÇÕES TÉCNICAS (ESTÁVEIS) ---
+# --- 1. FUNÇÕES TÉCNICAS ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -24,7 +24,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE TOTAL E CORES ---
+# --- 2. DESIGN SYSTEM: CONTROLE TOTAL ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -36,6 +36,9 @@ st.markdown("""
     }
     .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
+
+    /* --- REMOVER ATRIBUIÇÃO DO MAPA (LEAFLET) --- */
+    .leaflet-control-attribution { display: none !important; }
 
     /* Barra de métricas compacta (HTML) */
     .custom-metrics-container {
@@ -61,18 +64,17 @@ st.markdown("""
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    /* --- AJUSTE SOLICITADO: NÚMERO DA ORDEM EM PRETO --- */
+    /* Sequence em Preto conforme solicitado */
     .stTextInput input {
         height: 30px !important; 
         background-color: #f1f3f5 !important;
-        color: black !important; /* MUDANÇA AQUI: VERDE -> PRETO */
+        color: black !important;
         font-size: 13px !important;
         text-align: center; 
         font-weight: 800 !important;
         border-radius: 6px !important;
     }
     
-    /* Botões de Ação */
     .stButton button {
         height: 36px !important; font-size: 11px !important;
         width: 100% !important; border-radius: 8px !important;
@@ -80,7 +82,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO E MEMÓRIA ---
+# --- 3. ESTADO ---
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
@@ -111,8 +113,10 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA NO TOPO
-    m = folium.Map(tiles="cartodbpositron")
+    # A. MAPA NO TOPO (Agora sem o texto do Leaflet)
+    # Adicionamos control_scale=False e control_attribution=False no folium.Map
+    m = folium.Map(tiles="cartodbpositron", control_scale=False)
+    
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
 
@@ -127,7 +131,7 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
     st_folium(m, width=None, height=200, use_container_width=True)
 
-    # B. MÉTRICAS EM HTML (HORIZONTAL)
+    # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     
     st.markdown(f"""
@@ -151,7 +155,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA COM ROLAGEM
+    # C. LISTA
     with st.container(height=480):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
