@@ -89,7 +89,7 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    /* 4. GRID COM BOTÕES MAIORES - ✅ mantém 50px, 🚗 e input ganham +8px */
+    /* 4. GRID COM BOTÕES MAIORES */
     [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 50px 58px 1fr !important;
@@ -156,7 +156,7 @@ st.markdown("""
         margin: 0 !important;
     }
     
-    /* Botão ✅ mantém tamanho original */
+    /* Botão ✅ - CENTRALIZAÇÃO PERFEITA */
     [data-testid="column"]:nth-of-type(1) .stButton > button { 
         height: 36px !important; 
         font-size: 15px !important; 
@@ -166,9 +166,13 @@ st.markdown("""
         margin: 0 !important;
         box-sizing: border-box !important;
         white-space: nowrap !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
     }
     
-    /* Botão 🚗 Waze com altura aumentada */
+    /* Botão 🚗 Waze - CENTRALIZAÇÃO PERFEITA */
     [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
         height: 44px !important; 
         font-size: 16px !important; 
@@ -181,6 +185,20 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
+        line-height: 1 !important;
+        overflow: hidden !important;
+    }
+    
+    /* Forçando centralização dos emojis/ícones */
+    [data-testid="column"]:nth-of-type(1) .stButton > button > div,
+    [data-testid="column"]:nth-of-type(2) .stLinkButton > a > div {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* 6. MEDIA QUERIES */
