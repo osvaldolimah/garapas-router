@@ -24,86 +24,75 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE TOTAL ---
+# --- 2. DESIGN SYSTEM (UX SEGURO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Trava contra scroll lateral */
-    html, body, [data-testid="stAppViewContainer"] {
-        overflow-x: hidden !important;
-        width: 100vw !important;
-    }
+    html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100vw !important; }
     .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
+    .leaflet-control-attribution { display: none !important; }
 
-    /* --- REMOVER ATRIBUIÇÃO (CSS NUCLEAR) --- */
-    .leaflet-control-attribution, .leaflet-bottom.leaflet-right { 
-        display: none !important; 
-    }
-
-    /* Barra de métricas compacta (HTML) */
     .custom-metrics-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: white;
-        padding: 6px 10px;
-        border-radius: 8px;
-        margin: 4px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        width: 100%;
+        display: flex; justify-content: space-between; align-items: center;
+        background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%;
     }
     .metric-item { text-align: center; flex: 1; }
     .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
     .metric-value { font-size: 15px; color: #111; font-weight: 800; display: block; }
 
-    /* Cards Minimalistas */
     .delivery-card { 
-        border-radius: 8px; padding: 8px 10px; margin-bottom: 3px; 
+        border-radius: 8px; padding: 8px 12px; margin-bottom: 3px; 
         background-color: white; border-left: 5px solid #FF4B4B;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    /* Sequence em Preto */
+    /* Input da Sequence (A chave do seu sucesso) */
     .stTextInput input {
-        height: 30px !important; 
-        background-color: #f1f3f5 !important;
-        color: black !important;
-        font-size: 13px !important;
-        text-align: center; 
-        font-weight: 800 !important;
-        border-radius: 6px !important;
+        height: 32px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 14px !important;
+        text-align: center; font-weight: 900 !important; border-radius: 6px !important;
+        border: 1px solid #ccc !important;
     }
     
-    .stButton button {
-        height: 36px !important; font-size: 11px !important;
-        width: 100% !important; border-radius: 8px !important;
-    }
+    .stButton button { height: 36px !important; font-size: 11px !important; width: 100% !important; border-radius: 8px !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO ---
+# --- 3. ESTADO E MEMÓRIA ---
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
-if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. TELA INICIAL ---
+# --- 4. FLUXO DE ENTRADA (Onde "colamos" os dados) ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
     if uploaded_file and st.button("🚀 Otimizar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
+        
+        # Garantir que a coluna SEQUENCE existe e é tratada como texto/ID
+        if 'SEQUENCE' not in df_raw.columns:
+            st.error("Erro: A coluna 'SEQUENCE' não foi encontrada na planilha!")
+            st.stop()
+            
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
+        
+        # O PULO DO GATO: Criamos um ID único combinando endereço e sequência original
+        df_clean['UNIQUE_ID'] = df_clean['DESTINATION ADDRESS'].astype(str) + "_" + df_clean['SEQUENCE'].astype(str)
+        
         df_temp = df_clean.copy().reset_index()
         rota = []
         p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
+        
         while not df_temp.empty:
             dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
             idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
+        
         final_df = pd.DataFrame(rota).reset_index(drop=True)
         final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['df_final'] = final_df
@@ -115,14 +104,8 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # --- A. MAPA NO TOPO (COM ATTR_CONTROL DESATIVADO) ---
-    # Adicionado attribution_control=False para matar o texto na raiz
-    m = folium.Map(
-        tiles="cartodbpositron", 
-        attribution_control=False, 
-        control_scale=False
-    )
-    
+    # A. MAPA
+    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
 
@@ -135,23 +118,11 @@ if st.session_state['df_final'] is not None:
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
-    st_folium(m, width=None, height=200, use_container_width=True)
+    st_folium(m, width=None, height=180, use_container_width=True)
 
-    # B. MÉTRICAS
+    # B. MÉTRICAS (HTML)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
-    
-    st.markdown(f"""
-        <div class="custom-metrics-container">
-            <div class="metric-item">
-                <span class="metric-label">📦 Faltam</span>
-                <span class="metric-value">{len(restantes)} paradas</span>
-            </div>
-            <div class="metric-item">
-                <span class="metric-label">🛤️ KM Restante</span>
-                <span class="metric-value">{km_v * 1.3:.1f} km</span>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f'<div class="custom-metrics-container"><div class="metric-item"><span class="metric-label">📦 Faltam</span><span class="metric-value">{len(restantes)}</span></div><div class="metric-item"><span class="metric-label">🛤️ KM</span><span class="metric-value">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
     if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
         if restantes:
@@ -161,17 +132,23 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA
-    with st.container(height=480):
+    # C. LISTA DE ENDEREÇOS COM SEQUENCE TRAVADA
+    with st.container(height=500):
         for i, row in df_res.iterrows():
-            rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
+            rua = str(row.get('DESTINATION ADDRESS', '---'))
+            bairro = str(row.get('BAIRRO', ''))
+            
+            # AGORA PEGAMOS A SEQUENCE DIRETAMENTE DA LINHA DO DATAFRAME
+            # Ela nunca mais se solta do endereço
+            seq_original = str(row.get('SEQUENCE', '---'))
+            
             entregue = i in st.session_state['entregues']
             is_next = (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            ca, cb, cc = st.columns([0.8, 0.8, 1.4])
+            ca, cb, cc = st.columns([0.6, 0.6, 1.8])
             with ca:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
@@ -180,4 +157,5 @@ if st.session_state['df_final'] is not None:
             with cb:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with cc:
-                st.session_state['custom_sequences'][i] = st.text_input("", value=st.session_state['custom_sequences'].get(i, str(row.get('SEQUENCE', '---'))), key=f"s_{i}", label_visibility="collapsed")
+                # Exibimos a sequence que veio do manifesto e travamos ela
+                st.text_input("ORDEM NO CARRO:", value=seq_original, key=f"s_{i}", label_visibility="collapsed", disabled=True)
