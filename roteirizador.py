@@ -7,7 +7,6 @@ from folium.features import DivIcon
 import requests
 
 # --- 1. FUNÇÕES TÉCNICAS ---
-
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -25,70 +24,70 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: ANTI-SCROLL LATERAL ---
-
+# --- 2. DESIGN SYSTEM: CONTROLE TOTAL DE UI ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Trava Global contra Scroll Lateral */
+    /* Trava de segurança contra scroll lateral */
     html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
+        position: fixed; /* Previne o 'elástico' do navegador */
     }
-    .block-container { padding: 0.2rem 0.5rem !important; }
+    .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* 2. HACK SUPREMO DAS COLUNAS (LADO A LADO REAL) */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 4px !important; /* Espaço mínimo entre colunas */
+    /* BARRA DE MÉTRICAS CUSTOMIZADA (HTML PURO) */
+    .custom-metrics-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin: 5px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        width: 100%;
     }
-    
-    [data-testid="column"] {
-        flex: 1 1 0% !important;
-        min-width: 0 !important; /* Mata o min-width do Streamlit */
-    }
+    .metric-item { text-align: center; flex: 1; }
+    .metric-label { font-size: 9px; color: #777; font-weight: bold; text-transform: uppercase; }
+    .metric-value { font-size: 16px; color: #222; font-weight: 800; display: block; }
 
-    /* 3. Métricas Miniatura */
-    [data-testid="stMetric"] {
-        background: white; padding: 2px 5px !important;
-        border-radius: 5px; border: 1px solid #eee;
-    }
-    [data-testid="stMetricValue"] { font-size: 13px !important; }
-    [data-testid="stMetricLabel"] { font-size: 9px !important; }
-    
-    .stButton button {
-        height: 34px !important; font-size: 10px !important;
-        width: 100% !important; padding: 0 !important;
-    }
-
-    /* 4. Cards Slim */
+    /* Ajustes da Lista e Cards */
     .delivery-card { 
-        border-radius: 6px; padding: 6px 10px; margin-bottom: 3px; 
-        background-color: white; border-left: 4px solid #FF4B4B;
+        border-radius: 8px; padding: 8px 12px; margin-bottom: 4px; 
+        background-color: white; border-left: 5px solid #FF4B4B;
     }
-    .next-target { border-left: 4px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 12px !important; font-weight: 600; }
+    .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
+    .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    div[data-baseweb="input"] { height: 26px !important; }
-    .stTextInput input { font-size: 11px !important; text-align: center; }
+    /* Botões de Ação Compactos */
+    .stButton button {
+        height: 36px !important; font-size: 11px !important;
+        width: 100% !important; border-radius: 8px !important;
+    }
+    
+    /* Input Ordem Estilo Dark */
+    .stTextInput input {
+        height: 30px !important; background-color: #f1f3f5 !important;
+        color: #2ecc71 !important; font-size: 12px !important;
+        text-align: center; font-weight: bold;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO ---
+# --- 3. ESTADO E LÓGICA ---
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. TELA INICIAL ---
+# --- 4. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Otimizar", use_container_width=True):
+    if uploaded_file and st.button("🚀 Otimizar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
@@ -125,22 +124,32 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
     st_folium(m, width=None, height=200, use_container_width=True)
 
-    # B. MÉTRICAS E BOTÃO (FORÇADO LADO A LADO)
-    c1, c2, c3 = st.columns(3)
+    # B. MÉTRICAS (HTML PURO - LADO A LADO FORÇADO)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     
-    c1.metric("📦 FALTAM", f"{len(restantes)}")
-    c2.metric("🛤️ KM", f"{km_v * 1.3:.1f}")
-    with c3:
-        if st.button("LIMPAR", use_container_width=True):
-            if restantes:
-                st.session_state['df_final'] = df_res.iloc[restantes].reset_index(drop=True)
-                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-                st.session_state['entregues'] = set()
-                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-                st.rerun()
+    # Injeção de HTML para as métricas não quebrarem
+    st.markdown(f"""
+        <div class="custom-metrics-container">
+            <div class="metric-item">
+                <span class="metric-label">📦 Faltam</span>
+                <span class="metric-value">{len(restantes)}</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-label">🛤️ KM</span>
+                <span class="metric-value">{km_v * 1.3:.1f}</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
+        if restantes:
+            st.session_state['df_final'] = df_res.iloc[restantes].reset_index(drop=True)
+            st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+            st.session_state['entregues'] = set()
+            st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+            st.rerun()
 
-    # C. LISTA
+    # C. LISTA COM SCROLL
     with st.container(height=480):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
