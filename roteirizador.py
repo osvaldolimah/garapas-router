@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA (PARA NÃO PERDER DADOS NO WAZE) ---
+# --- 1. MEMÓRIA BLINDADA (PERSISTÊNCIA) ---
 SAVE_FILE = "garapas_progress.pkl"
 
 def save_state():
@@ -49,44 +49,57 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (REGRAS SEPARADAS) ---
+# --- 3. DESIGN SYSTEM: SOLUÇÃO DEFINITIVA ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
+    /* RESET GLOBAL */
     * { box-sizing: border-box !important; }
     html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100% !important; }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRA 1: GRID DA LISTA DE ENTREGAS (FRAGMENTO) --- */
-    /* Usamos um seletor que foca apenas nos botões dentro da lista */
-    [data-testid="stExpander"] [data-testid="stHorizontalBlock"],
-    .delivery-list-container [data-testid="stHorizontalBlock"] {
+    /* --- TRAVA DO GRID (LADO A LADO) --- */
+    /* Aplicamos o Grid do Claude em qualquer linha que esteja dentro da nossa lista */
+    .delivery-list-area [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
-        gap: 3px !important;
+        gap: 4px !important;
         align-items: center !important;
+        width: 100% !important;
+    }
+    
+    .delivery-list-area [data-testid="column"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 0 !important;
     }
 
-    /* --- REGRA 2: BOTÕES DE CONTROLE (TOPO) --- */
-    /* Deixamos as colunas padrão do Streamlit para os botões grandes */
-    .control-btns [data-testid="column"] {
-        flex: 1 1 0% !important;
-    }
-
-    /* ESTILO GERAL DOS BOTÕES */
+    /* ESTILO DOS BOTÕES E ÍCONES CENTRALIZADOS */
     .stButton > button, .stLinkButton > a {
         height: 44px !important; width: 100% !important; padding: 0 !important;
         display: flex !important; align-items: center !important; justify-content: center !important;
         border-radius: 6px !important; border: 1px solid #dee2e6 !important;
     }
+    .stButton > button div, .stLinkButton > a div {
+        display: flex !important; align-items: center !important; justify-content: center !important;
+    }
 
-    .stTextInput input { height: 44px !important; background-color: #f8f9fa !important; text-align: center !important; font-weight: 700 !important; }
-    .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin: 6px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    /* INPUT DA ORDEM */
+    .stTextInput input {
+        height: 44px !important; background-color: #f8f9fa !important;
+        font-size: 13px !important; font-weight: 700 !important; text-align: center !important;
+        border-radius: 6px !important;
+    }
+
+    /* CARDS */
+    .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.3; }
+    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.3; color: #111; }
+    
+    /* MÉTRICAS */
     .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
@@ -96,14 +109,14 @@ if 'df_final' not in st.session_state:
     if not load_state():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. LISTA FRAGMENTADA (COM CLASSE PARA CSS) ---
+# --- 5. FRAGMENTO DA LISTA (LADO A LADO TRAVADO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
-    # Criamos uma div para o CSS saber que aqui deve aplicar o Grid de 56/64
-    st.markdown('<div class="delivery-list-container">', unsafe_allow_html=True)
+    # Criamos uma classe CSS para garantir o Grid aqui dentro
+    st.markdown('<div class="delivery-list-area">', unsafe_allow_html=True)
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
@@ -113,7 +126,7 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            c_done, c_waze, c_seq = st.columns(3)
+            c_done, c_waze, c_seq = st.columns([1, 1, 3]) # O CSS Grid vai sobrescrever isso para 56px/64px
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
@@ -170,8 +183,7 @@ if st.session_state['df_final'] is not None:
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
-    # C. BOTÕES DE CONTROLE (AGORA PROTEGIDOS)
-    st.markdown('<div class="control-btns">', unsafe_allow_html=True)
+    # C. BOTÕES DE CONTROLE
     c1, c2 = st.columns(2)
     with c1:
         if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
@@ -187,6 +199,5 @@ if st.session_state['df_final'] is not None:
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear()
             st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
     render_delivery_list()
