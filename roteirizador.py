@@ -89,10 +89,10 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    /* 4. ANIQUILAÇÃO TOTAL DE COLUNAS - ABORDAGEM GRID */
+    /* 4. GRID COM BOTÕES MAIORES - ✅ mantém 50px, 🚗 e input ganham +8px */
     [data-testid="stHorizontalBlock"] {
         display: grid !important;
-        grid-template-columns: 50px 50px 1fr !important;
+        grid-template-columns: 50px 58px 1fr !important;
         gap: 4px !important;
         width: 100% !important;
         padding: 0 !important;
@@ -107,14 +107,21 @@ st.markdown("""
         overflow: hidden !important;
     }
     
-    /* Forçando cada coluna individualmente */
-    [data-testid="column"]:nth-of-type(1),
-    [data-testid="column"]:nth-of-type(2) {
+    /* Coluna 1: ✅ (mantém 50px) */
+    [data-testid="column"]:nth-of-type(1) {
         width: 50px !important;
         max-width: 50px !important;
         min-width: 50px !important;
     }
     
+    /* Coluna 2: 🚗 (aumenta para 58px) */
+    [data-testid="column"]:nth-of-type(2) {
+        width: 58px !important;
+        max-width: 58px !important;
+        min-width: 58px !important;
+    }
+    
+    /* Coluna 3: Input (pega o resto) */
     [data-testid="column"]:nth-of-type(3) {
         width: 100% !important;
         min-width: 0 !important;
@@ -133,11 +140,12 @@ st.markdown("""
         margin: 0 !important;
     }
     
+    /* Input com altura aumentada */
     .stTextInput input {
-        height: 36px !important; 
+        height: 44px !important; 
         background-color: #f8f9fa !important;
         color: #000 !important; 
-        font-size: 12px !important;
+        font-size: 13px !important;
         text-align: center; 
         font-weight: 700 !important; 
         border-radius: 6px !important;
@@ -148,7 +156,8 @@ st.markdown("""
         margin: 0 !important;
     }
     
-    .stButton > button { 
+    /* Botão ✅ mantém tamanho original */
+    [data-testid="column"]:nth-of-type(1) .stButton > button { 
         height: 36px !important; 
         font-size: 15px !important; 
         width: 100% !important;
@@ -159,9 +168,10 @@ st.markdown("""
         white-space: nowrap !important;
     }
     
-    .stLinkButton > a {
-        height: 36px !important; 
-        font-size: 15px !important; 
+    /* Botão 🚗 Waze com altura aumentada */
+    [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
+        height: 44px !important; 
+        font-size: 16px !important; 
         width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
@@ -176,24 +186,32 @@ st.markdown("""
     /* 6. MEDIA QUERIES */
     @media screen and (max-width: 400px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 45px 45px 1fr !important;
+            grid-template-columns: 45px 53px 1fr !important;
         }
         
-        [data-testid="column"]:nth-of-type(1),
-        [data-testid="column"]:nth-of-type(2) {
+        [data-testid="column"]:nth-of-type(1) {
             width: 45px !important;
             max-width: 45px !important;
             min-width: 45px !important;
         }
         
-        .stButton > button,
-        .stLinkButton > a { 
+        [data-testid="column"]:nth-of-type(2) {
+            width: 53px !important;
+            max-width: 53px !important;
+            min-width: 53px !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(1) .stButton > button { 
             font-size: 14px !important; 
             height: 34px !important;
         }
+        [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
+            font-size: 15px !important;
+            height: 42px !important;
+        }
         .stTextInput input {
-            font-size: 11px !important;
-            height: 34px !important;
+            font-size: 12px !important;
+            height: 42px !important;
         }
         .address-header {
             font-size: 11px !important;
@@ -202,27 +220,37 @@ st.markdown("""
     
     @media screen and (min-width: 401px) and (max-width: 600px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 55px 55px 1fr !important;
+            grid-template-columns: 55px 63px 1fr !important;
         }
         
-        [data-testid="column"]:nth-of-type(1),
-        [data-testid="column"]:nth-of-type(2) {
+        [data-testid="column"]:nth-of-type(1) {
             width: 55px !important;
             max-width: 55px !important;
             min-width: 55px !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(2) {
+            width: 63px !important;
+            max-width: 63px !important;
+            min-width: 63px !important;
         }
     }
     
     @media screen and (min-width: 601px) {
         [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 60px 60px 1fr !important;
+            grid-template-columns: 60px 68px 1fr !important;
         }
         
-        [data-testid="column"]:nth-of-type(1),
-        [data-testid="column"]:nth-of-type(2) {
+        [data-testid="column"]:nth-of-type(1) {
             width: 60px !important;
             max-width: 60px !important;
             min-width: 60px !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(2) {
+            width: 68px !important;
+            max-width: 68px !important;
+            min-width: 68px !important;
         }
     }
     </style>
@@ -270,7 +298,7 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # --- COLUNAS COM GRID (NÃO USAR st.columns COM PROPORÇÕES) ---
+            # --- COLUNAS COM GRID ---
             c_done, c_waze, c_seq = st.columns(3)
             
             with c_done:
