@@ -25,7 +25,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM (UX RESPONSIVO) ---
+# --- 2. DESIGN SYSTEM ---
 
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
@@ -43,7 +43,6 @@ st.markdown("""
         background-color: #212529 !important; color: #39FF14 !important;
         font-family: 'Roboto Mono', monospace; font-size: 18px !important; text-align: center;
     }
-    /* Remove espaços inúteis no topo */
     .block-container { padding-top: 1rem !important; }
     header, footer { visibility: hidden; }
     </style>
@@ -78,6 +77,7 @@ if st.session_state['df_final'] is None:
                 p_atual = df_temp.iloc[idx]
                 rota.append(p_atual)
                 df_temp = df_temp.drop(df_temp.index[idx])
+            
             final_df = pd.DataFrame(rota).reset_index(drop=True)
             final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
             st.session_state['df_final'] = final_df
@@ -85,14 +85,14 @@ if st.session_state['df_final'] is None:
                 st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-# --- 5. INTERFACE OPERACIONAL (TELA FIXA) ---
+# --- 5. INTERFACE OPERACIONAL ---
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     entregues_list = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_list]
 
-    # --- PARTE 1: TOPO FIXO (MAPA E MÉTRICAS) ---
+    # --- TOPO FIXO ---
     st.subheader(f"📍 {len(restantes)} paradas restantes")
     
     col_met, col_btn = st.columns([1, 1])
@@ -112,26 +112,39 @@ if st.session_state['df_final'] is not None:
                 st.session_state['road_path'] = get_road_route_batch(novo_df[['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # O Mapa (Não rola, ele está no corpo da página que agora é estática)
-    m = folium.Map(location=[df_res['LATITUDE'].mean(), df_res['LONGITUDE'].mean()], zoom_start=13, tiles="cartodbpositron")
+    # --- MAPA INTELIGENTE (AUTO-ZOOM) ---
+    # Inicializamos sem centro fixo
+    m = folium.Map(tiles="cartodbpositron")
+    
+    # Adicionamos a rota
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=5, opacity=0.7).add_to(m)
+
+    # Coletamos todas as coordenadas para o fit_bounds
+    all_coords = []
 
     for i, row in df_res.iterrows():
         foi = i in entregues_list
         cor = "#28A745" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#FF4B4B")
+        id_p = int(row['ORDEM_PARADA'])
+        
+        loc = [row['LATITUDE'], row['LONGITUDE']]
+        all_coords.append(loc) # Guarda para calcular os limites
+        
         icon_html = f'''<div style="background-color: {cor}; border: 2px solid white; border-radius: 50%; width: 24px; height: 24px; 
                         display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; 
-                        font-size: 10px;">{int(row['ORDEM_PARADA'])}</div>'''
-        folium.Marker(location=[row['LATITUDE'], row['LONGITUDE']], icon=DivIcon(icon_size=(24,24), icon_anchor=(12,12), html=icon_html)).add_to(m)
+                        font-size: 10px;">{id_p}</div>'''
+        folium.Marker(location=loc, icon=DivIcon(icon_size=(24,24), icon_anchor=(12,12), html=icon_html)).add_to(m)
     
+    # A MÁGICA ACONTECE AQUI: O mapa se ajusta para mostrar todos os pontos
+    if all_coords:
+        m.fit_bounds(all_coords)
+
     st_folium(m, width=1400, height=300, key=f"map_v{st.session_state['versao_lista']}")
 
-    # --- PARTE 2: LISTA COM ROLAGEM INTERNA ---
+    # --- LISTA COM ROLAGEM INTERNA ---
     st.markdown("### 📋 Sequência de Entrega")
-    
-    # Este container cria uma caixa com scroll próprio. A página inteira para de rolar.
-    with st.container(height=500):
+    with st.container(height=450):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
             seq_v = st.session_state['custom_sequences'].get(i, str(row.get('SEQUENCE', '---')))
