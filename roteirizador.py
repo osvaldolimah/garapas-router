@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. FUNÇÕES DE MEMÓRIA (NÃO PERDE DADOS NO WAZE) ---
+# --- 1. PERSISTÊNCIA (MEMÓRIA CONTRA FECHAMENTO NO WAZE) ---
 SAVE_FILE = "sessao_garapas.pkl"
 
 def salvar_progresso():
@@ -31,11 +31,11 @@ def carregar_progresso():
         except: return False
     return False
 
-# --- 2. CÁLCULO DE ROTA (HAVERSINE) ---
+# --- 2. CÁLCULO DE DISTÂNCIA ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
-    # Cálculo da distância ortodrômica entre dois pontos
-    # $$d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos\phi_1\cos\phi_2\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)$$
+    # Fórmula formal de Haversine para precisão em metros
+    # $$d = 12742 \cdot \arcsin\left(\sqrt{0.5 - \cos((lat_2-lat_1)p)/2 + \cos(lat_1 p)\cos(lat_2 p)(1-\cos((lon_2-lon_1)p))/2}\right)$$
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
     return 12742 * np.arcsin(np.sqrt(a))
 
@@ -51,11 +51,12 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT DO CLAUDE PARA ANDROID) ---
+# --- 3. DESIGN SYSTEM (LAYOUT TRAVADO + ÍCONES CENTRALIZADOS) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
+    /* RESET TOTAL */
     * { box-sizing: border-box !important; margin: 0 !important; }
     html, body, [data-testid="stAppViewContainer"], .main, .block-container {
         overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important;
@@ -64,7 +65,7 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* GRID DO CLAUDE - TRAVADO */
+    /* GRID DO CLAUDE (56px 64px 1fr) */
     [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
@@ -72,25 +73,34 @@ st.markdown("""
     }
     [data-testid="column"] { padding: 0 !important; min-width: 0 !important; }
 
-    /* BOTÕES E INPUTS */
+    /* CENTRALIZAÇÃO ABSOLUTA DOS ÍCONES ✅ e 🚗 */
     .stButton > button, .stLinkButton > a {
-        height: 44px !important; width: 100% !important; display: flex !important; 
-        align-items: center !important; justify-content: center !important;
+        height: 44px !important; width: 100% !important; 
+        display: flex !important; align-items: center !important; justify-content: center !important;
         border-radius: 6px !important; border: 1px solid #dee2e6 !important;
+        padding: 0 !important;
     }
+    
+    /* Força o conteúdo interno (emoji/texto) a ficar no centro exato */
+    .stButton > button div, .stLinkButton > a div, .stButton > button p {
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        margin: 0 !important; padding: 0 !important; width: 100% !important;
+    }
+
+    /* INPUT SEQUENCE */
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
-        text-align: center; font-weight: 700 !important; border-radius: 6px !important;
+        text-align: center; font-weight: 800 !important; border-radius: 6px !important;
+        font-size: 14px !important;
     }
 
     /* CARDS */
     .delivery-card { 
-        border-radius: 8px; padding: 6px; background-color: white; 
-        border-left: 4px solid #FF4B4B; margin: 6px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        border-radius: 8px; padding: 8px; background-color: white; 
+        border-left: 5px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
     }
-    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.3; }
+    .next-target { border-left: 5px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.2; color: #111; }
     .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
@@ -100,13 +110,13 @@ if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. OPERAÇÃO (FRAGMENTADA PARA SER SUAVE) ---
+# --- 5. OPERAÇÃO (FRAGMENTO SINCRONIZADO) ---
 @st.fragment
 def render_app():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (TRAVADO NA ROTA)
+    # A. MAPA COM KEY FIXA (MATA A PISCADA)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -123,7 +133,8 @@ def render_app():
     if coords_para_zoom:
         m.fit_bounds(coords_para_zoom, padding=(30, 30))
     
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_garapas")
+    # A key "mapa_estatico" impede o re-render total do Iframe
+    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_estatico")
 
     # B. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
@@ -172,8 +183,7 @@ if st.session_state['df_final'] is None:
         st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
         st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
         st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-        salvar_progresso()
-        st.rerun()
+        salvar_progresso(); st.rerun()
 
 if st.session_state['df_final'] is not None:
     if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
