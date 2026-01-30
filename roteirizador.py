@@ -30,67 +30,155 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 st.markdown("""
     <style>
     /* 1. Reset de Tela e Travas */
+    * { box-sizing: border-box !important; }
     html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
+        max-width: 100vw !important;
         margin: 0 !important;
         padding: 0 !important;
     }
-    .block-container { padding: 0rem 0.2rem !important; }
+    .block-container { 
+        padding: 0.5rem 0.5rem !important; 
+        max-width: 100% !important;
+    }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
     /* 2. BARRA DE MÉTRICAS (HTML ESTÁVEL) */
     .custom-metrics-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        background: white; 
+        padding: 8px 10px; 
+        border-radius: 8px; 
+        margin: 8px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        width: 100%; 
+        max-width: 100%;
     }
 
-    /* 3. A MÁQUINA DE LADO A LADO (HACK DEFINITIVO) */
-    /* Zeramos o gap e forçamos o display grid para precisão de pixels */
+    /* 3. SISTEMA DE COLUNAS RESPONSIVO - A SOLUÇÃO DEFINITIVA */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 2px !important;
+        gap: 4px !important;
         width: 100% !important;
-        padding: 0px !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
-    /* Forçamos o encolhimento total das colunas */
+    /* Colunas com controle total */
     [data-testid="column"] {
         min-width: 0 !important;
-        flex-basis: 0 !important;
-        flex-grow: 1 !important;
-        padding: 0px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex-shrink: 1 !important;
     }
 
-    /* Definindo larguras fixas em porcentagem da tela (vw) */
-    [data-testid="column"]:nth-of-type(1) { flex: 0 0 16vw !important; } /* ✅ */
-    [data-testid="column"]:nth-of-type(2) { flex: 0 0 16vw !important; } /* 🚗 */
-    [data-testid="column"]:nth-of-type(3) { flex: 0 0 62vw !important; } /* ORDEM */
+    /* Distribuição inteligente: botões menores, input maior */
+    [data-testid="column"]:nth-of-type(1) { 
+        flex: 0 0 calc(18% - 3px) !important; 
+        max-width: calc(18% - 3px) !important;
+    }
+    [data-testid="column"]:nth-of-type(2) { 
+        flex: 0 0 calc(18% - 3px) !important; 
+        max-width: calc(18% - 3px) !important;
+    }
+    [data-testid="column"]:nth-of-type(3) { 
+        flex: 0 0 calc(64% - 2px) !important; 
+        max-width: calc(64% - 2px) !important;
+    }
 
     /* 4. ESTILO DOS CARDS */
     .delivery-card { 
-        border-radius: 8px; padding: 6px 10px; 
-        background-color: white; border-left: 5px solid #FF4B4B;
-        margin-top: 10px;
+        border-radius: 8px; 
+        padding: 8px 10px; 
+        background-color: white; 
+        border-left: 4px solid #FF4B4B;
+        margin: 8px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
-    .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
+    .next-target { 
+        border-left: 4px solid #007BFF !important; 
+        background-color: #f0f8ff !important;
+        box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
+    }
+    .address-header { 
+        font-size: 13px !important; 
+        font-weight: 700; 
+        color: #111; 
+        line-height: 1.3;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
     
-    /* Inputs e Botões Adaptáveis */
+    /* 5. Inputs e Botões - AJUSTE CRÍTICO */
     .stTextInput input {
-        height: 38px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 13px !important;
-        text-align: center; font-weight: 900 !important; border-radius: 6px !important;
-        padding: 0px !important; border: 1px solid #ccc !important;
+        height: 40px !important; 
+        background-color: #f8f9fa !important;
+        color: #000 !important; 
+        font-size: 14px !important;
+        text-align: center; 
+        font-weight: 700 !important; 
+        border-radius: 6px !important;
+        padding: 0 4px !important; 
+        border: 1px solid #dee2e6 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
+    
     .stButton button { 
-        height: 38px !important; font-size: 16px !important; 
-        width: 100% !important; border-radius: 6px !important;
-        padding: 0px !important;
+        height: 40px !important; 
+        font-size: 18px !important; 
+        width: 100% !important; 
+        max-width: 100% !important;
+        border-radius: 6px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+    }
+
+    /* 6. MEDIA QUERIES PARA DISPOSITIVOS PEQUENOS */
+    @media screen and (max-width: 480px) {
+        [data-testid="column"]:nth-of-type(1) { 
+            flex: 0 0 calc(20% - 3px) !important; 
+            max-width: calc(20% - 3px) !important;
+        }
+        [data-testid="column"]:nth-of-type(2) { 
+            flex: 0 0 calc(20% - 3px) !important; 
+            max-width: calc(20% - 3px) !important;
+        }
+        [data-testid="column"]:nth-of-type(3) { 
+            flex: 0 0 calc(60% - 2px) !important; 
+            max-width: calc(60% - 2px) !important;
+        }
+        
+        .stButton button { 
+            font-size: 16px !important; 
+            height: 38px !important;
+        }
+        .stTextInput input {
+            font-size: 13px !important;
+            height: 38px !important;
+        }
+    }
+
+    /* 7. Para tablets em landscape */
+    @media screen and (min-width: 768px) and (max-width: 1024px) {
+        [data-testid="column"]:nth-of-type(1) { 
+            flex: 0 0 calc(15% - 3px) !important; 
+        }
+        [data-testid="column"]:nth-of-type(2) { 
+            flex: 0 0 calc(15% - 3px) !important; 
+        }
+        [data-testid="column"]:nth-of-type(3) { 
+            flex: 0 0 calc(70% - 2px) !important; 
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -137,9 +225,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # --- AS COLUNAS COM LARGURA EM VW (VIEWPORT WIDTH) ---
-            # Aqui garantimos que a soma não passe de 100% da largura da tela
-            c_done, c_waze, c_seq = st.columns([0.16, 0.16, 0.62])
+            # --- AS COLUNAS RESPONSIVAS ---
+            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
