@@ -6,7 +6,7 @@ import numpy as np
 from folium.features import DivIcon
 import requests
 
-# --- 1. FUNÇÕES TÉCNICAS ---
+# --- 1. FUNÇÕES TÉCNICAS (ESTÁVEIS) ---
 def fast_haversine(lat1, lon1, lat2, lon2):
     p = np.pi/180
     a = 0.5 - np.cos((lat2-lat1)*p)/2 + np.cos(lat1*p) * np.cos(lat2*p) * (1-np.cos((lon2-lon1)*p))/2
@@ -24,66 +24,69 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE TOTAL DE UI ---
+# --- 2. DESIGN SYSTEM: CONTROLE TOTAL E CORES ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Trava de segurança contra scroll lateral */
+    /* Trava de segurança total */
     html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
-        position: fixed; /* Previne o 'elástico' do navegador */
     }
     .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* BARRA DE MÉTRICAS CUSTOMIZADA (HTML PURO) */
+    /* Barra de métricas compacta (HTML) */
     .custom-metrics-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: white;
-        padding: 8px 12px;
-        border-radius: 10px;
-        margin: 5px 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 6px 10px;
+        border-radius: 8px;
+        margin: 4px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         width: 100%;
     }
     .metric-item { text-align: center; flex: 1; }
-    .metric-label { font-size: 9px; color: #777; font-weight: bold; text-transform: uppercase; }
-    .metric-value { font-size: 16px; color: #222; font-weight: 800; display: block; }
+    .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
+    .metric-value { font-size: 15px; color: #111; font-weight: 800; display: block; }
 
-    /* Ajustes da Lista e Cards */
+    /* Cards Minimalistas */
     .delivery-card { 
-        border-radius: 8px; padding: 8px 12px; margin-bottom: 4px; 
+        border-radius: 8px; padding: 8px 10px; margin-bottom: 3px; 
         background-color: white; border-left: 5px solid #FF4B4B;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    /* Botões de Ação Compactos */
+    /* --- AJUSTE SOLICITADO: NÚMERO DA ORDEM EM PRETO --- */
+    .stTextInput input {
+        height: 30px !important; 
+        background-color: #f1f3f5 !important;
+        color: black !important; /* MUDANÇA AQUI: VERDE -> PRETO */
+        font-size: 13px !important;
+        text-align: center; 
+        font-weight: 800 !important;
+        border-radius: 6px !important;
+    }
+    
+    /* Botões de Ação */
     .stButton button {
         height: 36px !important; font-size: 11px !important;
         width: 100% !important; border-radius: 8px !important;
     }
-    
-    /* Input Ordem Estilo Dark */
-    .stTextInput input {
-        height: 30px !important; background-color: #f1f3f5 !important;
-        color: #2ecc71 !important; font-size: 12px !important;
-        text-align: center; font-weight: bold;
-    }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ESTADO E LÓGICA ---
+# --- 3. ESTADO E MEMÓRIA ---
 if 'df_final' not in st.session_state: st.session_state['df_final'] = None
 if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'custom_sequences' not in st.session_state: st.session_state['custom_sequences'] = {}
 
-# --- 4. FLUXO DE ENTRADA ---
+# --- 4. TELA INICIAL ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -124,19 +127,18 @@ if st.session_state['df_final'] is not None:
     if all_coords: m.fit_bounds(all_coords, padding=(20, 20))
     st_folium(m, width=None, height=200, use_container_width=True)
 
-    # B. MÉTRICAS (HTML PURO - LADO A LADO FORÇADO)
+    # B. MÉTRICAS EM HTML (HORIZONTAL)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     
-    # Injeção de HTML para as métricas não quebrarem
     st.markdown(f"""
         <div class="custom-metrics-container">
             <div class="metric-item">
                 <span class="metric-label">📦 Faltam</span>
-                <span class="metric-value">{len(restantes)}</span>
+                <span class="metric-value">{len(restantes)} paradas</span>
             </div>
             <div class="metric-item">
-                <span class="metric-label">🛤️ KM</span>
-                <span class="metric-value">{km_v * 1.3:.1f}</span>
+                <span class="metric-label">🛤️ KM Restante</span>
+                <span class="metric-value">{km_v * 1.3:.1f} km</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -149,7 +151,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA COM SCROLL
+    # C. LISTA COM ROLAGEM
     with st.container(height=480):
         for i, row in df_res.iterrows():
             rua, bairro = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', ''))
