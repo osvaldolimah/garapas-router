@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. MEMÓRIA BLINDADA (PERSISTÊNCIA) ---
+# --- 1. MEMÓRIA (PERSISTÊNCIA) ---
 SAVE_FILE = "garapas_progress.pkl"
 
 def save_state():
@@ -49,75 +49,76 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM: O SEGREDO DO LADO A LADO ---
+# --- 3. DESIGN SYSTEM: TRAVA TOTAL MOBILE ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. RESET GLOBAL */
+    /* 1. RESET GLOBAL E ANTI-STACKING */
     * { box-sizing: border-box !important; }
-    html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100% !important; }
+    html, body, [data-testid="stAppViewContainer"] { 
+        overflow-x: hidden !important; 
+        width: 100% !important; 
+    }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
-    .leaflet-control-attribution { display: none !important; }
 
-    /* 2. FORÇAR GRID NA LISTA (RESOLVE O PROBLEMA DA VERTICAL) */
-    /* Este seletor ignora as divs intermediárias do Streamlit */
-    .delivery-list-area div[data-testid="stHorizontalBlock"] {
-        display: grid !important;
-        grid-template-columns: 56px 64px 1fr !important; /* LARGURAS DO CLAUDE */
-        gap: 4px !important;
+    /* 2. FORÇAR LADO A LADO NO ANDROID (SOLUÇÃO DEFINITIVA) */
+    /* Isso impede o Streamlit de empilhar as colunas em telas pequenas */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important; /* Força horizontal */
+        flex-wrap: nowrap !important;   /* Proíbe empilhar */
+        align-items: center !important;
         width: 100% !important;
+        gap: 4px !important;
+    }
+
+    [data-testid="column"] {
+        min-width: 0 !important; /* Permite encolher além do padrão */
+        flex-shrink: 1 !important;
+    }
+
+    /* 3. LARGURAS ESPECÍFICAS DA LISTA (GRID DO CLAUDE) */
+    /* Aplicado apenas às colunas dentro da lista de entregas */
+    .delivery-list div[data-testid="column"]:nth-of-type(1) { flex: 0 0 54px !important; }
+    .delivery-list div[data-testid="column"]:nth-of-type(2) { flex: 0 0 60px !important; }
+    .delivery-list div[data-testid="column"]:nth-of-type(3) { flex: 1 1 auto !important; }
+
+    /* 4. BOTÕES E INPUTS */
+    .stButton > button, .stLinkButton > a {
+        height: 44px !important; width: 100% !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        border-radius: 8px !important; border: 1px solid #dee2e6 !important;
         padding: 0 !important;
-        margin: 0 !important;
     }
     
-    /* Removemos as larguras automáticas das colunas internas */
-    .delivery-list-area div[data-testid="column"] {
-        width: 100% !important;
-        min-width: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* 3. CENTRALIZAÇÃO E ESTILO DOS BOTÕES */
-    .stButton > button, .stLinkButton > a {
-        height: 44px !important; width: 100% !important; padding: 0 !important;
-        display: flex !important; align-items: center !important; justify-content: center !important;
-        border-radius: 6px !important; border: 1px solid #dee2e6 !important;
-        line-height: 1 !important;
-    }
-    .stButton > button div, .stLinkButton > a div {
-        display: flex !important; align-items: center !important; justify-content: center !important;
-    }
-
-    /* 4. INPUT DA ORDEM */
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important;
-        font-size: 13px !important; font-weight: 700 !important; text-align: center !important;
-        border-radius: 6px !important;
+        font-size: 14px !important; font-weight: 800 !important; text-align: center !important;
+        border-radius: 8px !important;
     }
 
-    /* 5. CARDS E MÉTRICAS */
-    .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.3; color: #111; }
+    /* 5. CARDS */
+    .delivery-card { border-radius: 8px; padding: 8px; background-color: white; border-left: 5px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .next-target { border-left: 5px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.2; }
     .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
 
-# --- 4. INICIALIZAÇÃO DE ESTADO ---
+# --- 4. INICIALIZAÇÃO ---
 if 'df_final' not in st.session_state:
     if not load_state():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. FRAGMENTO DA LISTA (O CONTAINER QUE TRAVA O VISUAL) ---
+# --- 5. FRAGMENTO DA LISTA ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
-    # Esta div "delivery-list-area" é o que permite ao CSS travar o Grid
-    st.markdown('<div class="delivery-list-area">', unsafe_allow_html=True)
+    st.markdown('<div class="delivery-list">', unsafe_allow_html=True)
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
@@ -127,8 +128,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # Aqui estão as 3 colunas que o CSS vai obrigar a ficarem lado a lado
-            c_done, c_waze, c_seq = st.columns(3)
+            # Aqui as colunas são forçadas a não empilhar pelo CSS acima
+            c_done, c_waze, c_seq = st.columns([1, 1, 3])
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
@@ -148,7 +149,7 @@ def render_delivery_list():
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Planilha", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
+    if uploaded_file and st.button("🚀 Iniciar", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
