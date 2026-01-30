@@ -24,24 +24,29 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: ERGONOMIA MÓVEL ---
+# --- 2. DESIGN SYSTEM: TRAVA HORIZONTAL TOTAL ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100vw !important; }
+    /* Trava contra scroll lateral */
+    html, body, [data-testid="stAppViewContainer"] {
+        overflow-x: hidden !important;
+        width: 100vw !important;
+    }
     .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- TRAVA DE BOTÕES LADO A LADO --- */
-    /* Força todas as colunas a ficarem na horizontal, inclusive na lista */
+    /* --- TÉCNICA NUCLEAR: LADO A LADO EM TUDO --- */
+    /* Força métricas E botões da lista a ficarem sempre na horizontal */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
-        gap: 6px !important;
+        width: 100% !important;
+        gap: 4px !important;
     }
     
     [data-testid="column"] {
@@ -49,6 +54,7 @@ st.markdown("""
         min-width: 0 !important;
     }
 
+    /* Barra de métricas */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
@@ -58,20 +64,27 @@ st.markdown("""
     .metric-label { font-size: 9px; color: #888; font-weight: bold; text-transform: uppercase; }
     .metric-value { font-size: 15px; color: #111; font-weight: 800; display: block; }
 
+    /* Cards e Lista */
     .delivery-card { 
         border-radius: 8px; padding: 6px 10px; margin-bottom: 2px; 
         background-color: white; border-left: 5px solid #FF4B4B;
     }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; color: #111; }
+    .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
+    /* Sequence em Preto e Borda de Destaque */
     .stTextInput input {
-        height: 34px !important; background-color: #f8f9fa !important;
-        color: black !important; font-size: 14px !important;
+        height: 32px !important; background-color: #f1f3f5 !important;
+        color: black !important; font-size: 13px !important;
         text-align: center; font-weight: 900 !important; border-radius: 6px !important;
+        padding: 0px !important;
     }
     
-    .stButton button { height: 38px !important; font-size: 12px !important; width: 100% !important; border-radius: 8px !important; }
+    .stButton button { 
+        height: 34px !important; font-size: 12px !important; 
+        width: 100% !important; border-radius: 6px !important;
+        padding: 0px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -81,7 +94,7 @@ if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
 
-# --- 4. ENTRADA ---
+# --- 4. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -102,12 +115,12 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. OPERAÇÃO ---
+# --- 5. INTERFACE OPERACIONAL ---
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (Aumentado em ~60px/1.5cm)
+    # A. MAPA (AUMENTADO PARA 320PX)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -121,10 +134,9 @@ if st.session_state['df_final'] is not None:
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
-    # Altura ajustada para 260px (aproximadamente 1.5cm a mais que os 180-200px anteriores)
-    st_folium(m, width=None, height=260, use_container_width=True)
+    st_folium(m, width=None, height=320, use_container_width=True)
 
-    # B. MÉTRICAS
+    # B. MÉTRICAS (HTML)
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div class="metric-item"><span class="metric-label">📦 Faltam</span><span class="metric-value">{len(restantes)}</span></div><div class="metric-item"><span class="metric-label">🛤️ KM</span><span class="metric-value">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
@@ -136,7 +148,7 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA DE ENDEREÇOS (COM BOTÕES LADO A LADO)
+    # C. LISTA DE ENTREGAS (BOTÕES E SEQUENCE LADO A LADO)
     with st.container(height=450):
         for i, row in df_res.iterrows():
             rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
@@ -146,19 +158,17 @@ if st.session_state['df_final'] is not None:
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
             
-            # Aqui forçamos o lado a lado com proporções equilibradas
-            c_actions, c_seq = st.columns([2, 1])
+            # --- TRES COLUNAS LADO A LADO ---
+            c_done, c_waze, c_seq = st.columns([0.6, 0.6, 1.8])
             
-            with c_actions:
-                # Sub-colunas para os botões ficarem colados
-                c_done, c_waze = st.columns(2)
-                with c_done:
-                    if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                        if entregue: st.session_state['entregues'].remove(i)
-                        else: st.session_state['entregues'].add(i)
-                        st.rerun()
-                with c_waze:
-                    st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+            with c_done:
+                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
+                    if entregue: st.session_state['entregues'].remove(i)
+                    else: st.session_state['entregues'].add(i)
+                    st.rerun()
+            
+            with c_waze:
+                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
