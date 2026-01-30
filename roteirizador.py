@@ -29,7 +29,7 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* Trava de segurança total */
+    /* Trava contra scroll lateral */
     html, body, [data-testid="stAppViewContainer"] {
         overflow-x: hidden !important;
         width: 100vw !important;
@@ -37,8 +37,10 @@ st.markdown("""
     .block-container { padding: 0rem 0.4rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
 
-    /* --- REMOVER ATRIBUIÇÃO DO MAPA (LEAFLET) --- */
-    .leaflet-control-attribution { display: none !important; }
+    /* --- REMOVER ATRIBUIÇÃO (CSS NUCLEAR) --- */
+    .leaflet-control-attribution, .leaflet-bottom.leaflet-right { 
+        display: none !important; 
+    }
 
     /* Barra de métricas compacta (HTML) */
     .custom-metrics-container {
@@ -64,7 +66,7 @@ st.markdown("""
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; }
     
-    /* Sequence em Preto conforme solicitado */
+    /* Sequence em Preto */
     .stTextInput input {
         height: 30px !important; 
         background-color: #f1f3f5 !important;
@@ -113,9 +115,13 @@ if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA NO TOPO (Agora sem o texto do Leaflet)
-    # Adicionamos control_scale=False e control_attribution=False no folium.Map
-    m = folium.Map(tiles="cartodbpositron", control_scale=False)
+    # --- A. MAPA NO TOPO (COM ATTR_CONTROL DESATIVADO) ---
+    # Adicionado attribution_control=False para matar o texto na raiz
+    m = folium.Map(
+        tiles="cartodbpositron", 
+        attribution_control=False, 
+        control_scale=False
+    )
     
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
