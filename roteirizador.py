@@ -24,75 +24,35 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 2. DESIGN SYSTEM: CONTROLE DE LARGURA ABSOLUTO ---
+# --- 2. DESIGN SYSTEM: CONTROLE DE FLUXO ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. Trava Global Anti-Scroll Lateral */
-    html, body, [data-testid="stAppViewContainer"] {
-        overflow-x: hidden !important;
-        width: 100vw !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    .block-container { padding: 0rem 0.2rem !important; max-width: 100vw !important; }
+    html, body, [data-testid="stAppViewContainer"] { overflow-x: hidden !important; width: 100vw !important; }
+    .block-container { padding: 0rem 0.2rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
+    .leaflet-control-attribution { display: none !important; }
 
-    /* 2. FORÇAR COLUNAS LADO A LADO (TÉCNICA DAS MÉTRICAS) */
+    /* Forçar colunas lado a lado */
     [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important; /* Proíbe quebra de linha */
-        align-items: center !important;
-        width: 100% !important;
-        gap: 4px !important;
+        display: flex !important; flex-direction: row !important;
+        flex-wrap: nowrap !important; align-items: center !important;
+        width: 100% !important; gap: 4px !important;
     }
     
-    /* 3. LARGURAS FIXAS PARA OS BOTÕES (EVITA VAZAMENTO) */
-    /* Coluna 1 e 2 (Botões) */
-    [data-testid="stHorizontalBlock"] > div:nth-child(1),
-    [data-testid="stHorizontalBlock"] > div:nth-child(2) {
-        flex: 0 0 15% !important; /* Ocupa exatamente 15% cada */
-        min-width: 15% !important;
-    }
-    /* Coluna 3 (Sequence) */
-    [data-testid="stHorizontalBlock"] > div:nth-child(3) {
-        flex: 0 0 65% !important; /* Ocupa exatamente 65% */
-        min-width: 0 !important;
-    }
+    [data-testid="column"] { flex: 0 0 auto !important; min-width: 0 !important; }
+    [data-testid="column"]:nth-child(1), [data-testid="column"]:nth-child(2) { width: 15% !important; }
+    [data-testid="column"]:nth-child(3) { width: 65% !important; }
 
-    /* 4. ESTILO DOS CARDS */
-    .delivery-card { 
-        border-radius: 8px 8px 0 0; padding: 6px 10px; 
-        background-color: white; border-left: 5px solid #FF4B4B;
-        margin-top: 10px;
-    }
+    .delivery-card { border-radius: 8px 8px 0 0; padding: 6px 10px; background-color: white; border-left: 5px solid #FF4B4B; margin-top: 10px; }
     .next-target { border-left: 5px solid #007BFF !important; background-color: #f8fbff !important; }
     .address-header { font-size: 12px !important; font-weight: 700; color: #111; line-height: 1.1; }
     
-    /* Input Compacto */
-    .stTextInput input {
-        height: 38px !important; background-color: #f1f3f5 !important;
-        color: black !important; font-size: 13px !important;
-        text-align: center; font-weight: 900 !important; border-radius: 6px !important;
-        padding: 0px !important; border: 1px solid #ccc !important;
-        width: 100% !important;
-    }
+    .stTextInput input { height: 38px !important; background-color: #f1f3f5 !important; color: black !important; font-size: 13px !important; text-align: center; font-weight: 900 !important; border-radius: 6px !important; padding: 0px !important; border: 1px solid #ccc !important; }
+    .stButton button { height: 38px !important; font-size: 16px !important; width: 100% !important; border-radius: 6px !important; padding: 0px !important; }
     
-    /* Botões ✅ e 🚗 */
-    .stButton button { 
-        height: 38px !important; font-size: 16px !important; 
-        width: 100% !important; border-radius: 6px !important;
-        padding: 0px !important; margin: 0px !important;
-    }
-
-    /* Métricas HTML */
-    .custom-metrics-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
-    }
+    .custom-metrics-container { display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 10px; border-radius: 8px; margin: 4px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -102,7 +62,7 @@ if 'road_path' not in st.session_state: st.session_state['road_path'] = []
 if 'entregues' not in st.session_state: st.session_state['entregues'] = set()
 if 'manual_sequences' not in st.session_state: st.session_state['manual_sequences'] = {}
 
-# --- 4. ENTRADA ---
+# --- 4. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("", type=['xlsx'])
@@ -123,24 +83,51 @@ if st.session_state['df_final'] is None:
         st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         st.rerun()
 
-# --- 5. INTERFACE ---
+# --- 5. FRAGMENTO DA LISTA (O SEGREDO DA SUAVIDADE) ---
+@st.fragment
+def render_delivery_list():
+    df_res = st.session_state['df_final']
+    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
+    
+    # Lista de Entregas
+    with st.container(height=500):
+        for i, row in df_res.iterrows():
+            rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
+            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
+            card_class = "next-target" if is_next else ""
+
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
+            
+            c_done, c_waze, c_seq = st.columns(3)
+            with c_done:
+                # Aqui o clique NÃO recarrega o mapa
+                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
+                    if entregue: st.session_state['entregues'].remove(i)
+                    else: st.session_state['entregues'].add(i)
+                    st.rerun(scope="fragment") # Atualiza apenas este bloco!
+            with c_waze:
+                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+            with c_seq:
+                nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
+                if nova_seq != val_padrao:
+                    st.session_state['manual_sequences'][uid] = nova_seq
+
+# --- 6. INTERFACE PRINCIPAL ---
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA (320px)
+    # A. MAPA (Fixado no topo)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
-
-    all_coords = []
+    all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
     for i, row in df_res.iterrows():
         foi = i in st.session_state['entregues']
         cor = "#2ecc71" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#e74c3c")
-        loc = [row['LATITUDE'], row['LONGITUDE']]; all_coords.append(loc)
         icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
-        folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
-    
+        folium.Marker(location=[row['LATITUDE'], row['LONGITUDE']], icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
@@ -156,29 +143,5 @@ if st.session_state['df_final'] is not None:
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
             st.rerun()
 
-    # C. LISTA DE ENTREGAS
-    st.markdown("---")
-    with st.container(height=450):
-        for i, row in df_res.iterrows():
-            rua, bairro, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('BAIRRO', '')), str(row.get('UID', ''))
-            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
-            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
-            card_class = "next-target" if is_next else ""
-
-            # Endereço em cima
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua} <span style="font-size:9px;color:#999;">({bairro})</span></div></div>', unsafe_allow_html=True)
-            
-            # Barra de Ações Travada em 100% da Largura
-            c_done, c_waze, c_seq = st.columns(3) # O CSS vai ignorar o '3' e aplicar 15%/15%/65%
-            
-            with c_done:
-                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                    if entregue: st.session_state['entregues'].remove(i)
-                    else: st.session_state['entregues'].add(i)
-                    st.rerun()
-            with c_waze:
-                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
-            with c_seq:
-                nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
-                if nova_seq != val_padrao:
-                    st.session_state['manual_sequences'][uid] = nova_seq
+    # C. CHAMADA DA LISTA (FRAGMENTADA)
+    render_delivery_list()
