@@ -161,11 +161,14 @@ st.markdown("""
         border-left: 4px solid #FF4B4B;
         margin: 8px 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        transition: background-color 220ms ease, border-left-color 220ms ease, box-shadow 220ms ease;
     }
     .next-target { 
         border-left: 4px solid #007BFF !important; 
         background-color: #f0f8ff !important;
         box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
+        transform-origin: left center;
+        transition: transform 180ms ease;
     }
     .address-header { 
         font-size: 13px !important; 
@@ -174,6 +177,7 @@ st.markdown("""
         line-height: 1.3;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        transition: color 220ms ease;
     }
     
     /* 5. BOTÕES E INPUTS */
@@ -199,6 +203,7 @@ st.markdown("""
         padding: 0 !important;
         box-sizing: border-box !important;
         white-space: nowrap !important;
+        transition: background-color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
     }
     
     .stLinkButton a {
@@ -212,6 +217,7 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
+        transition: background-color 160ms ease, transform 120ms ease;
     }
 
     /* 6. MOBILE - BOTÕES AINDA MENORES */
@@ -272,6 +278,7 @@ st.markdown("""
         .stTextInput input {
             font-size: 12px !important;
             height: 36px !important;
+            transition: background-color 160ms ease;
         }
     }
 
@@ -337,7 +344,7 @@ def render_operacao():
         loc = [row['LATITUDE'], row['LONGITUDE']]
         
         # HTML Simplificado para renderização instantânea
-        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
+        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;transition:background 200ms ease, transform 140ms ease;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada agressiva de Tiles)
