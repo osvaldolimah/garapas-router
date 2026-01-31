@@ -699,8 +699,7 @@ def render_operacao():
                     else: st.session_state['entregues'].add(i)
 
                     salvar_progresso()
-
-                    st.rerun(scope="fragment") # Atualização suave do bloco
+                    # Não forçamos st.rerun aqui — evitar reruns extras reduz piscadas no mapa
 
             with c_waze:
 
