@@ -90,12 +90,12 @@ st.markdown("""
         max-width: 100%;
     }
 
-    /* 3. SISTEMA DE COLUNAS RESPONSIVO - A SOLUÇÃO DEFINITIVA */
+    /* 3. SISTEMA DE COLUNAS RESPONSIVO - AJUSTE PRECISO */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 4px !important;
+        gap: 3px !important;
         width: 100% !important;
         max-width: 100% !important;
         padding: 0 !important;
@@ -110,18 +110,18 @@ st.markdown("""
         flex-shrink: 1 !important;
     }
 
-    /* Distribuição inteligente: botões menores, input maior */
+    /* Distribuição: 17% + 17% + 66% = 100% - mas com gap de 3px considerado */
     [data-testid="column"]:nth-of-type(1) { 
-        flex: 0 0 calc(18% - 3px) !important; 
-        max-width: calc(18% - 3px) !important;
+        flex: 0 0 17% !important; 
+        max-width: 17% !important;
     }
     [data-testid="column"]:nth-of-type(2) { 
-        flex: 0 0 calc(18% - 3px) !important; 
-        max-width: calc(18% - 3px) !important;
+        flex: 0 0 17% !important; 
+        max-width: 17% !important;
     }
     [data-testid="column"]:nth-of-type(3) { 
-        flex: 0 0 calc(64% - 2px) !important; 
-        max-width: calc(64% - 2px) !important;
+        flex: 1 1 66% !important; 
+        max-width: 66% !important;
     }
 
     /* 4. ESTILO DOS CARDS */
@@ -190,17 +190,21 @@ st.markdown("""
 
     /* 6. MEDIA QUERIES PARA DISPOSITIVOS PEQUENOS */
     @media screen and (max-width: 480px) {
+        [data-testid="stHorizontalBlock"] {
+            gap: 2px !important;
+        }
+        
         [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 calc(20% - 3px) !important; 
-            max-width: calc(20% - 3px) !important;
+            flex: 0 0 19% !important; 
+            max-width: 19% !important;
         }
         [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 calc(20% - 3px) !important; 
-            max-width: calc(20% - 3px) !important;
+            flex: 0 0 19% !important; 
+            max-width: 19% !important;
         }
         [data-testid="column"]:nth-of-type(3) { 
-            flex: 0 0 calc(60% - 2px) !important; 
-            max-width: calc(60% - 2px) !important;
+            flex: 1 1 62% !important; 
+            max-width: 62% !important;
         }
         
         .stButton button { 
@@ -220,13 +224,13 @@ st.markdown("""
     /* 7. Para tablets em landscape */
     @media screen and (min-width: 768px) and (max-width: 1024px) {
         [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 calc(15% - 3px) !important; 
+            flex: 0 0 15% !important; 
         }
         [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 calc(15% - 3px) !important; 
+            flex: 0 0 15% !important; 
         }
         [data-testid="column"]:nth-of-type(3) { 
-            flex: 0 0 calc(70% - 2px) !important; 
+            flex: 1 1 70% !important; 
         }
     }
     </style>
@@ -253,7 +257,7 @@ def render_delivery_list():
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
             # --- AS COLUNAS RESPONSIVAS ---
-            c_done, c_waze, c_seq = st.columns([0.18, 0.18, 0.64])
+            c_done, c_waze, c_seq = st.columns([0.17, 0.17, 0.66])
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
