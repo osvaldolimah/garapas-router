@@ -55,19 +55,26 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* RESET GLOBAL */
-    * { box-sizing: border-box !important; margin: 0 !important; }
+    /* RESET GLOBAL - NUCLEAR */
+    * { 
+        box-sizing: border-box !important; 
+        margin: 0 !important; 
+    }
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, .block-container { 
-        overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
+        overflow-x: hidden !important; 
+        width: 100% !important; 
+        max-width: 100vw !important; 
+        padding: 0 !important; 
     }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRA 1: LISTA DE ENTREGAS (3 COLUNAS TRAVADAS) --- */
+    /* --- REGRA 1: LISTA DE ENTREGAS (3 COLUNAS TRAVADAS) - FORÇA BRUTA --- */
     .delivery-item-row [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
+        grid-template-rows: auto !important;
         gap: 3px !important;
         width: 100% !important;
         padding: 0 !important;
@@ -75,26 +82,35 @@ st.markdown("""
         overflow: visible !important;
     }
     
+    /* Forçando que NUNCA empilhe verticalmente */
+    .delivery-item-row [data-testid="stHorizontalBlock"] > * {
+        grid-row: 1 !important;
+    }
+    
     .delivery-item-row [data-testid="column"] {
         min-width: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
         overflow: hidden !important;
+        display: block !important;
     }
     
     .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+        grid-column: 1 !important;
         width: 56px !important;
         max-width: 56px !important;
         min-width: 56px !important;
     }
     
     .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+        grid-column: 2 !important;
         width: 64px !important;
         max-width: 64px !important;
         min-width: 64px !important;
     }
     
     .delivery-item-row [data-testid="column"]:nth-of-type(3) {
+        grid-column: 3 !important;
         width: 100% !important;
         min-width: 0 !important;
     }
@@ -103,6 +119,7 @@ st.markdown("""
     .top-controls [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
+        flex-wrap: nowrap !important;
         gap: 6px !important;
         width: 100% !important;
         padding: 0 !important;
@@ -218,7 +235,7 @@ st.markdown("""
         width: 100%;
     }
     
-    /* MEDIA QUERIES */
+    /* MEDIA QUERIES - MOBILE FIRST */
     @media screen and (max-width: 400px) {
         .delivery-item-row [data-testid="stHorizontalBlock"] {
             grid-template-columns: 50px 58px 1fr !important;
@@ -226,15 +243,21 @@ st.markdown("""
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            grid-column: 1 !important;
             width: 50px !important;
             max-width: 50px !important;
             min-width: 50px !important;
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            grid-column: 2 !important;
             width: 58px !important;
             max-width: 58px !important;
             min-width: 58px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(3) {
+            grid-column: 3 !important;
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(1) .stButton > button {
@@ -263,15 +286,21 @@ st.markdown("""
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            grid-column: 1 !important;
             width: 58px !important;
             max-width: 58px !important;
             min-width: 58px !important;
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            grid-column: 2 !important;
             width: 66px !important;
             max-width: 66px !important;
             min-width: 66px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(3) {
+            grid-column: 3 !important;
         }
     }
     
@@ -281,15 +310,21 @@ st.markdown("""
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            grid-column: 1 !important;
             width: 62px !important;
             max-width: 62px !important;
             min-width: 62px !important;
         }
         
         .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            grid-column: 2 !important;
             width: 70px !important;
             max-width: 70px !important;
             min-width: 70px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(3) {
+            grid-column: 3 !important;
         }
     }
     </style>
