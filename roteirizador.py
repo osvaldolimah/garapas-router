@@ -167,12 +167,9 @@ st.markdown("""
         font-size: 17px !important; 
         width: 100% !important; 
         border-radius: 6px !important;
-        padding: 6px !important;
+        padding: 0 !important;
         box-sizing: border-box !important;
         white-space: nowrap !important;
-        border: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
     }
     
     .stLinkButton a {
@@ -180,16 +177,12 @@ st.markdown("""
         font-size: 17px !important; 
         width: 100% !important; 
         border-radius: 6px !important;
-        padding: 6px !important;
+        padding: 0 !important;
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
-        transition: background-color 160ms ease, transform 120ms ease;
-        border: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
     }
 
     /* 6. MOBILE - BOTÕES AINDA MENORES */
@@ -271,98 +264,85 @@ st.markdown("""
 # --- 4. ESTADO ---
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
-        st.session_state.update({
-            'df_final': None, 
-            'road_path': [], 
-            'entregues': set(), 
-            'manual_sequences': {},
-            'first_render': True
-        })
+        st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. MOTOR DE OPERAÇÃO (SUAVIZAÇÃO DA ATUALIZAÇÃO) ---
+# Contador para forçar atualização do mapa
+if 'map_update_counter' not in st.session_state:
+    st.session_state['map_update_counter'] = 0
+
+# --- 5. FRAGMENTO DO MAPA (ATUALIZA SOZINHO) ---
 @st.fragment
-def render_operacao():
+def render_mapa():
     df_res = st.session_state['df_final']
-    entregues_set = st.session_state['entregues']
-    restantes = [i for i in range(len(df_res)) if i not in entregues_set]
+    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
-    # --- A. MAPA (PREPARAÇÃO OTIMIZADA) ---
-    all_coords = [[row.LATITUDE, row.LONGITUDE] for row in df_res.itertuples()]
-    
-    if all_coords:
-        center_lat = sum(c[0] for c in all_coords) / len(all_coords)
-        center_lon = sum(c[1] for c in all_coords) / len(all_coords)
-    else:
-        center_lat, center_lon = 0, 0
-
-    m = folium.Map(
-        location=[center_lat, center_lon], 
-        zoom_start=14, 
-        tiles="cartodbpositron", 
-        attribution_control=False
-    )
-
+    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
-        # Otimização: [::10] torna o mapa muito mais leve para o navegador mobile
-        folium.PolyLine(st.session_state['road_path'][::10], color="#007BFF", weight=4, opacity=0.7).add_to(m)
+        folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
-    proximo_idx = restantes[0] if restantes else None
+    all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
+    for i, row in df_res.iterrows():
+        foi = i in st.session_state['entregues']
+        cor = "#2ecc71" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#e74c3c")
+        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
+        folium.Marker(location=[row['LATITUDE'], row['LONGITUDE']], icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # Itertuples é muito mais rápido que iterrows()
-    for row in df_res.itertuples():
-        i = row.Index
-        foi = i in entregues_set
-        cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
-        loc = [row.LATITUDE, row.LONGITUDE]
-        
-        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row.ORDEM_PARADA)}</div>'
-        folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
-    
-    # SÓ AJUSTA O ZOOM NO PRIMEIRO CARREGAMENTO (Evita piscada ao marcar check)
-    if all_coords and st.session_state.get('first_render', True):
-        m.fit_bounds(all_coords, padding=(30, 30))
-        st.session_state['first_render'] = False
-    
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional", returned_objects=[])
+    if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
+    st_folium(m, width=None, height=320, use_container_width=True, key=f"mapa_{st.session_state['map_update_counter']}")
 
-    # --- B. MÉTRICAS ---
+# --- 6. FRAGMENTO DAS MÉTRICAS (ATUALIZA SOZINHO) ---
+@st.fragment
+def render_metricas():
+    df_res = st.session_state['df_final']
+    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
+    
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], 
                               df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) 
               for k in range(len(restantes)-1)) if len(restantes) > 1 else 0
     
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
+
+# --- 7. FRAGMENTO DA LISTA ---
+@st.fragment
+def render_delivery_list():
+    df_res = st.session_state['df_final']
+    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
-    # --- C. LISTA DE ENTREGAS ---
     with st.container(height=500):
-        for row in df_res.itertuples():
-            i = row.Index
-            rua, uid = str(getattr(row, '_4', '---')), str(row.UID) # Posição segura da coluna endereço
-            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.SEQUENCE))
-            entregue, is_next = i in entregues_set, (i == proximo_idx)
+        for i, row in df_res.iterrows():
+            rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
+            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
 
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row.ORDEM_PARADA)}ª - {rua}</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
             c_done, c_waze, c_seq = st.columns(3)
+            
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                    if entregue: st.session_state['entregues'].remove(i)
-                    else: st.session_state['entregues'].add(i)
+                    if entregue: 
+                        st.session_state['entregues'].remove(i)
+                    else: 
+                        st.session_state['entregues'].add(i)
+                    st.session_state['map_update_counter'] += 1
                     salvar_progresso()
-                    # Removido st.rerun() manual para o fragmento gerir a atualização silenciosa
+                    st.rerun(scope="fragment")
+                    
             with c_waze:
-                st.link_button("🚗", f"https://waze.com/ul?ll={row.LATITUDE},{row.LONGITUDE}&navigate=yes", use_container_width=True)
+                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+            
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
 
-# --- 6. INTERFACE PRINCIPAL ---
+# --- 8. INTERFACE PRINCIPAL ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
-    if uploaded_file and st.button("🚀", use_container_width=True):
+    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
@@ -376,24 +356,22 @@ if st.session_state['df_final'] is None:
         final_df = pd.DataFrame(rota).reset_index(drop=True)
         final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['df_final'] = final_df
-        st.session_state['first_render'] = True
-        pts_tuple = tuple(map(tuple, final_df[['LATITUDE', 'LONGITUDE']].values.tolist()))
-        st.session_state['road_path'] = get_road_route_batch(pts_tuple)
+        st.session_state['road_path'] = get_road_route_batch(final_df[['LATITUDE', 'LONGITUDE']].values.tolist())
         salvar_progresso()
         st.rerun()
 
 else:
+    # A. BOTÕES DE CONTROLE
     c_limpar, c_novo = st.columns(2)
     with c_limpar:
         if st.button("🗑️", use_container_width=True):
-            restantes_idxs = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
-            if restantes_idxs:
-                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
+            restantes = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
+            if restantes:
+                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes].reset_index(drop=True)
                 st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
                 st.session_state['entregues'] = set()
-                st.session_state['first_render'] = True
-                pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
-                st.session_state['road_path'] = get_road_route_batch(pts_tuple)
+                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+                st.session_state['map_update_counter'] += 1
                 salvar_progresso()
                 st.rerun()
     with c_novo:
@@ -402,4 +380,11 @@ else:
             st.session_state.clear()
             st.rerun()
 
-    render_operacao()
+    # B. MAPA (FRAGMENTO INDEPENDENTE)
+    render_mapa()
+
+    # C. MÉTRICAS (FRAGMENTO INDEPENDENTE)
+    render_metricas()
+    
+    # D. LISTA (FRAGMENTO INDEPENDENTE)
+    render_delivery_list()
