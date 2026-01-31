@@ -89,29 +89,27 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRA DA LISTA DE ENTREGAS (Grid Travado: 55px | 55px | Resto) --- */
-    .lista-entregas [data-testid="stHorizontalBlock"] {
+    /* --- REGRA DE OURO: GRID TRAVADO (55px | 55px | 1fr) --- */
+    /* Aplica apenas onde for explicitamente necessário (Lista e Topo Mapa) */
+    .locked-grid [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 55px 55px 1fr !important;
         gap: 4px !important;
         width: 100% !important;
         align-items: center !important;
     }
-    .lista-entregas [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
+    .locked-grid [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
 
-    /* --- REGRA PARA BOTÕES DE COMANDO (Lado a Lado na Horizontal) --- */
-    /* Garante que os botões fiquem na horizontal e não empilhem */
-    [data-testid="stHorizontalBlock"] {
+    /* --- REGRA PARA TELAS COM APENAS 2 COLUNAS (Início) --- */
+    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
         gap: 8px !important;
         width: 100% !important;
-        align-items: center !important;
     }
-    [data-testid="column"] {
+    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) > [data-testid="column"] {
         flex: 1 !important;
-        min-width: 0 !important;
+        width: 50% !important;
     }
 
     /* BOTÕES E INPUTS */
@@ -163,10 +161,11 @@ def render_dashboard():
     proximo_alvo_idx = next((i for i in range(len(df_res)) if i not in entregues_set), None)
     restantes_idxs = [i for i in range(len(df_res)) if i not in entregues_set]
 
-    # A. BOTÕES DE CONTROLE - APENAS ÍCONES
+    # A. BOTÕES DE CONTROLE - APENAS ÍCONES (COM GRID TRAVADO)
+    st.markdown('<div class="locked-grid">', unsafe_allow_html=True)
     c_limpar, c_novo, _c_empty = st.columns(3)
     with c_limpar:
-        if st.button("🗑️", use_container_width=True):
+        if st.button("🗑️", key="btn_limpar", use_container_width=True):
             if restantes_idxs:
                 st.session_state['df_final'] = df_res.iloc[restantes_idxs].reset_index(drop=True)
                 st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
@@ -175,9 +174,10 @@ def render_dashboard():
                 st.session_state['road_path'] = get_road_route_batch(pts_tuple)
                 salvar_progresso(); st.rerun()
     with c_novo:
-        if st.button("📁", use_container_width=True):
+        if st.button("📁", key="btn_novo", use_container_width=True):
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear(); st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # B. MAPA (OTIMIZADO)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
@@ -208,7 +208,7 @@ def render_dashboard():
         
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes_idxs)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
 
-    # D. LISTA DE ENTREGAS (COM PROTEÇÃO DE CLASSE)
+    # D. LISTA DE ENTREGAS (COM PROTEÇÃO DE GRID)
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
@@ -218,8 +218,7 @@ def render_dashboard():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            # --- DIV QUE APLICA O GRID TRAVADO APENAS AQUI ---
-            st.markdown('<div class="lista-entregas">', unsafe_allow_html=True)
+            st.markdown('<div class="locked-grid">', unsafe_allow_html=True)
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
