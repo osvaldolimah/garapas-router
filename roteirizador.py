@@ -279,26 +279,39 @@ def render_operacao():
     entregues_set = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_set]
     
-    # --- A. MAPA (OTIMIZADO) ---
-    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
+    # --- A. MAPA (PREPARAÇÃO) ---
+    all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
+    
+    # Cálculo do centro para evitar o "bug do mapa do mundo"
+    if all_coords:
+        center_lat = sum(c[0] for c in all_coords) / len(all_coords)
+        center_lon = sum(c[1] for c in all_coords) / len(all_coords)
+    else:
+        center_lat, center_lon = 0, 0
+
+    m = folium.Map(
+        location=[center_lat, center_lon], 
+        zoom_start=13, 
+        tiles="cartodbpositron", 
+        attribution_control=False
+    )
+
     if st.session_state['road_path']:
         # Otimização de renderização: Amostragem para leveza
         folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
     proximo_idx = restantes[0] if restantes else None
-    all_coords = []
     
     for i, row in df_res.iterrows():
         foi = i in entregues_set
         cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
-        all_coords.append(loc)
         
         # HTML Simplificado para renderização instantânea
         icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada de Tiles)
+    # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada agressiva de Tiles)
     if all_coords and st.session_state.get('first_render', True):
         m.fit_bounds(all_coords, padding=(30, 30))
         st.session_state['first_render'] = False
