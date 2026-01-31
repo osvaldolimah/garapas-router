@@ -56,94 +56,214 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 st.markdown("""
     <style>
     /* RESET GLOBAL */
-    * { box-sizing: border-box !important; margin: 0 !important; }
+    * { box-sizing: border-box !important; }
     html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, .block-container { 
-        overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
+        overflow-x: hidden !important; 
+        width: 100% !important; 
+        max-width: 100vw !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
     }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* BOTÕES DE CONTROLE NO TOPO */
-    .top-controls [data-testid="stHorizontalBlock"] {
-        display: flex !important; flex-direction: row !important; gap: 6px !important; width: 100% !important;
+    /* FORÇAR HORIZONTAL EM MOBILE - ABORDAGEM EXTREMA */
+    [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlockBorderWrapper"]:has(.delivery-item-row) {
+        overflow: visible !important;
     }
-    .top-controls [data-testid="column"] {
-        flex: 1 !important; width: 50% !important; min-width: 0 !important;
+    
+    .delivery-item-row {
+        display: block !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    /* FORÇA O HORIZONTAL BLOCK A NUNCA EMPILHAR */
+    .delivery-item-row > div[data-testid="stVerticalBlock"] {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    .delivery-item-row > div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    .delivery-item-row [data-testid="stHorizontalBlock"] {
+        display: grid !important;
+        grid-template-columns: 50px 58px 1fr !important;
+        grid-auto-flow: column !important;
+        gap: 3px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .delivery-item-row [data-testid="column"] {
+        display: inline-block !important;
+        vertical-align: top !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        float: none !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-child(1) {
+        width: 50px !important;
+        max-width: 50px !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-child(2) {
+        width: 58px !important;
+        max-width: 58px !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-child(3) {
+        width: calc(100% - 111px) !important;
+        max-width: calc(100% - 111px) !important;
     }
 
-    /* BOTÕES GERAIS */
-    .stButton > button {
-        height: 44px !important; width: 100% !important; padding: 0 !important;
-        display: flex !important; align-items: center !important; justify-content: center !important;
-        border-radius: 6px !important; box-sizing: border-box !important;
+    /* BOTÕES DE CONTROLE NO TOPO */
+    .top-controls [data-testid="stHorizontalBlock"] {
+        display: flex !important; 
+        flex-direction: row !important; 
+        flex-wrap: nowrap !important;
+        gap: 6px !important; 
+        width: 100% !important;
+    }
+    .top-controls [data-testid="column"] {
+        flex: 1 !important; 
+        width: 50% !important; 
+        min-width: 0 !important;
+    }
+
+    /* BOTÕES E INPUTS */
+    .stButton, .stLinkButton, .stTextInput {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .stButton > div, .stLinkButton > div, .stTextInput > div {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .stButton > button, .stLinkButton > a {
+        height: 40px !important; 
+        width: 100% !important; 
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important; 
+        align-items: center !important; 
+        justify-content: center !important;
+        border-radius: 6px !important; 
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+    }
+    
+    .stTextInput input {
+        height: 40px !important; 
+        background-color: #f8f9fa !important;
+        color: #000 !important;
+        text-align: center; 
+        font-weight: 700 !important; 
+        border-radius: 6px !important;
+        font-size: 13px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0 2px !important;
+        border: 1px solid #dee2e6 !important;
+        margin: 0 !important;
     }
 
     /* CARDS */
     .delivery-card { 
-        border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; 
-        margin: 6px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); width: 100%;
+        border-radius: 8px; 
+        padding: 6px; 
+        background-color: white; 
+        border-left: 4px solid #FF4B4B; 
+        margin: 6px 0; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        width: 100%;
     }
-    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .next-target { 
+        border-left: 4px solid #007BFF !important; 
+        background-color: #f0f8ff !important;
+    }
     .address-header { 
-        font-size: 12px !important; font-weight: 700; line-height: 1.3; color: #111;
-        margin-bottom: 4px !important; word-wrap: break-word; overflow-wrap: break-word;
+        font-size: 12px !important; 
+        font-weight: 700; 
+        line-height: 1.3; 
+        color: #111;
+        margin-bottom: 4px !important;
+        word-wrap: break-word;
     }
     .custom-metrics-container { 
-        display: flex; justify-content: space-between; padding: 8px; background: white; 
-        border-radius: 8px; margin: 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%;
+        display: flex; 
+        justify-content: space-between; 
+        padding: 8px; 
+        background: white; 
+        border-radius: 8px; 
+        margin: 8px 0; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        width: 100%;
     }
     
-    /* GRID DE BOTÕES - HTML PURO */
-    .btn-grid {
-        display: grid !important;
-        grid-template-columns: 50px 58px 1fr !important;
-        gap: 3px !important;
-        width: 100% !important;
-        margin: 4px 0 !important;
-        align-items: center !important;
-    }
-    
-    .btn-done, .btn-waze {
-        height: 40px !important;
-        border-radius: 6px !important;
-        border: 1px solid #dee2e6 !important;
-        background-color: #fff !important;
-        cursor: pointer !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 16px !important;
-        text-decoration: none !important;
-        color: #000 !important;
-        transition: all 0.2s !important;
-    }
-    
-    .btn-done:active, .btn-waze:active {
-        transform: scale(0.95) !important;
-        background-color: #f0f0f0 !important;
-    }
-    
-    .input-seq {
-        height: 40px !important;
-        border-radius: 6px !important;
-        border: 1px solid #dee2e6 !important;
-        background-color: #f8f9fa !important;
-        text-align: center !important;
-        font-weight: 700 !important;
-        font-size: 13px !important;
-        width: 100% !important;
-        padding: 0 4px !important;
-    }
-    
+    /* MOBILE */
     @media screen and (max-width: 400px) {
-        .btn-grid {
+        .delivery-item-row [data-testid="stHorizontalBlock"] {
             grid-template-columns: 45px 53px 1fr !important;
             gap: 2px !important;
         }
-        .btn-done, .btn-waze { height: 38px !important; font-size: 15px !important; }
-        .input-seq { height: 38px !important; font-size: 12px !important; }
-        .address-header { font-size: 11px !important; }
+        
+        .delivery-item-row [data-testid="column"]:nth-child(1) {
+            width: 45px !important;
+            max-width: 45px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-child(2) {
+            width: 53px !important;
+            max-width: 53px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-child(3) {
+            width: calc(100% - 100px) !important;
+            max-width: calc(100% - 100px) !important;
+        }
+        
+        .stButton > button, .stLinkButton > a {
+            height: 38px !important;
+            font-size: 15px !important;
+        }
+        
+        .stTextInput input {
+            height: 38px !important;
+            font-size: 12px !important;
+        }
+        
+        .address-header {
+            font-size: 11px !important;
+        }
+    }
+    
+    @media screen and (min-width: 401px) and (max-width: 600px) {
+        .delivery-item-row [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 55px 63px 1fr !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-child(1) {
+            width: 55px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-child(2) {
+            width: 63px !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -153,15 +273,11 @@ if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. FRAGMENTO DA LISTA (HTML PURO) ---
+# --- 5. FRAGMENTO DA LISTA ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
-    
-    # Detectar cliques nos botões
-    if 'clicked_btn' not in st.session_state:
-        st.session_state['clicked_btn'] = None
     
     with st.container(height=500):
         for i, row in df_res.iterrows():
@@ -169,42 +285,31 @@ def render_delivery_list():
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
             entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
             card_class = "next-target" if is_next else ""
-            
-            # CARD DO ENDEREÇO
+
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            # GRID DE BOTÕES EM HTML PURO
-            btn_icon = "✅" if not entregue else "🔄"
-            waze_url = f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes"
+            # WRAPPER COM CLASSE ESPECÍFICA
+            st.markdown('<div class="delivery-item-row">', unsafe_allow_html=True)
             
-            # Container com botão invisível do Streamlit para detectar clique
-            col_holder = st.container()
-            with col_holder:
-                # Botão invisível para toggle
-                if st.button("toggle", key=f"toggle_{i}", label_visibility="hidden"):
-                    if entregue: 
-                        st.session_state['entregues'].remove(i)
-                    else: 
-                        st.session_state['entregues'].add(i)
+            # USANDO PROPORÇÕES IGUAIS NO st.columns E DEIXANDO O CSS FAZER O TRABALHO
+            cols = st.columns([1, 1, 1])
+            
+            with cols[0]:
+                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
+                    if entregue: st.session_state['entregues'].remove(i)
+                    else: st.session_state['entregues'].add(i)
+                    salvar_progresso(); st.rerun(scope="fragment")
+            
+            with cols[1]:
+                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+            
+            with cols[2]:
+                nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
+                if nova_seq != val_padrao:
+                    st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
-                    st.rerun(scope="fragment")
             
-            # Renderizar grid HTML
-            st.markdown(f"""
-                <div class="btn-grid">
-                    <button class="btn-done" onclick="document.querySelector('[data-testid=\\'stButton\\'][key=\\'toggle_{i}\\'] button').click()">
-                        {btn_icon}
-                    </button>
-                    <a class="btn-waze" href="{waze_url}" target="_blank">🚗</a>
-                    <input type="text" class="input-seq" value="{val_padrao}" id="seq_{i}" readonly>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Input real do Streamlit (escondido) para capturar mudanças
-            nova_seq = st.text_input("", value=val_padrao, key=f"seq_hidden_{i}", label_visibility="collapsed")
-            if nova_seq != val_padrao:
-                st.session_state['manual_sequences'][uid] = nova_seq
-                salvar_progresso()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FLUXO PRINCIPAL ---
 if st.session_state['df_final'] is None:
