@@ -374,11 +374,14 @@ def render_operacao():
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
-                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                    if entregue:
-                        st.session_state['entregues'].remove(uid)
-                    else:
-                        st.session_state['entregues'].add(uid)
+                # Checkbox persistente por UID (usa label não-vazio escondido por acessibilidade)
+                cb_label = f"Marcar entregue {int(row.get('ORDEM_PARADA', i))}"
+                checked = st.checkbox(cb_label, value=entregue, key=f"done_{uid}", label_visibility="collapsed", use_container_width=True)
+                if checked and uid not in st.session_state['entregues']:
+                    st.session_state['entregues'].add(uid)
+                    salvar_progresso()
+                if (not checked) and uid in st.session_state['entregues']:
+                    st.session_state['entregues'].remove(uid)
                     salvar_progresso()
                     # Removido st.rerun para evitar dupla rerun e reduzir flicker.
             with c_waze:
