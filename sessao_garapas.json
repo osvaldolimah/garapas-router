@@ -1,0 +1,7252 @@
+{
+  "df_final": [
+    {
+      "index": 0,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": "-",
+      "STOP": "-",
+      "SPX TN": "BR267125771015P",
+      "DESTINATION ADDRESS": "Rua 3, 455, Apto 1322",
+      "BAIRRO": "Parque iracema ",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.827073,
+      "LONGITUDE": -38.607328,
+      "UID": "cb47674acf745942e1766c2dbaa5649a74c4345d",
+      "ORDEM_PARADA": 1
+    },
+    {
+      "index": 38,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 39,
+      "STOP": 26,
+      "SPX TN": "BR263186623110A",
+      "DESTINATION ADDRESS": "Rua Pedro Luiz Sobrinho, 153",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60823-175",
+      "LATITUDE": -3.8016927,
+      "LONGITUDE": -38.5031586,
+      "UID": "70a07b57ae676c7c3b82852632863fae46c68125",
+      "ORDEM_PARADA": 2
+    },
+    {
+      "index": 39,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 40,
+      "STOP": 27,
+      "SPX TN": "BR266948758791B",
+      "DESTINATION ADDRESS": "Rua Rosa Regina, 186",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60823-170",
+      "LATITUDE": -3.801949,
+      "LONGITUDE": -38.5024185,
+      "UID": "7a3d66b53596872048777a44e5e296278e441c30",
+      "ORDEM_PARADA": 3
+    },
+    {
+      "index": 37,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 38,
+      "STOP": 25,
+      "SPX TN": "BR263450875969N",
+      "DESTINATION ADDRESS": "Rua Rosa Regina, 160",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60823-170",
+      "LATITUDE": -3.8023,
+      "LONGITUDE": -38.5026016,
+      "UID": "ea9d1fe7c0f8f2e3698dc9611c3b45d1a0669974",
+      "ORDEM_PARADA": 4
+    },
+    {
+      "index": 3,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 1,
+      "STOP": 1,
+      "SPX TN": "BR266337652748Z",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 222",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-130",
+      "LATITUDE": -3.7985449,
+      "LONGITUDE": -38.5026703,
+      "UID": "ed76e535fc0163eb0fc707b697eab61a3d64b552",
+      "ORDEM_PARADA": 5
+    },
+    {
+      "index": 85,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 86,
+      "STOP": 65,
+      "SPX TN": "BR269267843379R",
+      "DESTINATION ADDRESS": "Rua Júlio Lima, 300",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-500",
+      "LATITUDE": -3.797162,
+      "LONGITUDE": -38.5025199,
+      "UID": "1df484ac10c968d2287e894cb9dbbf715696c9d7",
+      "ORDEM_PARADA": 6
+    },
+    {
+      "index": 86,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 87,
+      "STOP": 66,
+      "SPX TN": "BR2692726464345",
+      "DESTINATION ADDRESS": "Rua Júlio Lima, 220",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-500",
+      "LATITUDE": -3.7973037,
+      "LONGITUDE": -38.5034142,
+      "UID": "edeff57cdebbeae5e9d56226ae55769629f1b74a",
+      "ORDEM_PARADA": 7
+    },
+    {
+      "index": 84,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 85,
+      "STOP": 64,
+      "SPX TN": "BR265949397932Y",
+      "DESTINATION ADDRESS": "Rua Teofredo Goiana, 314",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-630",
+      "LATITUDE": -3.7952449,
+      "LONGITUDE": -38.5024147,
+      "UID": "7789c2cd49f67e5c5424888e341e0429a702b4a2",
+      "ORDEM_PARADA": 8
+    },
+    {
+      "index": 4,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 2,
+      "STOP": 2,
+      "SPX TN": "BR268427297435F",
+      "DESTINATION ADDRESS": "Avenida Ulisses Bezerra, 1516",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-490",
+      "LATITUDE": -3.7988663,
+      "LONGITUDE": -38.5008698,
+      "UID": "8eaa413c6a9d8eb25bb4282041564e9aab8d7992",
+      "ORDEM_PARADA": 9
+    },
+    {
+      "index": 40,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 41,
+      "STOP": 28,
+      "SPX TN": "BR266878669459W",
+      "DESTINATION ADDRESS": "Rua Benjamim Moura, 190, Casa",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-480",
+      "LATITUDE": -3.7994971,
+      "LONGITUDE": -38.4996452,
+      "UID": "6b749f3e89922c70eb26a10eeab6e57b5355efee",
+      "ORDEM_PARADA": 10
+    },
+    {
+      "index": 12,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 11,
+      "STOP": 10,
+      "SPX TN": "BR2610489246709",
+      "DESTINATION ADDRESS": "Avenida Desembargador Gonzaga, 1630, amc ",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-062",
+      "LATITUDE": -3.8006513,
+      "LONGITUDE": -38.4977455,
+      "UID": "5b34d7c1c2c9b945667894fb47fe3c4026d5f12b",
+      "ORDEM_PARADA": 11
+    },
+    {
+      "index": 14,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 13,
+      "STOP": 12,
+      "SPX TN": "BR264845716475U",
+      "DESTINATION ADDRESS": "Rua Rita Bezerra Nogueira, 20, Na rua da santinha",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-080",
+      "LATITUDE": -3.8013906,
+      "LONGITUDE": -38.4978104,
+      "UID": "da014b4d33f8f1183035eb18c48010d354582507",
+      "ORDEM_PARADA": 12
+    },
+    {
+      "index": 13,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 12,
+      "STOP": 11,
+      "SPX TN": "BR268646403137O",
+      "DESTINATION ADDRESS": "Rua Joãozito Arruda, 2250, Casa 12",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-075",
+      "LATITUDE": -3.8029001,
+      "LONGITUDE": -38.4972992,
+      "UID": "14b20bfb093f633ba3b2f50001f2126956de54c6",
+      "ORDEM_PARADA": 13
+    },
+    {
+      "index": 15,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 14,
+      "STOP": 13,
+      "SPX TN": "BR265141564650W",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 1290, 1290",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8019598,
+      "LONGITUDE": -38.4959908,
+      "UID": "04f591a994e15557a0d7674bd44a93e7f2f6923f",
+      "ORDEM_PARADA": 14
+    },
+    {
+      "index": 16,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 15,
+      "STOP": 13,
+      "SPX TN": "BR2638188775853",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 1269",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8017166,
+      "LONGITUDE": -38.4960785,
+      "UID": "1a0c26e2d793c11bca9054679792f691bd888138",
+      "ORDEM_PARADA": 15
+    },
+    {
+      "index": 19,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 19,
+      "STOP": 15,
+      "SPX TN": "BR262812603919P",
+      "DESTINATION ADDRESS": "Rua Ademar de Castro, 48",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-035",
+      "LATITUDE": -3.8018961,
+      "LONGITUDE": -38.4954948,
+      "UID": "46ddf507939dc786c4c434023601520631295bca",
+      "ORDEM_PARADA": 16
+    },
+    {
+      "index": 17,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 17,
+      "STOP": 14,
+      "SPX TN": "BR261587501513E",
+      "DESTINATION ADDRESS": "Travessa Ademar de Castro, 53, Apto 204",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-038",
+      "LATITUDE": -3.8021636,
+      "LONGITUDE": -38.4950829,
+      "UID": "0ac96a5018dfa28929988a7749dd16d04e6e1e7d",
+      "ORDEM_PARADA": 17
+    },
+    {
+      "index": 18,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 18,
+      "STOP": 14,
+      "SPX TN": "BR2624785554675",
+      "DESTINATION ADDRESS": "Travessa Ademar de Castro, 53, Apto 204",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-038",
+      "LATITUDE": -3.8021636,
+      "LONGITUDE": -38.4950829,
+      "UID": "32ae934ebc3a9dcc2a1c151da9de8eb661d406a6",
+      "ORDEM_PARADA": 18
+    },
+    {
+      "index": 20,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 20,
+      "STOP": 16,
+      "SPX TN": "BR266097200851K",
+      "DESTINATION ADDRESS": "Rua Amâncio Valente, 155, Condominio Terraço dos Ventos",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-144",
+      "LATITUDE": -3.8039787,
+      "LONGITUDE": -38.493454,
+      "UID": "99529c638d5479d57ac17a2b5c9fe832170584a2",
+      "ORDEM_PARADA": 19
+    },
+    {
+      "index": 21,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 21,
+      "STOP": 17,
+      "SPX TN": "BR2652313273838",
+      "DESTINATION ADDRESS": "Rua José La Fayette Azevedo Lima, 155, Apto 402 bloco A2",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-146",
+      "LATITUDE": -3.8048263,
+      "LONGITUDE": -38.4937515,
+      "UID": "e9061c379711a0ccd5321cd0181e7456fa6eda2f",
+      "ORDEM_PARADA": 20
+    },
+    {
+      "index": 22,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 22,
+      "STOP": 17,
+      "SPX TN": "BR266324123651T",
+      "DESTINATION ADDRESS": "Rua José La Fayette Azevedo Lima, 155, AP301 Bl A3 Terraço das flores",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-146",
+      "LATITUDE": -3.8048263,
+      "LONGITUDE": -38.4937515,
+      "UID": "87d13154637e8ea468cdff078a5a2e0ae650f940",
+      "ORDEM_PARADA": 21
+    },
+    {
+      "index": 23,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 23,
+      "STOP": 17,
+      "SPX TN": "BR261556008657H",
+      "DESTINATION ADDRESS": "Rua José La Fayette Azevedo Lima, 155, Apto 201 Bloco D2",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-146",
+      "LATITUDE": -3.8048263,
+      "LONGITUDE": -38.4937515,
+      "UID": "307f638d19bf1ffa98f7608adc0b6e2b12ac9597",
+      "ORDEM_PARADA": 22
+    },
+    {
+      "index": 24,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 24,
+      "STOP": 18,
+      "SPX TN": "BR2697882334144",
+      "DESTINATION ADDRESS": "R Fernando Santos, 99, 1301 torre tre",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-005",
+      "LATITUDE": -3.8050425,
+      "LONGITUDE": -38.4958,
+      "UID": "d70d8ae7356f1035614452d91bf76f534a1c59cf",
+      "ORDEM_PARADA": 23
+    },
+    {
+      "index": 25,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 25,
+      "STOP": 19,
+      "SPX TN": "BR2695390099081",
+      "DESTINATION ADDRESS": "Rua Leda Porto Freire , 455, ap 931 Bloco C",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8052435,
+      "LONGITUDE": -38.4964961,
+      "UID": "b82aa0669ebf798935c29c1ff5b5cb82a19fd8a3",
+      "ORDEM_PARADA": 24
+    },
+    {
+      "index": 26,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 26,
+      "STOP": 20,
+      "SPX TN": "BR2659151417156",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 2013, Apto 101 BL D",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4964981,
+      "UID": "ff075f950fbc5dd0e3c8e7895d6bc27c3b834060",
+      "ORDEM_PARADA": 25
+    },
+    {
+      "index": 27,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 27,
+      "STOP": 20,
+      "SPX TN": "BR2650478365917",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 2013, Apto 101 BL D",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4964981,
+      "UID": "5ea1645bd47a1a72ed089640b249bc583a21fbdf",
+      "ORDEM_PARADA": 26
+    },
+    {
+      "index": 29,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 29,
+      "STOP": 20,
+      "SPX TN": "BR2643672292789",
+      "DESTINATION ADDRESS": "Rua Conego Braveza, 2013, Cond. PORTAL DE AVILA ap 801 D",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4964981,
+      "UID": "7b73df1bf83fa4a2e0a70b3677e8be743d9fd082",
+      "ORDEM_PARADA": 27
+    },
+    {
+      "index": 31,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 31,
+      "STOP": 20,
+      "SPX TN": "BR269534452134I",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 2013, 1301 D portal de avila",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-048",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4964981,
+      "UID": "4d6ffb6bc57c0496b22fd10af186da476839894e",
+      "ORDEM_PARADA": 28
+    },
+    {
+      "index": 28,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 28,
+      "STOP": 20,
+      "SPX TN": "BR269840348881D",
+      "DESTINATION ADDRESS": "Rua Leda Porto Freire, 200, Apt 1702 B - Portal de Ávila",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4965,
+      "UID": "a5b972b12c04e6a33c1ce08abc4d500da92d1f9c",
+      "ORDEM_PARADA": 29
+    },
+    {
+      "index": 30,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 30,
+      "STOP": 20,
+      "SPX TN": "BR2699526810098",
+      "DESTINATION ADDRESS": "Rua Leda Porto Freire, 200, Ap 402 torre D",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8046,
+      "LONGITUDE": -38.4965,
+      "UID": "9c912230d1e81c5245d7ee2b6c13e71b1a952a2a",
+      "ORDEM_PARADA": 30
+    },
+    {
+      "index": 32,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 33,
+      "STOP": 21,
+      "SPX TN": "BR267484844079M",
+      "DESTINATION ADDRESS": "rua leda porto freire, 101 A, Apto 1611 - Entegar a portaria",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8048992,
+      "LONGITUDE": -38.4976692,
+      "UID": "df35b3ce9a36e8c13d68258d68214b483e560e49",
+      "ORDEM_PARADA": 31
+    },
+    {
+      "index": 34,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 35,
+      "STOP": 22,
+      "SPX TN": "BR260118791861H",
+      "DESTINATION ADDRESS": "Rua leda porto freire, 101, C ap1234 Edificio El Rey",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8046644,
+      "LONGITUDE": -38.4980507,
+      "UID": "2eac44cec5fa93d2d40d7aa7d708beb58e5d668b",
+      "ORDEM_PARADA": 32
+    },
+    {
+      "index": 33,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 34,
+      "STOP": 22,
+      "SPX TN": "BR263512893204E",
+      "DESTINATION ADDRESS": "Rua Leda Porto Freire, 101 C, Apto 731",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-020",
+      "LATITUDE": -3.8046999,
+      "LONGITUDE": -38.4981003,
+      "UID": "c34ad7198c7bceb595c72cb91d8c4db748383986",
+      "ORDEM_PARADA": 33
+    },
+    {
+      "index": 35,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 36,
+      "STOP": 23,
+      "SPX TN": "BR2654428291934",
+      "DESTINATION ADDRESS": "Rua Professor Adelmir Jucá, 181, Esquina com R. Joãozito Arruda",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-100",
+      "LATITUDE": -3.8039932,
+      "LONGITUDE": -38.4987068,
+      "UID": "99071b132252e09071a74b3107ddc596f1d5aed7",
+      "ORDEM_PARADA": 34
+    },
+    {
+      "index": 36,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 37,
+      "STOP": 24,
+      "SPX TN": "BR269730023996N",
+      "DESTINATION ADDRESS": "Rua Professor Adelmir Jucá, 92, Rua em frente ao Pq Del Sol",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-100",
+      "LATITUDE": -3.8034098,
+      "LONGITUDE": -38.4989967,
+      "UID": "5825416c2e6102c7ed355f8fe5c6d51ca8a67d16",
+      "ORDEM_PARADA": 35
+    },
+    {
+      "index": 2,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": "-",
+      "STOP": "-",
+      "SPX TN": "BR266535920459Y",
+      "DESTINATION ADDRESS": "Rua Deputado Sebastião Brasilino de Freitas, 555, Bloco B ap 1402 parque del sol",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-010",
+      "LATITUDE": -3.80589,
+      "LONGITUDE": -38.497448,
+      "UID": "a7ab4dd52c2cc90384793ed18d657aa45ca06bec",
+      "ORDEM_PARADA": 36
+    },
+    {
+      "index": 10,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 9,
+      "STOP": 9,
+      "SPX TN": "BR260491685584X",
+      "DESTINATION ADDRESS": "Rua João Leonel apto 604, 1380, Amc",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-058",
+      "LATITUDE": -3.799891,
+      "LONGITUDE": -38.4964256,
+      "UID": "af4ba825b8f9644bf3821435371cff2a50a48483",
+      "ORDEM_PARADA": 37
+    },
+    {
+      "index": 11,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 10,
+      "STOP": 9,
+      "SPX TN": "BR261965953776P",
+      "DESTINATION ADDRESS": "Rua João Leonel, 1380, Apto 304",
+      "BAIRRO": "Parque Iracema",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60824-058",
+      "LATITUDE": -3.799891,
+      "LONGITUDE": -38.4964256,
+      "UID": "a0093ca5900402b8a1ab667fea150f549e7040df",
+      "ORDEM_PARADA": 38
+    },
+    {
+      "index": 41,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 42,
+      "STOP": 29,
+      "SPX TN": "BR266723480568V",
+      "DESTINATION ADDRESS": "Rua Cônego Braveza, 979, Casa b",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-815",
+      "LATITUDE": -3.7990109,
+      "LONGITUDE": -38.4972011,
+      "UID": "93750a8f1c02bec8760973dee17e7a9570a2b0ff",
+      "ORDEM_PARADA": 39
+    },
+    {
+      "index": 7,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 5,
+      "STOP": 5,
+      "SPX TN": "BR261238817650W",
+      "DESTINATION ADDRESS": "Rua Chico Lemos, 1228, Casa proxima ao colegio Master",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-785",
+      "LATITUDE": -3.7982335,
+      "LONGITUDE": -38.4960251,
+      "UID": "f1aa43cc9faad736c8ef339e7c5f0e34454ea67c",
+      "ORDEM_PARADA": 40
+    },
+    {
+      "index": 6,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 4,
+      "STOP": 4,
+      "SPX TN": "BR264970266771H",
+      "DESTINATION ADDRESS": "Rua Chico Lemos, 1190",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-785",
+      "LATITUDE": -3.7978239,
+      "LONGITUDE": -38.4962997,
+      "UID": "5357bb4fa9604b550b039255bcf5e274168726a5",
+      "ORDEM_PARADA": 41
+    },
+    {
+      "index": 42,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 43,
+      "STOP": 30,
+      "SPX TN": "BR2615375795452",
+      "DESTINATION ADDRESS": "Avenida Ulisses Bezerra, 2200, Prédio",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-490",
+      "LATITUDE": -3.7969999,
+      "LONGITUDE": -38.4958,
+      "UID": "69ff907f6d22eba4edd8a80e963907507a570c9d",
+      "ORDEM_PARADA": 42
+    },
+    {
+      "index": 5,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 3,
+      "STOP": 3,
+      "SPX TN": "BR268773651911K",
+      "DESTINATION ADDRESS": "Avenida Ulisses Bezerra, 2138",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-490",
+      "LATITUDE": -3.7971001,
+      "LONGITUDE": -38.4971085,
+      "UID": "1f678620bf4a3a80e2a52ddb8942468d67052ca3",
+      "ORDEM_PARADA": 43
+    },
+    {
+      "index": 79,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 80,
+      "STOP": 60,
+      "SPX TN": "BR2670231335805",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 1111, Dafonte Veiculos",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-131",
+      "LATITUDE": -3.7955637,
+      "LONGITUDE": -38.4966736,
+      "UID": "373166025795c755e7176c97eed2bac32247db89",
+      "ORDEM_PARADA": 44
+    },
+    {
+      "index": 81,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 82,
+      "STOP": 62,
+      "SPX TN": "BR263020192099E",
+      "DESTINATION ADDRESS": "Rua Júlio Lima, 940, Casa 25",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-500",
+      "LATITUDE": -3.7945974,
+      "LONGITUDE": -38.4969292,
+      "UID": "cb8d2eb553df64673f11e20dba08c0318149f951",
+      "ORDEM_PARADA": 45
+    },
+    {
+      "index": 82,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 83,
+      "STOP": 62,
+      "SPX TN": "BR264029820841F",
+      "DESTINATION ADDRESS": "Rua Júlio Lima, 940, Casa 12",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-500",
+      "LATITUDE": -3.7945974,
+      "LONGITUDE": -38.4969292,
+      "UID": "fce86edcf9df38fe1f7ef4f30504f3a402231889",
+      "ORDEM_PARADA": 46
+    },
+    {
+      "index": 80,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 81,
+      "STOP": 61,
+      "SPX TN": "BR267424123749Y",
+      "DESTINATION ADDRESS": "Rua Chico Lemos, 640",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-785",
+      "LATITUDE": -3.7938917,
+      "LONGITUDE": -38.4979477,
+      "UID": "7b28e8f607192b636aa852f306e7d6fa28ba2a16",
+      "ORDEM_PARADA": 47
+    },
+    {
+      "index": 83,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 84,
+      "STOP": 63,
+      "SPX TN": "BR2611775808632",
+      "DESTINATION ADDRESS": "Rua Cícero Alves de Souza, 247, Chamar no interfone",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-810",
+      "LATITUDE": -3.7944405,
+      "LONGITUDE": -38.4984932,
+      "UID": "e96157babfef83cc52fe9bc0aaf38aa99f50f2f6",
+      "ORDEM_PARADA": 48
+    },
+    {
+      "index": 77,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 78,
+      "STOP": 59,
+      "SPX TN": "BR266081378338F",
+      "DESTINATION ADDRESS": "Rua Vicente Lopes, 917",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-104",
+      "LATITUDE": -3.7944658,
+      "LONGITUDE": -38.4951019,
+      "UID": "dfff9539a28740bbdff52e8f61c9ea69c730d8d7",
+      "ORDEM_PARADA": 49
+    },
+    {
+      "index": 78,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 79,
+      "STOP": 59,
+      "SPX TN": "BR268349741446C",
+      "DESTINATION ADDRESS": "Rua Vicente Lopes, 917",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-104",
+      "LATITUDE": -3.7944658,
+      "LONGITUDE": -38.4951019,
+      "UID": "6ac1fb2e1df3a07c4a9939067456688945f141b3",
+      "ORDEM_PARADA": 50
+    },
+    {
+      "index": 76,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 77,
+      "STOP": 58,
+      "SPX TN": "BR2683273903978",
+      "DESTINATION ADDRESS": "Rua Vicente Lopes, 874",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-104",
+      "LATITUDE": -3.7938056,
+      "LONGITUDE": -38.4950638,
+      "UID": "b02d077c7c958f43106a2bc5ea8bbbfeb9bdd9e5",
+      "ORDEM_PARADA": 51
+    },
+    {
+      "index": 75,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 76,
+      "STOP": 57,
+      "SPX TN": "BR2698672858233",
+      "DESTINATION ADDRESS": "Rua Vicente Lopes, 995, APT 303",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-104",
+      "LATITUDE": -3.7951319,
+      "LONGITUDE": -38.4951172,
+      "UID": "d513acfcad855ff5740c11d083898f9ad93fad8e",
+      "ORDEM_PARADA": 52
+    },
+    {
+      "index": 57,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 58,
+      "STOP": 41,
+      "SPX TN": "BR265684734045H",
+      "DESTINATION ADDRESS": "Rua Walter de Castro, 568",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-070",
+      "LATITUDE": -3.7952908,
+      "LONGITUDE": -38.493478,
+      "UID": "8220c0d9d693bf9209098a5d04b88e96184ea73e",
+      "ORDEM_PARADA": 53
+    },
+    {
+      "index": 73,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 74,
+      "STOP": 56,
+      "SPX TN": "BR2686068692637",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 1515, Ao lado do pet shopping patas",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-131",
+      "LATITUDE": -3.7955806,
+      "LONGITUDE": -38.492836,
+      "UID": "7656263e1e9f710bdf01adef7b55e7b3419b1437",
+      "ORDEM_PARADA": 54
+    },
+    {
+      "index": 74,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 75,
+      "STOP": 56,
+      "SPX TN": "BR264223064158R",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 1532",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-131",
+      "LATITUDE": -3.7955806,
+      "LONGITUDE": -38.492836,
+      "UID": "a2df17291b5152c0940814579cd5a7f9a343fab3",
+      "ORDEM_PARADA": 55
+    },
+    {
+      "index": 72,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 73,
+      "STOP": 55,
+      "SPX TN": "BR2657598332445",
+      "DESTINATION ADDRESS": "Rua Trajano Alves de Aguiar, 401, Ap 306",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-060",
+      "LATITUDE": -3.7946,
+      "LONGITUDE": -38.4922981,
+      "UID": "c1c1ef0c803136f890bc9d62e43a85f4c91fde70",
+      "ORDEM_PARADA": 56
+    },
+    {
+      "index": 60,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 61,
+      "STOP": 43,
+      "SPX TN": "BR2687423344832",
+      "DESTINATION ADDRESS": "Rua General Castelo Branco, 287, casa",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-040",
+      "LATITUDE": -3.7946329,
+      "LONGITUDE": -38.4918671,
+      "UID": "6b1669e5b5ae23c87664a1b5a607a6d058c54212",
+      "ORDEM_PARADA": 57
+    },
+    {
+      "index": 58,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 59,
+      "STOP": 42,
+      "SPX TN": "BR2602306712153",
+      "DESTINATION ADDRESS": "Rua General Castelo Branco, 130, Clinica espaco vida",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-040",
+      "LATITUDE": -3.7941657,
+      "LONGITUDE": -38.4919487,
+      "UID": "31db67ab410594e737bd7daec3163316ef57ae20",
+      "ORDEM_PARADA": 58
+    },
+    {
+      "index": 59,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 60,
+      "STOP": 42,
+      "SPX TN": "BR262900391002Q",
+      "DESTINATION ADDRESS": "Rua General Castelo Branco, 130, Clinica espaco vida",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-040",
+      "LATITUDE": -3.7941657,
+      "LONGITUDE": -38.4919487,
+      "UID": "d7c5d48bdc51dd39d11751d4a8a248100e476f8b",
+      "ORDEM_PARADA": 59
+    },
+    {
+      "index": 71,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 72,
+      "STOP": 54,
+      "SPX TN": "BR2618018537153",
+      "DESTINATION ADDRESS": "Rua Trajano Alves de Aguiar, 239",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-060",
+      "LATITUDE": -3.7937739,
+      "LONGITUDE": -38.4925117,
+      "UID": "3602f4c82dba5bdb4a7de0ccd81ec12846c46af2",
+      "ORDEM_PARADA": 60
+    },
+    {
+      "index": 70,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 71,
+      "STOP": 53,
+      "SPX TN": "BR267844636927A",
+      "DESTINATION ADDRESS": "Rua General Castelo Branco, 16, Ao lado da padaria pao nosso",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-040",
+      "LATITUDE": -3.7927651,
+      "LONGITUDE": -38.4918137,
+      "UID": "25a4cc8d0bb9de9a0d3e59b2035b9a6866b6da04",
+      "ORDEM_PARADA": 61
+    },
+    {
+      "index": 69,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 70,
+      "STOP": 52,
+      "SPX TN": "BR2659285323182",
+      "DESTINATION ADDRESS": "Rua Padre Januário Campos, 226, Casa",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-705",
+      "LATITUDE": -3.7934999,
+      "LONGITUDE": -38.4898987,
+      "UID": "e7586a68c8b05a77dddc38b5fddf7a466d13f5c2",
+      "ORDEM_PARADA": 62
+    },
+    {
+      "index": 62,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 63,
+      "STOP": 45,
+      "SPX TN": "BR2617197763759",
+      "DESTINATION ADDRESS": "Rua Desembargador Avelar, 1320, A",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-125",
+      "LATITUDE": -3.7944374,
+      "LONGITUDE": -38.4899406,
+      "UID": "9cf236333fc03a12ada9f8bc805fc6ce899d3f02",
+      "ORDEM_PARADA": 63
+    },
+    {
+      "index": 61,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 62,
+      "STOP": 44,
+      "SPX TN": "BR2669148180765",
+      "DESTINATION ADDRESS": "Rua Joaquim Emídio de Castro, 347",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-575",
+      "LATITUDE": -3.7954552,
+      "LONGITUDE": -38.4912491,
+      "UID": "f64e91cc237ecd5be865052ccff6a713cbaf3e2b",
+      "ORDEM_PARADA": 64
+    },
+    {
+      "index": 43,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 44,
+      "STOP": 31,
+      "SPX TN": "BR260791136586T",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 1730, HDS REFRIGERAÇÃO",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-130",
+      "LATITUDE": -3.7960152,
+      "LONGITUDE": -38.4913234,
+      "UID": "2aa4e37f74a7454a3f67a4a80846ca301a665a5b",
+      "ORDEM_PARADA": 65
+    },
+    {
+      "index": 44,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 45,
+      "STOP": 32,
+      "SPX TN": "BR260864101470V",
+      "DESTINATION ADDRESS": "Avenida Oliveira Paiva, 1850, Do lado da uniboi",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-130",
+      "LATITUDE": -3.7962003,
+      "LONGITUDE": -38.4899292,
+      "UID": "a8908c0333ecb845a3985fd82749147bfe6482fb",
+      "ORDEM_PARADA": 66
+    },
+    {
+      "index": 45,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 46,
+      "STOP": 33,
+      "SPX TN": "BR2628108455795",
+      "DESTINATION ADDRESS": "Rua Pedro Firmeza, 1464, 1464",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-492",
+      "LATITUDE": -3.7982066,
+      "LONGITUDE": -38.4887428,
+      "UID": "56d906993b482c6515e1a45489646a4d61a587b5",
+      "ORDEM_PARADA": 67
+    },
+    {
+      "index": 46,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 47,
+      "STOP": 34,
+      "SPX TN": "BR266818401574V",
+      "DESTINATION ADDRESS": "Rua Máximo Linhares, 777, Torre felice ap 1301",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-482",
+      "LATITUDE": -3.7989051,
+      "LONGITUDE": -38.4908905,
+      "UID": "c734d58b4a62373c67eb6db7165a827b1044fa94",
+      "ORDEM_PARADA": 68
+    },
+    {
+      "index": 47,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 48,
+      "STOP": 34,
+      "SPX TN": "BR2632880528387",
+      "DESTINATION ADDRESS": "Rua Máximo Linhares, 777, Ap 704 Torre Vivace",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-482",
+      "LATITUDE": -3.7989051,
+      "LONGITUDE": -38.4908905,
+      "UID": "e2db18e45c7fc19014f21bf7c98e91c6ec6eb655",
+      "ORDEM_PARADA": 69
+    },
+    {
+      "index": 52,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 53,
+      "STOP": 37,
+      "SPX TN": "BR269644002695E",
+      "DESTINATION ADDRESS": "Rua Botelho Magalhães, 280, Casa",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-485",
+      "LATITUDE": -3.7985613,
+      "LONGITUDE": -38.4914551,
+      "UID": "48e793bac942d3da6414f3b93414000a2199b1d9",
+      "ORDEM_PARADA": 70
+    },
+    {
+      "index": 53,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 54,
+      "STOP": 37,
+      "SPX TN": "BR2641354426551",
+      "DESTINATION ADDRESS": "Rua Botelho Magalhães, 270",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-485",
+      "LATITUDE": -3.798393,
+      "LONGITUDE": -38.491436,
+      "UID": "012cdf6568e7184109c4131f08e3272e28a5c508",
+      "ORDEM_PARADA": 71
+    },
+    {
+      "index": 48,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 49,
+      "STOP": 35,
+      "SPX TN": "BR2621100540282",
+      "DESTINATION ADDRESS": "Rua Máximo Linhares, 380, casa",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-482",
+      "LATITUDE": -3.79882,
+      "LONGITUDE": -38.4923706,
+      "UID": "6505d45a1574d2fe5416694aeb54932d9d542aa9",
+      "ORDEM_PARADA": 72
+    },
+    {
+      "index": 50,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 51,
+      "STOP": 35,
+      "SPX TN": "BR2618072749068",
+      "DESTINATION ADDRESS": "Rua Máximo Linhares, 140",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-482",
+      "LATITUDE": -3.7988582,
+      "LONGITUDE": -38.4924088,
+      "UID": "b2630cd3216474f8fef9385cfdbfc3e2caea7c99",
+      "ORDEM_PARADA": 73
+    },
+    {
+      "index": 49,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 50,
+      "STOP": 35,
+      "SPX TN": "BR262791911530L",
+      "DESTINATION ADDRESS": "Rua Máximo Linhares, 309",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-482",
+      "LATITUDE": -3.7987895,
+      "LONGITUDE": -38.492691,
+      "UID": "7fb6dcbc0c933127533ed4090a0dd0316923bf7a",
+      "ORDEM_PARADA": 74
+    },
+    {
+      "index": 51,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 52,
+      "STOP": 36,
+      "SPX TN": "BR262785592068S",
+      "DESTINATION ADDRESS": "Rua Sabina Augusta, 302, Próximo ao papaleguas",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-498",
+      "LATITUDE": -3.7983086,
+      "LONGITUDE": -38.4924774,
+      "UID": "8543b6a897518cf08359268ba739dcea88758f5e",
+      "ORDEM_PARADA": 75
+    },
+    {
+      "index": 56,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 57,
+      "STOP": 40,
+      "SPX TN": "BR2677524248100",
+      "DESTINATION ADDRESS": "Rua Monsenhor Antero, 635, Casa 07",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-475",
+      "LATITUDE": -3.7972264,
+      "LONGITUDE": -38.4933319,
+      "UID": "62b1feb5b784324ca34789c71926867b37787876",
+      "ORDEM_PARADA": 76
+    },
+    {
+      "index": 8,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 6,
+      "STOP": 6,
+      "SPX TN": "BR2696824305918",
+      "DESTINATION ADDRESS": "Rua Manoel Monteiro, 1221, em frente a multiclinic",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-080",
+      "LATITUDE": -3.797956,
+      "LONGITUDE": -38.4942482,
+      "UID": "e48f3d7e2ba9810788d6ba396d7ec7a4f766ede1",
+      "ORDEM_PARADA": 77
+    },
+    {
+      "index": 9,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 8,
+      "STOP": 8,
+      "SPX TN": "BR261985747288U",
+      "DESTINATION ADDRESS": "Rua João Leonel, 1523",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-469",
+      "LATITUDE": -3.7992032,
+      "LONGITUDE": -38.4950943,
+      "UID": "7492569e029b3572ce142efece7e9f3c0291b6ba",
+      "ORDEM_PARADA": 78
+    },
+    {
+      "index": 55,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 56,
+      "STOP": 39,
+      "SPX TN": "BR267944905845A",
+      "DESTINATION ADDRESS": "Rua 10 B, 191, Próximo a praça do lago jacare",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-108",
+      "LATITUDE": -3.8004904,
+      "LONGITUDE": -38.4923325,
+      "UID": "d32a3e86f15da71cc751a3c514ca78d9688314b8",
+      "ORDEM_PARADA": 79
+    },
+    {
+      "index": 54,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 55,
+      "STOP": 38,
+      "SPX TN": "BR2667831016838",
+      "DESTINATION ADDRESS": "Rua Botelho Magalhães, 1050, Lago Jacareí",
+      "BAIRRO": "Cidade dos Funcionários",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60822-485",
+      "LATITUDE": -3.7997837,
+      "LONGITUDE": -38.4913139,
+      "UID": "27d8f22e0ec6ec0c7a4bcb90f19984a6b8ac3150",
+      "ORDEM_PARADA": 80
+    },
+    {
+      "index": 63,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 64,
+      "STOP": 46,
+      "SPX TN": "BR266576924216G",
+      "DESTINATION ADDRESS": "Rua Coronel Honório Vieira, 410, Vizinho ao Empório Delice",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-836",
+      "LATITUDE": -3.7952001,
+      "LONGITUDE": -38.4874611,
+      "UID": "fd5a0001fc5483d9710b20867bd2457b87129b59",
+      "ORDEM_PARADA": 81
+    },
+    {
+      "index": 66,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 67,
+      "STOP": 49,
+      "SPX TN": "BR260061767162E",
+      "DESTINATION ADDRESS": "Avenida Hermínio de Castro, 50, casa",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-825",
+      "LATITUDE": -3.7921062,
+      "LONGITUDE": -38.486621,
+      "UID": "f410200bde589cf9f190a81e033181e94ee387bf",
+      "ORDEM_PARADA": 82
+    },
+    {
+      "index": 65,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 66,
+      "STOP": 48,
+      "SPX TN": "BR265683176442V",
+      "DESTINATION ADDRESS": "Rua Onofre Sampaio Cavalcante, 371",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-820",
+      "LATITUDE": -3.7917993,
+      "LONGITUDE": -38.4854698,
+      "UID": "fe5027a1b34cdc6df06461af9daf3245e4116e67",
+      "ORDEM_PARADA": 83
+    },
+    {
+      "index": 1,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": "-",
+      "STOP": "-",
+      "SPX TN": "BR269447982058F",
+      "DESTINATION ADDRESS": "Rua Martins de Jesus, 1400, Casa",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-815",
+      "LATITUDE": -3.791201,
+      "LONGITUDE": -38.484516,
+      "UID": "725692e23c5ef236f95c0db77af1ff519cba2d3f",
+      "ORDEM_PARADA": 84
+    },
+    {
+      "index": 64,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 65,
+      "STOP": 47,
+      "SPX TN": "BR264098612919G",
+      "DESTINATION ADDRESS": "Rua Júnior Rocha, 950",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-585",
+      "LATITUDE": -3.7916384,
+      "LONGITUDE": -38.4877739,
+      "UID": "833a8e876254dda9e7f01fea41b7f5da96571297",
+      "ORDEM_PARADA": 85
+    },
+    {
+      "index": 68,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 69,
+      "STOP": 51,
+      "SPX TN": "BR267000972674P",
+      "DESTINATION ADDRESS": "Rua Padre Januário Campos, 99",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-705",
+      "LATITUDE": -3.792279,
+      "LONGITUDE": -38.4893112,
+      "UID": "ac395f8e8bcb3c1c0d2c041a042a500927887bb8",
+      "ORDEM_PARADA": 86
+    },
+    {
+      "index": 67,
+      "AT ID": "AT202601290YP52",
+      "SEQUENCE": 68,
+      "STOP": 50,
+      "SPX TN": "BR263650852344F",
+      "DESTINATION ADDRESS": "Rua Padre Januário Campos, 78",
+      "BAIRRO": "Parque Manibura",
+      "CITY": "Fortaleza",
+      "ZIPCODE/POSTAL CODE": "60821-705",
+      "LATITUDE": -3.7921199,
+      "LONGITUDE": -38.48947,
+      "UID": "5c2a8fe4a4b9850407133f83b8263b7c3c241007",
+      "ORDEM_PARADA": 87
+    }
+  ],
+  "road_path": [
+    [
+      -3.82701,
+      -38.607295
+    ],
+    [
+      -3.827151,
+      -38.607024
+    ],
+    [
+      -3.82731,
+      -38.607106
+    ],
+    [
+      -3.827614,
+      -38.607265
+    ],
+    [
+      -3.827789,
+      -38.607352
+    ],
+    [
+      -3.828431,
+      -38.60769
+    ],
+    [
+      -3.829045,
+      -38.608002
+    ],
+    [
+      -3.829694,
+      -38.608319
+    ],
+    [
+      -3.830322,
+      -38.608655
+    ],
+    [
+      -3.830636,
+      -38.608823
+    ],
+    [
+      -3.830857,
+      -38.608919
+    ],
+    [
+      -3.830921,
+      -38.608977
+    ],
+    [
+      -3.831804,
+      -38.609425
+    ],
+    [
+      -3.831947,
+      -38.609498
+    ],
+    [
+      -3.832087,
+      -38.60957
+    ],
+    [
+      -3.833157,
+      -38.610129
+    ],
+    [
+      -3.83412,
+      -38.610634
+    ],
+    [
+      -3.834526,
+      -38.610843
+    ],
+    [
+      -3.834596,
+      -38.610882
+    ],
+    [
+      -3.834645,
+      -38.610914
+    ],
+    [
+      -3.834781,
+      -38.610997
+    ],
+    [
+      -3.834486,
+      -38.61169
+    ],
+    [
+      -3.834333,
+      -38.612034
+    ],
+    [
+      -3.834173,
+      -38.612372
+    ],
+    [
+      -3.833546,
+      -38.613577
+    ],
+    [
+      -3.833546,
+      -38.613601
+    ],
+    [
+      -3.833551,
+      -38.613625
+    ],
+    [
+      -3.833561,
+      -38.613647
+    ],
+    [
+      -3.833576,
+      -38.613666
+    ],
+    [
+      -3.833595,
+      -38.61368
+    ],
+    [
+      -3.833617,
+      -38.61369
+    ],
+    [
+      -3.833641,
+      -38.613694
+    ],
+    [
+      -3.833665,
+      -38.613693
+    ],
+    [
+      -3.833688,
+      -38.613686
+    ],
+    [
+      -3.833708,
+      -38.613673
+    ],
+    [
+      -3.833906,
+      -38.613301
+    ],
+    [
+      -3.834572,
+      -38.612035
+    ],
+    [
+      -3.835051,
+      -38.611124
+    ],
+    [
+      -3.836651,
+      -38.607462
+    ],
+    [
+      -3.836853,
+      -38.607002
+    ],
+    [
+      -3.83762,
+      -38.605116
+    ],
+    [
+      -3.837696,
+      -38.604895
+    ],
+    [
+      -3.838373,
+      -38.602918
+    ],
+    [
+      -3.839199,
+      -38.600921
+    ],
+    [
+      -3.839263,
+      -38.600768
+    ],
+    [
+      -3.839524,
+      -38.600186
+    ],
+    [
+      -3.84035,
+      -38.598376
+    ],
+    [
+      -3.840662,
+      -38.597709
+    ],
+    [
+      -3.840684,
+      -38.597662
+    ],
+    [
+      -3.840727,
+      -38.597572
+    ],
+    [
+      -3.841552,
+      -38.595566
+    ],
+    [
+      -3.841757,
+      -38.595073
+    ],
+    [
+      -3.842028,
+      -38.59446
+    ],
+    [
+      -3.842199,
+      -38.594059
+    ],
+    [
+      -3.842443,
+      -38.593438
+    ],
+    [
+      -3.842665,
+      -38.592782
+    ],
+    [
+      -3.842724,
+      -38.592567
+    ],
+    [
+      -3.842828,
+      -38.592185
+    ],
+    [
+      -3.842947,
+      -38.591597
+    ],
+    [
+      -3.84301,
+      -38.591184
+    ],
+    [
+      -3.843077,
+      -38.590744
+    ],
+    [
+      -3.843213,
+      -38.589761
+    ],
+    [
+      -3.84329,
+      -38.589208
+    ],
+    [
+      -3.843524,
+      -38.587494
+    ],
+    [
+      -3.84369,
+      -38.586323
+    ],
+    [
+      -3.84388,
+      -38.584933
+    ],
+    [
+      -3.844092,
+      -38.583582
+    ],
+    [
+      -3.844097,
+      -38.583546
+    ],
+    [
+      -3.844352,
+      -38.581783
+    ],
+    [
+      -3.844387,
+      -38.581533
+    ],
+    [
+      -3.84441,
+      -38.581397
+    ],
+    [
+      -3.844497,
+      -38.580891
+    ],
+    [
+      -3.844652,
+      -38.580058
+    ],
+    [
+      -3.844667,
+      -38.579981
+    ],
+    [
+      -3.844792,
+      -38.579512
+    ],
+    [
+      -3.844842,
+      -38.579325
+    ],
+    [
+      -3.844988,
+      -38.578871
+    ],
+    [
+      -3.845046,
+      -38.578688
+    ],
+    [
+      -3.845317,
+      -38.578077
+    ],
+    [
+      -3.845805,
+      -38.576976
+    ],
+    [
+      -3.845906,
+      -38.576749
+    ],
+    [
+      -3.845924,
+      -38.576716
+    ],
+    [
+      -3.845958,
+      -38.576625
+    ],
+    [
+      -3.845991,
+      -38.57656
+    ],
+    [
+      -3.846185,
+      -38.576124
+    ],
+    [
+      -3.846295,
+      -38.57587
+    ],
+    [
+      -3.846546,
+      -38.575289
+    ],
+    [
+      -3.84656,
+      -38.575257
+    ],
+    [
+      -3.84673,
+      -38.574839
+    ],
+    [
+      -3.846797,
+      -38.574703
+    ],
+    [
+      -3.847136,
+      -38.573913
+    ],
+    [
+      -3.847228,
+      -38.573699
+    ],
+    [
+      -3.847471,
+      -38.573165
+    ],
+    [
+      -3.84768,
+      -38.572768
+    ],
+    [
+      -3.847702,
+      -38.572727
+    ],
+    [
+      -3.847726,
+      -38.572681
+    ],
+    [
+      -3.847957,
+      -38.572218
+    ],
+    [
+      -3.848068,
+      -38.571996
+    ],
+    [
+      -3.848126,
+      -38.571866
+    ],
+    [
+      -3.848203,
+      -38.571689
+    ],
+    [
+      -3.848469,
+      -38.571081
+    ],
+    [
+      -3.8486,
+      -38.570785
+    ],
+    [
+      -3.849437,
+      -38.568792
+    ],
+    [
+      -3.849838,
+      -38.567803
+    ],
+    [
+      -3.850373,
+      -38.566278
+    ],
+    [
+      -3.850819,
+      -38.565235
+    ],
+    [
+      -3.85099,
+      -38.564837
+    ],
+    [
+      -3.851176,
+      -38.564373
+    ],
+    [
+      -3.851542,
+      -38.563546
+    ],
+    [
+      -3.85188,
+      -38.562716
+    ],
+    [
+      -3.852199,
+      -38.561938
+    ],
+    [
+      -3.852299,
+      -38.561702
+    ],
+    [
+      -3.852421,
+      -38.561416
+    ],
+    [
+      -3.852497,
+      -38.56124
+    ],
+    [
+      -3.852544,
+      -38.561132
+    ],
+    [
+      -3.853133,
+      -38.559806
+    ],
+    [
+      -3.853247,
+      -38.559542
+    ],
+    [
+      -3.85331,
+      -38.559399
+    ],
+    [
+      -3.853467,
+      -38.55902
+    ],
+    [
+      -3.853513,
+      -38.558907
+    ],
+    [
+      -3.854662,
+      -38.556211
+    ],
+    [
+      -3.854696,
+      -38.556133
+    ],
+    [
+      -3.855104,
+      -38.555197
+    ],
+    [
+      -3.855213,
+      -38.55498
+    ],
+    [
+      -3.855657,
+      -38.554092
+    ],
+    [
+      -3.855806,
+      -38.553767
+    ],
+    [
+      -3.855864,
+      -38.553658
+    ],
+    [
+      -3.855929,
+      -38.5535
+    ],
+    [
+      -3.856271,
+      -38.552675
+    ],
+    [
+      -3.856561,
+      -38.551973
+    ],
+    [
+      -3.857228,
+      -38.550483
+    ],
+    [
+      -3.857447,
+      -38.549864
+    ],
+    [
+      -3.857544,
+      -38.549581
+    ],
+    [
+      -3.857617,
+      -38.549334
+    ],
+    [
+      -3.857753,
+      -38.548822
+    ],
+    [
+      -3.857844,
+      -38.548478
+    ],
+    [
+      -3.857866,
+      -38.548384
+    ],
+    [
+      -3.857885,
+      -38.548304
+    ],
+    [
+      -3.857915,
+      -38.548172
+    ],
+    [
+      -3.858061,
+      -38.547557
+    ],
+    [
+      -3.858185,
+      -38.546829
+    ],
+    [
+      -3.858233,
+      -38.546634
+    ],
+    [
+      -3.858341,
+      -38.546191
+    ],
+    [
+      -3.85856,
+      -38.545161
+    ],
+    [
+      -3.858822,
+      -38.544115
+    ],
+    [
+      -3.859438,
+      -38.541438
+    ],
+    [
+      -3.85972,
+      -38.540248
+    ],
+    [
+      -3.859883,
+      -38.539557
+    ],
+    [
+      -3.85999,
+      -38.539099
+    ],
+    [
+      -3.860262,
+      -38.538003
+    ],
+    [
+      -3.860545,
+      -38.537298
+    ],
+    [
+      -3.860685,
+      -38.536886
+    ],
+    [
+      -3.860953,
+      -38.535766
+    ],
+    [
+      -3.860989,
+      -38.535609
+    ],
+    [
+      -3.861167,
+      -38.534828
+    ],
+    [
+      -3.861375,
+      -38.53394
+    ],
+    [
+      -3.861857,
+      -38.531837
+    ],
+    [
+      -3.861968,
+      -38.53135
+    ],
+    [
+      -3.862179,
+      -38.530425
+    ],
+    [
+      -3.862486,
+      -38.529097
+    ],
+    [
+      -3.862721,
+      -38.528106
+    ],
+    [
+      -3.862866,
+      -38.527606
+    ],
+    [
+      -3.863061,
+      -38.526992
+    ],
+    [
+      -3.863201,
+      -38.526482
+    ],
+    [
+      -3.863296,
+      -38.526074
+    ],
+    [
+      -3.863455,
+      -38.52538
+    ],
+    [
+      -3.863629,
+      -38.524614
+    ],
+    [
+      -3.863963,
+      -38.523151
+    ],
+    [
+      -3.864011,
+      -38.522902
+    ],
+    [
+      -3.864054,
+      -38.522664
+    ],
+    [
+      -3.864291,
+      -38.521273
+    ],
+    [
+      -3.86466,
+      -38.519596
+    ],
+    [
+      -3.864676,
+      -38.519523
+    ],
+    [
+      -3.864725,
+      -38.519316
+    ],
+    [
+      -3.864733,
+      -38.519283
+    ],
+    [
+      -3.864779,
+      -38.519071
+    ],
+    [
+      -3.864936,
+      -38.518394
+    ],
+    [
+      -3.865099,
+      -38.517746
+    ],
+    [
+      -3.865221,
+      -38.517344
+    ],
+    [
+      -3.865428,
+      -38.516798
+    ],
+    [
+      -3.86559,
+      -38.516412
+    ],
+    [
+      -3.865987,
+      -38.515639
+    ],
+    [
+      -3.866119,
+      -38.515367
+    ],
+    [
+      -3.866224,
+      -38.515109
+    ],
+    [
+      -3.866474,
+      -38.514483
+    ],
+    [
+      -3.86661,
+      -38.51404
+    ],
+    [
+      -3.866763,
+      -38.513583
+    ],
+    [
+      -3.867006,
+      -38.512987
+    ],
+    [
+      -3.86716,
+      -38.512611
+    ],
+    [
+      -3.86757,
+      -38.511643
+    ],
+    [
+      -3.867892,
+      -38.510915
+    ],
+    [
+      -3.868139,
+      -38.51024
+    ],
+    [
+      -3.868291,
+      -38.509787
+    ],
+    [
+      -3.868323,
+      -38.509693
+    ],
+    [
+      -3.868407,
+      -38.509446
+    ],
+    [
+      -3.868801,
+      -38.508063
+    ],
+    [
+      -3.868958,
+      -38.507509
+    ],
+    [
+      -3.869562,
+      -38.505408
+    ],
+    [
+      -3.869572,
+      -38.505368
+    ],
+    [
+      -3.869686,
+      -38.504942
+    ],
+    [
+      -3.870453,
+      -38.502281
+    ],
+    [
+      -3.870594,
+      -38.5018
+    ],
+    [
+      -3.870602,
+      -38.501774
+    ],
+    [
+      -3.870696,
+      -38.501461
+    ],
+    [
+      -3.870887,
+      -38.500739
+    ],
+    [
+      -3.870977,
+      -38.500436
+    ],
+    [
+      -3.871297,
+      -38.499327
+    ],
+    [
+      -3.871321,
+      -38.499251
+    ],
+    [
+      -3.871673,
+      -38.49801
+    ],
+    [
+      -3.871675,
+      -38.498003
+    ],
+    [
+      -3.871761,
+      -38.497821
+    ],
+    [
+      -3.871834,
+      -38.497728
+    ],
+    [
+      -3.871924,
+      -38.49767
+    ],
+    [
+      -3.872043,
+      -38.49763
+    ],
+    [
+      -3.872195,
+      -38.497615
+    ],
+    [
+      -3.8723,
+      -38.497643
+    ],
+    [
+      -3.872432,
+      -38.49771
+    ],
+    [
+      -3.872522,
+      -38.497799
+    ],
+    [
+      -3.872579,
+      -38.49789
+    ],
+    [
+      -3.872612,
+      -38.497986
+    ],
+    [
+      -3.872625,
+      -38.498055
+    ],
+    [
+      -3.872623,
+      -38.498156
+    ],
+    [
+      -3.872603,
+      -38.498255
+    ],
+    [
+      -3.872562,
+      -38.498344
+    ],
+    [
+      -3.872494,
+      -38.498435
+    ],
+    [
+      -3.872395,
+      -38.498512
+    ],
+    [
+      -3.872252,
+      -38.498567
+    ],
+    [
+      -3.87209,
+      -38.49861
+    ],
+    [
+      -3.870906,
+      -38.498265
+    ],
+    [
+      -3.870091,
+      -38.498012
+    ],
+    [
+      -3.869912,
+      -38.497959
+    ],
+    [
+      -3.869048,
+      -38.497735
+    ],
+    [
+      -3.868471,
+      -38.497607
+    ],
+    [
+      -3.867964,
+      -38.49754
+    ],
+    [
+      -3.867698,
+      -38.497531
+    ],
+    [
+      -3.867145,
+      -38.497522
+    ],
+    [
+      -3.866948,
+      -38.497519
+    ],
+    [
+      -3.866463,
+      -38.497525
+    ],
+    [
+      -3.865816,
+      -38.497509
+    ],
+    [
+      -3.865704,
+      -38.49751
+    ],
+    [
+      -3.864822,
+      -38.497511
+    ],
+    [
+      -3.864736,
+      -38.497504
+    ],
+    [
+      -3.863947,
+      -38.497439
+    ],
+    [
+      -3.863584,
+      -38.497401
+    ],
+    [
+      -3.862962,
+      -38.497296
+    ],
+    [
+      -3.862407,
+      -38.497163
+    ],
+    [
+      -3.861442,
+      -38.496944
+    ],
+    [
+      -3.861028,
+      -38.496842
+    ],
+    [
+      -3.860641,
+      -38.496747
+    ],
+    [
+      -3.860548,
+      -38.496724
+    ],
+    [
+      -3.8596,
+      -38.496493
+    ],
+    [
+      -3.858648,
+      -38.496298
+    ],
+    [
+      -3.858548,
+      -38.496281
+    ],
+    [
+      -3.857761,
+      -38.496146
+    ],
+    [
+      -3.857442,
+      -38.496085
+    ],
+    [
+      -3.856798,
+      -38.49597
+    ],
+    [
+      -3.855906,
+      -38.49581
+    ],
+    [
+      -3.855713,
+      -38.495777
+    ],
+    [
+      -3.855023,
+      -38.495659
+    ],
+    [
+      -3.853589,
+      -38.495407
+    ],
+    [
+      -3.853365,
+      -38.495368
+    ],
+    [
+      -3.853228,
+      -38.495344
+    ],
+    [
+      -3.85309,
+      -38.495339
+    ],
+    [
+      -3.852952,
+      -38.495339
+    ],
+    [
+      -3.8528,
+      -38.49535
+    ],
+    [
+      -3.852675,
+      -38.495374
+    ],
+    [
+      -3.852523,
+      -38.495414
+    ],
+    [
+      -3.852264,
+      -38.495412
+    ],
+    [
+      -3.852025,
+      -38.495408
+    ],
+    [
+      -3.851992,
+      -38.495406
+    ],
+    [
+      -3.851903,
+      -38.495427
+    ],
+    [
+      -3.851413,
+      -38.495441
+    ],
+    [
+      -3.851183,
+      -38.495468
+    ],
+    [
+      -3.85095,
+      -38.495509
+    ],
+    [
+      -3.850486,
+      -38.495628
+    ],
+    [
+      -3.850192,
+      -38.495714
+    ],
+    [
+      -3.850046,
+      -38.495768
+    ],
+    [
+      -3.849917,
+      -38.495818
+    ],
+    [
+      -3.849589,
+      -38.495946
+    ],
+    [
+      -3.84925,
+      -38.496085
+    ],
+    [
+      -3.848964,
+      -38.496226
+    ],
+    [
+      -3.848808,
+      -38.496304
+    ],
+    [
+      -3.848569,
+      -38.496423
+    ],
+    [
+      -3.84847,
+      -38.496473
+    ],
+    [
+      -3.84818,
+      -38.49662
+    ],
+    [
+      -3.847724,
+      -38.496831
+    ],
+    [
+      -3.847352,
+      -38.497013
+    ],
+    [
+      -3.846118,
+      -38.497617
+    ],
+    [
+      -3.845881,
+      -38.49771
+    ],
+    [
+      -3.84555,
+      -38.497868
+    ],
+    [
+      -3.845452,
+      -38.497915
+    ],
+    [
+      -3.844922,
+      -38.498164
+    ],
+    [
+      -3.843947,
+      -38.498669
+    ],
+    [
+      -3.84316,
+      -38.499033
+    ],
+    [
+      -3.842951,
+      -38.499129
+    ],
+    [
+      -3.842439,
+      -38.499372
+    ],
+    [
+      -3.842043,
+      -38.499578
+    ],
+    [
+      -3.841071,
+      -38.500054
+    ],
+    [
+      -3.840667,
+      -38.500256
+    ],
+    [
+      -3.839972,
+      -38.500589
+    ],
+    [
+      -3.839618,
+      -38.500759
+    ],
+    [
+      -3.838973,
+      -38.501072
+    ],
+    [
+      -3.838624,
+      -38.501241
+    ],
+    [
+      -3.837537,
+      -38.501759
+    ],
+    [
+      -3.836634,
+      -38.502188
+    ],
+    [
+      -3.836256,
+      -38.502373
+    ],
+    [
+      -3.835783,
+      -38.502598
+    ],
+    [
+      -3.835534,
+      -38.502717
+    ],
+    [
+      -3.835462,
+      -38.502748
+    ],
+    [
+      -3.834745,
+      -38.503094
+    ],
+    [
+      -3.833996,
+      -38.503461
+    ],
+    [
+      -3.833253,
+      -38.503828
+    ],
+    [
+      -3.832882,
+      -38.50401
+    ],
+    [
+      -3.832677,
+      -38.50411
+    ],
+    [
+      -3.832035,
+      -38.504397
+    ],
+    [
+      -3.831974,
+      -38.504428
+    ],
+    [
+      -3.831885,
+      -38.504472
+    ],
+    [
+      -3.831509,
+      -38.504623
+    ],
+    [
+      -3.831212,
+      -38.504704
+    ],
+    [
+      -3.830995,
+      -38.504767
+    ],
+    [
+      -3.830956,
+      -38.504775
+    ],
+    [
+      -3.830551,
+      -38.504855
+    ],
+    [
+      -3.830176,
+      -38.504902
+    ],
+    [
+      -3.82982,
+      -38.504932
+    ],
+    [
+      -3.829725,
+      -38.50493
+    ],
+    [
+      -3.829655,
+      -38.50493
+    ],
+    [
+      -3.829353,
+      -38.504917
+    ],
+    [
+      -3.829214,
+      -38.504909
+    ],
+    [
+      -3.82886,
+      -38.504866
+    ],
+    [
+      -3.828737,
+      -38.504844
+    ],
+    [
+      -3.827823,
+      -38.504628
+    ],
+    [
+      -3.826903,
+      -38.504392
+    ],
+    [
+      -3.826707,
+      -38.504343
+    ],
+    [
+      -3.826509,
+      -38.504294
+    ],
+    [
+      -3.826027,
+      -38.504174
+    ],
+    [
+      -3.825126,
+      -38.503944
+    ],
+    [
+      -3.824254,
+      -38.503715
+    ],
+    [
+      -3.823998,
+      -38.503647
+    ],
+    [
+      -3.823222,
+      -38.503452
+    ],
+    [
+      -3.822414,
+      -38.503235
+    ],
+    [
+      -3.821879,
+      -38.503097
+    ],
+    [
+      -3.821596,
+      -38.503024
+    ],
+    [
+      -3.820517,
+      -38.502768
+    ],
+    [
+      -3.819356,
+      -38.502469
+    ],
+    [
+      -3.818829,
+      -38.502331
+    ],
+    [
+      -3.818127,
+      -38.502153
+    ],
+    [
+      -3.817348,
+      -38.501933
+    ],
+    [
+      -3.816217,
+      -38.501658
+    ],
+    [
+      -3.816127,
+      -38.501636
+    ],
+    [
+      -3.815395,
+      -38.501455
+    ],
+    [
+      -3.814672,
+      -38.50126
+    ],
+    [
+      -3.814346,
+      -38.501183
+    ],
+    [
+      -3.813482,
+      -38.500967
+    ],
+    [
+      -3.813219,
+      -38.500895
+    ],
+    [
+      -3.8125,
+      -38.500719
+    ],
+    [
+      -3.811963,
+      -38.500593
+    ],
+    [
+      -3.811743,
+      -38.500565
+    ],
+    [
+      -3.811548,
+      -38.500541
+    ],
+    [
+      -3.81135,
+      -38.500531
+    ],
+    [
+      -3.811086,
+      -38.500455
+    ],
+    [
+      -3.810981,
+      -38.500426
+    ],
+    [
+      -3.81083,
+      -38.500391
+    ],
+    [
+      -3.810729,
+      -38.500393
+    ],
+    [
+      -3.810622,
+      -38.500405
+    ],
+    [
+      -3.810348,
+      -38.500432
+    ],
+    [
+      -3.810154,
+      -38.500456
+    ],
+    [
+      -3.809816,
+      -38.500506
+    ],
+    [
+      -3.809677,
+      -38.500537
+    ],
+    [
+      -3.809437,
+      -38.500598
+    ],
+    [
+      -3.80917,
+      -38.500681
+    ],
+    [
+      -3.808673,
+      -38.500872
+    ],
+    [
+      -3.807615,
+      -38.50138
+    ],
+    [
+      -3.806998,
+      -38.50166
+    ],
+    [
+      -3.806917,
+      -38.501698
+    ],
+    [
+      -3.806828,
+      -38.501738
+    ],
+    [
+      -3.806307,
+      -38.501975
+    ],
+    [
+      -3.806196,
+      -38.502012
+    ],
+    [
+      -3.804668,
+      -38.502674
+    ],
+    [
+      -3.803325,
+      -38.503297
+    ],
+    [
+      -3.803139,
+      -38.503385
+    ],
+    [
+      -3.803076,
+      -38.503415
+    ],
+    [
+      -3.80298,
+      -38.50346
+    ],
+    [
+      -3.802941,
+      -38.503478
+    ],
+    [
+      -3.802391,
+      -38.503719
+    ],
+    [
+      -3.801838,
+      -38.503973
+    ],
+    [
+      -3.801783,
+      -38.503623
+    ],
+    [
+      -3.801711,
+      -38.503156
+    ],
+    [
+      -3.801703,
+      -38.503107
+    ],
+    [
+      -3.802025,
+      -38.502961
+    ],
+    [
+      -3.802056,
+      -38.502935
+    ],
+    [
+      -3.802077,
+      -38.502897
+    ],
+    [
+      -3.802085,
+      -38.502872
+    ],
+    [
+      -3.802085,
+      -38.502844
+    ],
+    [
+      -3.802069,
+      -38.502774
+    ],
+    [
+      -3.802007,
+      -38.502587
+    ],
+    [
+      -3.801876,
+      -38.502255
+    ],
+    [
+      -3.801942,
+      -38.502422
+    ],
+    [
+      -3.802007,
+      -38.502587
+    ],
+    [
+      -3.802069,
+      -38.502774
+    ],
+    [
+      -3.802085,
+      -38.502844
+    ],
+    [
+      -3.802085,
+      -38.502872
+    ],
+    [
+      -3.802077,
+      -38.502897
+    ],
+    [
+      -3.802056,
+      -38.502935
+    ],
+    [
+      -3.802025,
+      -38.502961
+    ],
+    [
+      -3.801703,
+      -38.503107
+    ],
+    [
+      -3.801641,
+      -38.502783
+    ],
+    [
+      -3.801579,
+      -38.502453
+    ],
+    [
+      -3.801561,
+      -38.502358
+    ],
+    [
+      -3.80136,
+      -38.501187
+    ],
+    [
+      -3.801278,
+      -38.500717
+    ],
+    [
+      -3.801204,
+      -38.5003
+    ],
+    [
+      -3.801167,
+      -38.500081
+    ],
+    [
+      -3.801151,
+      -38.499976
+    ],
+    [
+      -3.801141,
+      -38.499923
+    ],
+    [
+      -3.801129,
+      -38.499872
+    ],
+    [
+      -3.801039,
+      -38.499436
+    ],
+    [
+      -3.800992,
+      -38.499254
+    ],
+    [
+      -3.800968,
+      -38.499161
+    ],
+    [
+      -3.800939,
+      -38.499066
+    ],
+    [
+      -3.800811,
+      -38.498731
+    ],
+    [
+      -3.800687,
+      -38.498405
+    ],
+    [
+      -3.800449,
+      -38.497832
+    ],
+    [
+      -3.800418,
+      -38.497759
+    ],
+    [
+      -3.800479,
+      -38.49772
+    ],
+    [
+      -3.800537,
+      -38.497683
+    ],
+    [
+      -3.800604,
+      -38.49764
+    ],
+    [
+      -3.800681,
+      -38.49759
+    ],
+    [
+      -3.800787,
+      -38.497517
+    ],
+    [
+      -3.801035,
+      -38.497344
+    ],
+    [
+      -3.801432,
+      -38.497054
+    ],
+    [
+      -3.801493,
+      -38.497009
+    ],
+    [
+      -3.801526,
+      -38.496985
+    ],
+    [
+      -3.801589,
+      -38.497036
+    ],
+    [
+      -3.801635,
+      -38.497075
+    ],
+    [
+      -3.801723,
+      -38.4971
+    ],
+    [
+      -3.802079,
+      -38.497305
+    ],
+    [
+      -3.80219,
+      -38.497371
+    ],
+    [
+      -3.802358,
+      -38.497472
+    ],
+    [
+      -3.802603,
+      -38.497626
+    ],
+    [
+      -3.802645,
+      -38.497649
+    ],
+    [
+      -3.803162,
+      -38.497968
+    ],
+    [
+      -3.803521,
+      -38.498165
+    ],
+    [
+      -3.803717,
+      -38.498284
+    ],
+    [
+      -3.804239,
+      -38.498568
+    ],
+    [
+      -3.804333,
+      -38.498618
+    ],
+    [
+      -3.804597,
+      -38.498768
+    ],
+    [
+      -3.804649,
+      -38.498783
+    ],
+    [
+      -3.804708,
+      -38.498787
+    ],
+    [
+      -3.804745,
+      -38.498765
+    ],
+    [
+      -3.805259,
+      -38.498075
+    ],
+    [
+      -3.805744,
+      -38.498222
+    ],
+    [
+      -3.805934,
+      -38.49828
+    ],
+    [
+      -3.806471,
+      -38.498443
+    ],
+    [
+      -3.806904,
+      -38.498574
+    ],
+    [
+      -3.807218,
+      -38.498665
+    ],
+    [
+      -3.807251,
+      -38.498876
+    ],
+    [
+      -3.807277,
+      -38.499038
+    ],
+    [
+      -3.807289,
+      -38.49912
+    ],
+    [
+      -3.807334,
+      -38.499401
+    ],
+    [
+      -3.807491,
+      -38.50054
+    ],
+    [
+      -3.807615,
+      -38.50138
+    ],
+    [
+      -3.806998,
+      -38.50166
+    ],
+    [
+      -3.806917,
+      -38.501698
+    ],
+    [
+      -3.806828,
+      -38.501738
+    ],
+    [
+      -3.806307,
+      -38.501975
+    ],
+    [
+      -3.806196,
+      -38.502012
+    ],
+    [
+      -3.804668,
+      -38.502674
+    ],
+    [
+      -3.803325,
+      -38.503297
+    ],
+    [
+      -3.803139,
+      -38.503385
+    ],
+    [
+      -3.803016,
+      -38.503317
+    ],
+    [
+      -3.802972,
+      -38.503185
+    ],
+    [
+      -3.802879,
+      -38.502939
+    ],
+    [
+      -3.802783,
+      -38.502802
+    ],
+    [
+      -3.802583,
+      -38.502695
+    ],
+    [
+      -3.802516,
+      -38.502519
+    ],
+    [
+      -3.802259,
+      -38.501843
+    ],
+    [
+      -3.802378,
+      -38.501788
+    ],
+    [
+      -3.802418,
+      -38.501902
+    ],
+    [
+      -3.802506,
+      -38.502151
+    ],
+    [
+      -3.802528,
+      -38.502211
+    ],
+    [
+      -3.802562,
+      -38.502303
+    ],
+    [
+      -3.802626,
+      -38.502411
+    ],
+    [
+      -3.80273,
+      -38.502662
+    ],
+    [
+      -3.802783,
+      -38.502802
+    ],
+    [
+      -3.802879,
+      -38.502939
+    ],
+    [
+      -3.802972,
+      -38.503185
+    ],
+    [
+      -3.803016,
+      -38.503317
+    ],
+    [
+      -3.80298,
+      -38.50346
+    ],
+    [
+      -3.802941,
+      -38.503478
+    ],
+    [
+      -3.802391,
+      -38.503719
+    ],
+    [
+      -3.801838,
+      -38.503973
+    ],
+    [
+      -3.801696,
+      -38.504041
+    ],
+    [
+      -3.800776,
+      -38.504485
+    ],
+    [
+      -3.800618,
+      -38.504461
+    ],
+    [
+      -3.800548,
+      -38.504445
+    ],
+    [
+      -3.800479,
+      -38.50442
+    ],
+    [
+      -3.800432,
+      -38.504388
+    ],
+    [
+      -3.800385,
+      -38.504351
+    ],
+    [
+      -3.800331,
+      -38.504295
+    ],
+    [
+      -3.800283,
+      -38.504221
+    ],
+    [
+      -3.800244,
+      -38.50416
+    ],
+    [
+      -3.800191,
+      -38.504084
+    ],
+    [
+      -3.800154,
+      -38.50404
+    ],
+    [
+      -3.800114,
+      -38.504008
+    ],
+    [
+      -3.800062,
+      -38.503971
+    ],
+    [
+      -3.800008,
+      -38.503938
+    ],
+    [
+      -3.799924,
+      -38.503903
+    ],
+    [
+      -3.799872,
+      -38.503891
+    ],
+    [
+      -3.799821,
+      -38.503889
+    ],
+    [
+      -3.799719,
+      -38.503889
+    ],
+    [
+      -3.799625,
+      -38.503905
+    ],
+    [
+      -3.799536,
+      -38.503935
+    ],
+    [
+      -3.799448,
+      -38.503963
+    ],
+    [
+      -3.799397,
+      -38.503974
+    ],
+    [
+      -3.799357,
+      -38.503975
+    ],
+    [
+      -3.799287,
+      -38.503972
+    ],
+    [
+      -3.799222,
+      -38.503963
+    ],
+    [
+      -3.799146,
+      -38.503931
+    ],
+    [
+      -3.799106,
+      -38.503911
+    ],
+    [
+      -3.799036,
+      -38.503866
+    ],
+    [
+      -3.798964,
+      -38.503821
+    ],
+    [
+      -3.798836,
+      -38.503546
+    ],
+    [
+      -3.798652,
+      -38.50315
+    ],
+    [
+      -3.798475,
+      -38.502764
+    ],
+    [
+      -3.798452,
+      -38.502713
+    ],
+    [
+      -3.798448,
+      -38.502705
+    ],
+    [
+      -3.798392,
+      -38.502583
+    ],
+    [
+      -3.797774,
+      -38.501224
+    ],
+    [
+      -3.797252,
+      -38.50008
+    ],
+    [
+      -3.79722,
+      -38.500009
+    ],
+    [
+      -3.797169,
+      -38.499893
+    ],
+    [
+      -3.797144,
+      -38.499834
+    ],
+    [
+      -3.797078,
+      -38.499688
+    ],
+    [
+      -3.796544,
+      -38.498518
+    ],
+    [
+      -3.796506,
+      -38.498436
+    ],
+    [
+      -3.796434,
+      -38.498468
+    ],
+    [
+      -3.79647,
+      -38.498549
+    ],
+    [
+      -3.797072,
+      -38.499865
+    ],
+    [
+      -3.797098,
+      -38.499924
+    ],
+    [
+      -3.797103,
+      -38.499937
+    ],
+    [
+      -3.797149,
+      -38.500041
+    ],
+    [
+      -3.797181,
+      -38.500112
+    ],
+    [
+      -3.797704,
+      -38.501255
+    ],
+    [
+      -3.797664,
+      -38.501274
+    ],
+    [
+      -3.796722,
+      -38.501709
+    ],
+    [
+      -3.797073,
+      -38.502461
+    ],
+    [
+      -3.797112,
+      -38.502544
+    ],
+    [
+      -3.797349,
+      -38.503053
+    ],
+    [
+      -3.797477,
+      -38.503336
+    ],
+    [
+      -3.797959,
+      -38.504402
+    ],
+    [
+      -3.79698,
+      -38.504848
+    ],
+    [
+      -3.795985,
+      -38.505334
+    ],
+    [
+      -3.795365,
+      -38.503973
+    ],
+    [
+      -3.794925,
+      -38.503015
+    ],
+    [
+      -3.794749,
+      -38.502633
+    ],
+    [
+      -3.794788,
+      -38.502614
+    ],
+    [
+      -3.795238,
+      -38.502401
+    ],
+    [
+      -3.795729,
+      -38.502168
+    ],
+    [
+      -3.796722,
+      -38.501709
+    ],
+    [
+      -3.796436,
+      -38.501087
+    ],
+    [
+      -3.796159,
+      -38.500487
+    ],
+    [
+      -3.796267,
+      -38.500438
+    ],
+    [
+      -3.796869,
+      -38.500166
+    ],
+    [
+      -3.797064,
+      -38.500079
+    ],
+    [
+      -3.797149,
+      -38.500041
+    ],
+    [
+      -3.79722,
+      -38.500009
+    ],
+    [
+      -3.797275,
+      -38.499985
+    ],
+    [
+      -3.798099,
+      -38.49961
+    ],
+    [
+      -3.798111,
+      -38.499605
+    ],
+    [
+      -3.798159,
+      -38.499583
+    ],
+    [
+      -3.798192,
+      -38.499568
+    ],
+    [
+      -3.798199,
+      -38.499582
+    ],
+    [
+      -3.798201,
+      -38.499587
+    ],
+    [
+      -3.798215,
+      -38.499619
+    ],
+    [
+      -3.79822,
+      -38.49963
+    ],
+    [
+      -3.798452,
+      -38.500155
+    ],
+    [
+      -3.79854,
+      -38.500341
+    ],
+    [
+      -3.798746,
+      -38.500775
+    ],
+    [
+      -3.798803,
+      -38.500899
+    ],
+    [
+      -3.799372,
+      -38.502143
+    ],
+    [
+      -3.799304,
+      -38.502174
+    ],
+    [
+      -3.798392,
+      -38.502583
+    ],
+    [
+      -3.797774,
+      -38.501224
+    ],
+    [
+      -3.797814,
+      -38.501205
+    ],
+    [
+      -3.798678,
+      -38.500806
+    ],
+    [
+      -3.798746,
+      -38.500775
+    ],
+    [
+      -3.79881,
+      -38.500748
+    ],
+    [
+      -3.799742,
+      -38.500341
+    ],
+    [
+      -3.799723,
+      -38.500299
+    ],
+    [
+      -3.799438,
+      -38.499672
+    ],
+    [
+      -3.799213,
+      -38.499177
+    ],
+    [
+      -3.799185,
+      -38.499112
+    ],
+    [
+      -3.799409,
+      -38.49902
+    ],
+    [
+      -3.79961,
+      -38.498903
+    ],
+    [
+      -3.799675,
+      -38.498821
+    ],
+    [
+      -3.799723,
+      -38.498745
+    ],
+    [
+      -3.799785,
+      -38.498624
+    ],
+    [
+      -3.799839,
+      -38.498486
+    ],
+    [
+      -3.799894,
+      -38.498368
+    ],
+    [
+      -3.799998,
+      -38.498176
+    ],
+    [
+      -3.800099,
+      -38.498043
+    ],
+    [
+      -3.800214,
+      -38.497926
+    ],
+    [
+      -3.80037,
+      -38.497798
+    ],
+    [
+      -3.800418,
+      -38.497759
+    ],
+    [
+      -3.800479,
+      -38.49772
+    ],
+    [
+      -3.800537,
+      -38.497683
+    ],
+    [
+      -3.800604,
+      -38.49764
+    ],
+    [
+      -3.800651,
+      -38.49773
+    ],
+    [
+      -3.800659,
+      -38.497741
+    ],
+    [
+      -3.800695,
+      -38.497793
+    ],
+    [
+      -3.800735,
+      -38.497837
+    ],
+    [
+      -3.800764,
+      -38.49787
+    ],
+    [
+      -3.800826,
+      -38.497939
+    ],
+    [
+      -3.800951,
+      -38.498279
+    ],
+    [
+      -3.801075,
+      -38.498617
+    ],
+    [
+      -3.801082,
+      -38.498636
+    ],
+    [
+      -3.80085,
+      -38.498719
+    ],
+    [
+      -3.800811,
+      -38.498731
+    ],
+    [
+      -3.800687,
+      -38.498405
+    ],
+    [
+      -3.800449,
+      -38.497832
+    ],
+    [
+      -3.800418,
+      -38.497759
+    ],
+    [
+      -3.800479,
+      -38.49772
+    ],
+    [
+      -3.800537,
+      -38.497683
+    ],
+    [
+      -3.800604,
+      -38.49764
+    ],
+    [
+      -3.800681,
+      -38.49759
+    ],
+    [
+      -3.800787,
+      -38.497517
+    ],
+    [
+      -3.801035,
+      -38.497344
+    ],
+    [
+      -3.801432,
+      -38.497054
+    ],
+    [
+      -3.801493,
+      -38.497009
+    ],
+    [
+      -3.801526,
+      -38.496985
+    ],
+    [
+      -3.801589,
+      -38.497036
+    ],
+    [
+      -3.801635,
+      -38.497075
+    ],
+    [
+      -3.801723,
+      -38.4971
+    ],
+    [
+      -3.802079,
+      -38.497305
+    ],
+    [
+      -3.801307,
+      -38.497856
+    ],
+    [
+      -3.801384,
+      -38.497801
+    ],
+    [
+      -3.802079,
+      -38.497305
+    ],
+    [
+      -3.80219,
+      -38.497371
+    ],
+    [
+      -3.802358,
+      -38.497472
+    ],
+    [
+      -3.802458,
+      -38.497359
+    ],
+    [
+      -3.802486,
+      -38.49733
+    ],
+    [
+      -3.803101,
+      -38.496648
+    ],
+    [
+      -3.803383,
+      -38.496849
+    ],
+    [
+      -3.802778,
+      -38.497505
+    ],
+    [
+      -3.802749,
+      -38.497537
+    ],
+    [
+      -3.802749,
+      -38.497537
+    ],
+    [
+      -3.802645,
+      -38.497649
+    ],
+    [
+      -3.802603,
+      -38.497626
+    ],
+    [
+      -3.802358,
+      -38.497472
+    ],
+    [
+      -3.80219,
+      -38.497371
+    ],
+    [
+      -3.802079,
+      -38.497305
+    ],
+    [
+      -3.801723,
+      -38.4971
+    ],
+    [
+      -3.801682,
+      -38.497
+    ],
+    [
+      -3.801656,
+      -38.496971
+    ],
+    [
+      -3.801615,
+      -38.496926
+    ],
+    [
+      -3.801602,
+      -38.496911
+    ],
+    [
+      -3.80166,
+      -38.496842
+    ],
+    [
+      -3.801628,
+      -38.496771
+    ],
+    [
+      -3.801595,
+      -38.4967
+    ],
+    [
+      -3.801381,
+      -38.496239
+    ],
+    [
+      -3.80195,
+      -38.495969
+    ],
+    [
+      -3.802061,
+      -38.495916
+    ],
+    [
+      -3.80214,
+      -38.495894
+    ],
+    [
+      -3.80221,
+      -38.495889
+    ],
+    [
+      -3.80228,
+      -38.495897
+    ],
+    [
+      -3.802353,
+      -38.495912
+    ],
+    [
+      -3.802417,
+      -38.495929
+    ],
+    [
+      -3.802521,
+      -38.496003
+    ],
+    [
+      -3.802535,
+      -38.496069
+    ],
+    [
+      -3.802522,
+      -38.496117
+    ],
+    [
+      -3.80233,
+      -38.496327
+    ],
+    [
+      -3.802209,
+      -38.496424
+    ],
+    [
+      -3.80205,
+      -38.496457
+    ],
+    [
+      -3.801892,
+      -38.496548
+    ],
+    [
+      -3.801863,
+      -38.496565
+    ],
+    [
+      -3.801754,
+      -38.496645
+    ],
+    [
+      -3.801693,
+      -38.496707
+    ],
+    [
+      -3.80164,
+      -38.496757
+    ],
+    [
+      -3.801628,
+      -38.496771
+    ],
+    [
+      -3.801595,
+      -38.4967
+    ],
+    [
+      -3.801381,
+      -38.496239
+    ],
+    [
+      -3.801717,
+      -38.496079
+    ],
+    [
+      -3.802061,
+      -38.495916
+    ],
+    [
+      -3.801873,
+      -38.495505
+    ],
+    [
+      -3.801722,
+      -38.495175
+    ],
+    [
+      -3.802166,
+      -38.495091
+    ],
+    [
+      -3.802166,
+      -38.495091
+    ],
+    [
+      -3.80232,
+      -38.495062
+    ],
+    [
+      -3.801722,
+      -38.495175
+    ],
+    [
+      -3.802061,
+      -38.495916
+    ],
+    [
+      -3.80214,
+      -38.495894
+    ],
+    [
+      -3.80221,
+      -38.495889
+    ],
+    [
+      -3.80228,
+      -38.495897
+    ],
+    [
+      -3.802353,
+      -38.495912
+    ],
+    [
+      -3.802417,
+      -38.495929
+    ],
+    [
+      -3.802521,
+      -38.496003
+    ],
+    [
+      -3.802525,
+      -38.495936
+    ],
+    [
+      -3.802529,
+      -38.495872
+    ],
+    [
+      -3.802535,
+      -38.495826
+    ],
+    [
+      -3.802997,
+      -38.494431
+    ],
+    [
+      -3.803731,
+      -38.494668
+    ],
+    [
+      -3.803776,
+      -38.494565
+    ],
+    [
+      -3.804075,
+      -38.493629
+    ],
+    [
+      -3.804082,
+      -38.493608
+    ],
+    [
+      -3.804118,
+      -38.49351
+    ],
+    [
+      -3.803975,
+      -38.493469
+    ],
+    [
+      -3.803866,
+      -38.493438
+    ],
+    [
+      -3.803848,
+      -38.493433
+    ],
+    [
+      -3.803884,
+      -38.493495
+    ],
+    [
+      -3.803922,
+      -38.493543
+    ],
+    [
+      -3.803957,
+      -38.493566
+    ],
+    [
+      -3.804082,
+      -38.493608
+    ],
+    [
+      -3.804118,
+      -38.49351
+    ],
+    [
+      -3.804394,
+      -38.49271
+    ],
+    [
+      -3.80441,
+      -38.492659
+    ],
+    [
+      -3.805173,
+      -38.492927
+    ],
+    [
+      -3.80491,
+      -38.493724
+    ],
+    [
+      -3.804843,
+      -38.493701
+    ],
+    [
+      -3.804843,
+      -38.493701
+    ],
+    [
+      -3.804843,
+      -38.493701
+    ],
+    [
+      -3.804557,
+      -38.493603
+    ],
+    [
+      -3.804483,
+      -38.493578
+    ],
+    [
+      -3.804465,
+      -38.493579
+    ],
+    [
+      -3.804451,
+      -38.493592
+    ],
+    [
+      -3.804332,
+      -38.493952
+    ],
+    [
+      -3.804451,
+      -38.493592
+    ],
+    [
+      -3.804465,
+      -38.493579
+    ],
+    [
+      -3.804483,
+      -38.493578
+    ],
+    [
+      -3.804557,
+      -38.493603
+    ],
+    [
+      -3.80491,
+      -38.493724
+    ],
+    [
+      -3.805173,
+      -38.492927
+    ],
+    [
+      -3.80441,
+      -38.492659
+    ],
+    [
+      -3.804394,
+      -38.49271
+    ],
+    [
+      -3.804118,
+      -38.49351
+    ],
+    [
+      -3.804082,
+      -38.493608
+    ],
+    [
+      -3.804075,
+      -38.493629
+    ],
+    [
+      -3.803776,
+      -38.494565
+    ],
+    [
+      -3.803731,
+      -38.494668
+    ],
+    [
+      -3.803697,
+      -38.494748
+    ],
+    [
+      -3.803645,
+      -38.494897
+    ],
+    [
+      -3.803638,
+      -38.49493
+    ],
+    [
+      -3.80364,
+      -38.494953
+    ],
+    [
+      -3.803651,
+      -38.494975
+    ],
+    [
+      -3.803669,
+      -38.495006
+    ],
+    [
+      -3.803701,
+      -38.49503
+    ],
+    [
+      -3.803779,
+      -38.495079
+    ],
+    [
+      -3.804221,
+      -38.495318
+    ],
+    [
+      -3.804331,
+      -38.495389
+    ],
+    [
+      -3.804391,
+      -38.49542
+    ],
+    [
+      -3.804426,
+      -38.49544
+    ],
+    [
+      -3.80481,
+      -38.49568
+    ],
+    [
+      -3.805038,
+      -38.495809
+    ],
+    [
+      -3.805453,
+      -38.496044
+    ],
+    [
+      -3.805615,
+      -38.496139
+    ],
+    [
+      -3.805634,
+      -38.49616
+    ],
+    [
+      -3.805478,
+      -38.496211
+    ],
+    [
+      -3.80538,
+      -38.496245
+    ],
+    [
+      -3.805193,
+      -38.496449
+    ],
+    [
+      -3.804896,
+      -38.496771
+    ],
+    [
+      -3.804896,
+      -38.496771
+    ],
+    [
+      -3.804896,
+      -38.496771
+    ],
+    [
+      -3.804896,
+      -38.496771
+    ],
+    [
+      -3.804895,
+      -38.496772
+    ],
+    [
+      -3.804653,
+      -38.497035
+    ],
+    [
+      -3.804637,
+      -38.497053
+    ],
+    [
+      -3.804653,
+      -38.497035
+    ],
+    [
+      -3.804895,
+      -38.496772
+    ],
+    [
+      -3.80538,
+      -38.496245
+    ],
+    [
+      -3.805478,
+      -38.496211
+    ],
+    [
+      -3.805634,
+      -38.49616
+    ],
+    [
+      -3.805675,
+      -38.496204
+    ],
+    [
+      -3.805699,
+      -38.496241
+    ],
+    [
+      -3.80573,
+      -38.496352
+    ],
+    [
+      -3.805756,
+      -38.496489
+    ],
+    [
+      -3.805758,
+      -38.496543
+    ],
+    [
+      -3.805745,
+      -38.496623
+    ],
+    [
+      -3.805693,
+      -38.496729
+    ],
+    [
+      -3.80564,
+      -38.496827
+    ],
+    [
+      -3.805256,
+      -38.497348
+    ],
+    [
+      -3.805026,
+      -38.497658
+    ],
+    [
+      -3.8049,
+      -38.497675
+    ],
+    [
+      -3.804867,
+      -38.497679
+    ],
+    [
+      -3.804794,
+      -38.497685
+    ],
+    [
+      -3.804744,
+      -38.497671
+    ],
+    [
+      -3.804588,
+      -38.497547
+    ],
+    [
+      -3.804744,
+      -38.497671
+    ],
+    [
+      -3.804794,
+      -38.497685
+    ],
+    [
+      -3.804867,
+      -38.497679
+    ],
+    [
+      -3.805026,
+      -38.497658
+    ],
+    [
+      -3.804754,
+      -38.498024
+    ],
+    [
+      -3.804746,
+      -38.498036
+    ],
+    [
+      -3.804571,
+      -38.498073
+    ],
+    [
+      -3.804537,
+      -38.498075
+    ],
+    [
+      -3.804499,
+      -38.49806
+    ],
+    [
+      -3.804284,
+      -38.497867
+    ],
+    [
+      -3.80421,
+      -38.4978
+    ],
+    [
+      -3.804054,
+      -38.49766
+    ],
+    [
+      -3.804454,
+      -38.497217
+    ],
+    [
+      -3.804632,
+      -38.497259
+    ],
+    [
+      -3.804675,
+      -38.497272
+    ],
+    [
+      -3.80421,
+      -38.4978
+    ],
+    [
+      -3.804284,
+      -38.497867
+    ],
+    [
+      -3.804499,
+      -38.49806
+    ],
+    [
+      -3.804537,
+      -38.498075
+    ],
+    [
+      -3.804571,
+      -38.498073
+    ],
+    [
+      -3.804664,
+      -38.498053
+    ],
+    [
+      -3.804746,
+      -38.498036
+    ],
+    [
+      -3.8047,
+      -38.4981
+    ],
+    [
+      -3.804333,
+      -38.498618
+    ],
+    [
+      -3.804239,
+      -38.498568
+    ],
+    [
+      -3.804028,
+      -38.498748
+    ],
+    [
+      -3.803858,
+      -38.498893
+    ],
+    [
+      -3.803508,
+      -38.499138
+    ],
+    [
+      -3.803142,
+      -38.499395
+    ],
+    [
+      -3.803081,
+      -38.499444
+    ],
+    [
+      -3.803046,
+      -38.499478
+    ],
+    [
+      -3.803038,
+      -38.499522
+    ],
+    [
+      -3.803048,
+      -38.49957
+    ],
+    [
+      -3.803059,
+      -38.499598
+    ],
+    [
+      -3.803101,
+      -38.49966
+    ],
+    [
+      -3.803214,
+      -38.499801
+    ],
+    [
+      -3.803307,
+      -38.499869
+    ],
+    [
+      -3.803351,
+      -38.499885
+    ],
+    [
+      -3.803392,
+      -38.499888
+    ],
+    [
+      -3.80343,
+      -38.499876
+    ],
+    [
+      -3.803997,
+      -38.499463
+    ],
+    [
+      -3.804144,
+      -38.499367
+    ],
+    [
+      -3.804179,
+      -38.499329
+    ],
+    [
+      -3.80419,
+      -38.499307
+    ],
+    [
+      -3.804195,
+      -38.499268
+    ],
+    [
+      -3.804195,
+      -38.499239
+    ],
+    [
+      -3.804174,
+      -38.499192
+    ],
+    [
+      -3.803858,
+      -38.498893
+    ],
+    [
+      -3.804239,
+      -38.498568
+    ],
+    [
+      -3.804333,
+      -38.498618
+    ],
+    [
+      -3.804597,
+      -38.498768
+    ],
+    [
+      -3.804649,
+      -38.498783
+    ],
+    [
+      -3.804708,
+      -38.498787
+    ],
+    [
+      -3.804745,
+      -38.498765
+    ],
+    [
+      -3.805259,
+      -38.498075
+    ],
+    [
+      -3.805744,
+      -38.498222
+    ],
+    [
+      -3.805934,
+      -38.49828
+    ],
+    [
+      -3.806471,
+      -38.498443
+    ],
+    [
+      -3.806904,
+      -38.498574
+    ],
+    [
+      -3.807218,
+      -38.498665
+    ],
+    [
+      -3.807196,
+      -38.498492
+    ],
+    [
+      -3.80718,
+      -38.498357
+    ],
+    [
+      -3.807138,
+      -38.498021
+    ],
+    [
+      -3.807123,
+      -38.497891
+    ],
+    [
+      -3.806686,
+      -38.497755
+    ],
+    [
+      -3.806456,
+      -38.497684
+    ],
+    [
+      -3.805873,
+      -38.497504
+    ],
+    [
+      -3.805717,
+      -38.497456
+    ],
+    [
+      -3.805367,
+      -38.497925
+    ],
+    [
+      -3.805259,
+      -38.498075
+    ],
+    [
+      -3.804745,
+      -38.498765
+    ],
+    [
+      -3.804708,
+      -38.498787
+    ],
+    [
+      -3.804649,
+      -38.498783
+    ],
+    [
+      -3.804597,
+      -38.498768
+    ],
+    [
+      -3.804333,
+      -38.498618
+    ],
+    [
+      -3.804239,
+      -38.498568
+    ],
+    [
+      -3.803717,
+      -38.498284
+    ],
+    [
+      -3.803521,
+      -38.498165
+    ],
+    [
+      -3.803162,
+      -38.497968
+    ],
+    [
+      -3.802645,
+      -38.497649
+    ],
+    [
+      -3.802603,
+      -38.497626
+    ],
+    [
+      -3.802358,
+      -38.497472
+    ],
+    [
+      -3.80219,
+      -38.497371
+    ],
+    [
+      -3.802079,
+      -38.497305
+    ],
+    [
+      -3.801723,
+      -38.4971
+    ],
+    [
+      -3.801682,
+      -38.497
+    ],
+    [
+      -3.801656,
+      -38.496971
+    ],
+    [
+      -3.801615,
+      -38.496926
+    ],
+    [
+      -3.801602,
+      -38.496911
+    ],
+    [
+      -3.801548,
+      -38.496852
+    ],
+    [
+      -3.801464,
+      -38.496916
+    ],
+    [
+      -3.801414,
+      -38.496947
+    ],
+    [
+      -3.801378,
+      -38.496971
+    ],
+    [
+      -3.800995,
+      -38.497233
+    ],
+    [
+      -3.800723,
+      -38.497462
+    ],
+    [
+      -3.80064,
+      -38.497532
+    ],
+    [
+      -3.800447,
+      -38.49764
+    ],
+    [
+      -3.800401,
+      -38.497666
+    ],
+    [
+      -3.80038,
+      -38.497678
+    ],
+    [
+      -3.800331,
+      -38.497709
+    ],
+    [
+      -3.800234,
+      -38.497771
+    ],
+    [
+      -3.800107,
+      -38.497877
+    ],
+    [
+      -3.800004,
+      -38.497991
+    ],
+    [
+      -3.799938,
+      -38.498093
+    ],
+    [
+      -3.799466,
+      -38.497102
+    ],
+    [
+      -3.798844,
+      -38.495753
+    ],
+    [
+      -3.799122,
+      -38.495625
+    ],
+    [
+      -3.799416,
+      -38.495502
+    ],
+    [
+      -3.799767,
+      -38.496287
+    ],
+    [
+      -3.799841,
+      -38.496449
+    ],
+    [
+      -3.799841,
+      -38.496449
+    ],
+    [
+      -3.79989,
+      -38.496556
+    ],
+    [
+      -3.799909,
+      -38.496598
+    ],
+    [
+      -3.800025,
+      -38.49685
+    ],
+    [
+      -3.799466,
+      -38.497102
+    ],
+    [
+      -3.799051,
+      -38.497289
+    ],
+    [
+      -3.798468,
+      -38.497552
+    ],
+    [
+      -3.797874,
+      -38.496216
+    ],
+    [
+      -3.798241,
+      -38.496041
+    ],
+    [
+      -3.798844,
+      -38.495753
+    ],
+    [
+      -3.799466,
+      -38.497102
+    ],
+    [
+      -3.798468,
+      -38.497552
+    ],
+    [
+      -3.797483,
+      -38.497996
+    ],
+    [
+      -3.797451,
+      -38.497936
+    ],
+    [
+      -3.797054,
+      -38.497057
+    ],
+    [
+      -3.79686,
+      -38.496628
+    ],
+    [
+      -3.797802,
+      -38.496245
+    ],
+    [
+      -3.797874,
+      -38.496216
+    ],
+    [
+      -3.797497,
+      -38.495436
+    ],
+    [
+      -3.797049,
+      -38.495383
+    ],
+    [
+      -3.796458,
+      -38.495313
+    ],
+    [
+      -3.796253,
+      -38.49529
+    ],
+    [
+      -3.796681,
+      -38.49623
+    ],
+    [
+      -3.79686,
+      -38.496628
+    ],
+    [
+      -3.797054,
+      -38.497057
+    ],
+    [
+      -3.797081,
+      -38.497117
+    ],
+    [
+      -3.797451,
+      -38.497936
+    ],
+    [
+      -3.797483,
+      -38.497996
+    ],
+    [
+      -3.796571,
+      -38.498407
+    ],
+    [
+      -3.796506,
+      -38.498436
+    ],
+    [
+      -3.796434,
+      -38.498468
+    ],
+    [
+      -3.796388,
+      -38.498488
+    ],
+    [
+      -3.795446,
+      -38.498912
+    ],
+    [
+      -3.795136,
+      -38.49823
+    ],
+    [
+      -3.794967,
+      -38.497855
+    ],
+    [
+      -3.794815,
+      -38.497554
+    ],
+    [
+      -3.795042,
+      -38.497452
+    ],
+    [
+      -3.795129,
+      -38.496711
+    ],
+    [
+      -3.795229,
+      -38.495948
+    ],
+    [
+      -3.7954,
+      -38.495948
+    ],
+    [
+      -3.795438,
+      -38.496137
+    ],
+    [
+      -3.79546,
+      -38.496225
+    ],
+    [
+      -3.79549,
+      -38.496311
+    ],
+    [
+      -3.795543,
+      -38.496482
+    ],
+    [
+      -3.795613,
+      -38.496654
+    ],
+    [
+      -3.795614,
+      -38.496656
+    ],
+    [
+      -3.795793,
+      -38.497049
+    ],
+    [
+      -3.795816,
+      -38.497099
+    ],
+    [
+      -3.795832,
+      -38.497133
+    ],
+    [
+      -3.796086,
+      -38.497694
+    ],
+    [
+      -3.796411,
+      -38.498416
+    ],
+    [
+      -3.796427,
+      -38.498451
+    ],
+    [
+      -3.796434,
+      -38.498468
+    ],
+    [
+      -3.796388,
+      -38.498488
+    ],
+    [
+      -3.795446,
+      -38.498912
+    ],
+    [
+      -3.795136,
+      -38.49823
+    ],
+    [
+      -3.794967,
+      -38.497855
+    ],
+    [
+      -3.794815,
+      -38.497554
+    ],
+    [
+      -3.794662,
+      -38.497227
+    ],
+    [
+      -3.794578,
+      -38.49699
+    ],
+    [
+      -3.794556,
+      -38.496955
+    ],
+    [
+      -3.794556,
+      -38.496955
+    ],
+    [
+      -3.794548,
+      -38.496943
+    ],
+    [
+      -3.794525,
+      -38.496932
+    ],
+    [
+      -3.794501,
+      -38.496923
+    ],
+    [
+      -3.794039,
+      -38.497125
+    ],
+    [
+      -3.793541,
+      -38.497341
+    ],
+    [
+      -3.793858,
+      -38.497991
+    ],
+    [
+      -3.793902,
+      -38.497971
+    ],
+    [
+      -3.794815,
+      -38.497554
+    ],
+    [
+      -3.794967,
+      -38.497855
+    ],
+    [
+      -3.794941,
+      -38.49795
+    ],
+    [
+      -3.794852,
+      -38.498347
+    ],
+    [
+      -3.794457,
+      -38.498528
+    ],
+    [
+      -3.794152,
+      -38.498667
+    ],
+    [
+      -3.793858,
+      -38.497991
+    ],
+    [
+      -3.794815,
+      -38.497554
+    ],
+    [
+      -3.795042,
+      -38.497452
+    ],
+    [
+      -3.795378,
+      -38.497301
+    ],
+    [
+      -3.795742,
+      -38.497133
+    ],
+    [
+      -3.795816,
+      -38.497099
+    ],
+    [
+      -3.795881,
+      -38.497071
+    ],
+    [
+      -3.795861,
+      -38.497026
+    ],
+    [
+      -3.795688,
+      -38.496638
+    ],
+    [
+      -3.795608,
+      -38.496439
+    ],
+    [
+      -3.795553,
+      -38.496273
+    ],
+    [
+      -3.795527,
+      -38.496219
+    ],
+    [
+      -3.795514,
+      -38.496167
+    ],
+    [
+      -3.795499,
+      -38.496088
+    ],
+    [
+      -3.795482,
+      -38.495989
+    ],
+    [
+      -3.795452,
+      -38.495757
+    ],
+    [
+      -3.795444,
+      -38.495616
+    ],
+    [
+      -3.795438,
+      -38.495459
+    ],
+    [
+      -3.795436,
+      -38.495198
+    ],
+    [
+      -3.795479,
+      -38.494669
+    ],
+    [
+      -3.795523,
+      -38.494274
+    ],
+    [
+      -3.795528,
+      -38.494235
+    ],
+    [
+      -3.795531,
+      -38.494204
+    ],
+    [
+      -3.795548,
+      -38.494071
+    ],
+    [
+      -3.79557,
+      -38.493886
+    ],
+    [
+      -3.795602,
+      -38.493629
+    ],
+    [
+      -3.795775,
+      -38.493543
+    ],
+    [
+      -3.795808,
+      -38.493524
+    ],
+    [
+      -3.795821,
+      -38.493516
+    ],
+    [
+      -3.795825,
+      -38.493512
+    ],
+    [
+      -3.795826,
+      -38.493509
+    ],
+    [
+      -3.795855,
+      -38.493326
+    ],
+    [
+      -3.795859,
+      -38.493295
+    ],
+    [
+      -3.795871,
+      -38.493196
+    ],
+    [
+      -3.795706,
+      -38.493179
+    ],
+    [
+      -3.795656,
+      -38.493173
+    ],
+    [
+      -3.795585,
+      -38.493165
+    ],
+    [
+      -3.795573,
+      -38.493255
+    ],
+    [
+      -3.79555,
+      -38.493429
+    ],
+    [
+      -3.795475,
+      -38.494061
+    ],
+    [
+      -3.795465,
+      -38.494141
+    ],
+    [
+      -3.795452,
+      -38.494265
+    ],
+    [
+      -3.795358,
+      -38.495139
+    ],
+    [
+      -3.794466,
+      -38.495113
+    ],
+    [
+      -3.794466,
+      -38.495113
+    ],
+    [
+      -3.794393,
+      -38.495111
+    ],
+    [
+      -3.793652,
+      -38.495091
+    ],
+    [
+      -3.793249,
+      -38.495079
+    ],
+    [
+      -3.793015,
+      -38.495075
+    ],
+    [
+      -3.792626,
+      -38.49506
+    ],
+    [
+      -3.792441,
+      -38.495052
+    ],
+    [
+      -3.790901,
+      -38.494971
+    ],
+    [
+      -3.791025,
+      -38.494483
+    ],
+    [
+      -3.790901,
+      -38.494971
+    ],
+    [
+      -3.792441,
+      -38.495052
+    ],
+    [
+      -3.792626,
+      -38.49506
+    ],
+    [
+      -3.793015,
+      -38.495075
+    ],
+    [
+      -3.793249,
+      -38.495079
+    ],
+    [
+      -3.793652,
+      -38.495091
+    ],
+    [
+      -3.793805,
+      -38.495095
+    ],
+    [
+      -3.794393,
+      -38.495111
+    ],
+    [
+      -3.795132,
+      -38.495132
+    ],
+    [
+      -3.795358,
+      -38.495139
+    ],
+    [
+      -3.795356,
+      -38.495291
+    ],
+    [
+      -3.795362,
+      -38.495487
+    ],
+    [
+      -3.795367,
+      -38.495638
+    ],
+    [
+      -3.7954,
+      -38.495948
+    ],
+    [
+      -3.795229,
+      -38.495948
+    ],
+    [
+      -3.795129,
+      -38.496711
+    ],
+    [
+      -3.795042,
+      -38.497452
+    ],
+    [
+      -3.795378,
+      -38.497301
+    ],
+    [
+      -3.795742,
+      -38.497133
+    ],
+    [
+      -3.795816,
+      -38.497099
+    ],
+    [
+      -3.795881,
+      -38.497071
+    ],
+    [
+      -3.795861,
+      -38.497026
+    ],
+    [
+      -3.795688,
+      -38.496638
+    ],
+    [
+      -3.795608,
+      -38.496439
+    ],
+    [
+      -3.795553,
+      -38.496273
+    ],
+    [
+      -3.795527,
+      -38.496219
+    ],
+    [
+      -3.795514,
+      -38.496167
+    ],
+    [
+      -3.795499,
+      -38.496088
+    ],
+    [
+      -3.795482,
+      -38.495989
+    ],
+    [
+      -3.795452,
+      -38.495757
+    ],
+    [
+      -3.795444,
+      -38.495616
+    ],
+    [
+      -3.795438,
+      -38.495459
+    ],
+    [
+      -3.795436,
+      -38.495198
+    ],
+    [
+      -3.795479,
+      -38.494669
+    ],
+    [
+      -3.795523,
+      -38.494274
+    ],
+    [
+      -3.795528,
+      -38.494235
+    ],
+    [
+      -3.795531,
+      -38.494204
+    ],
+    [
+      -3.795548,
+      -38.494071
+    ],
+    [
+      -3.79557,
+      -38.493886
+    ],
+    [
+      -3.795602,
+      -38.493629
+    ],
+    [
+      -3.795775,
+      -38.493543
+    ],
+    [
+      -3.795808,
+      -38.493524
+    ],
+    [
+      -3.795821,
+      -38.493516
+    ],
+    [
+      -3.795825,
+      -38.493512
+    ],
+    [
+      -3.795826,
+      -38.493509
+    ],
+    [
+      -3.795855,
+      -38.493326
+    ],
+    [
+      -3.795859,
+      -38.493295
+    ],
+    [
+      -3.795871,
+      -38.493196
+    ],
+    [
+      -3.795706,
+      -38.493179
+    ],
+    [
+      -3.795656,
+      -38.493173
+    ],
+    [
+      -3.795585,
+      -38.493165
+    ],
+    [
+      -3.795573,
+      -38.493255
+    ],
+    [
+      -3.79555,
+      -38.493429
+    ],
+    [
+      -3.795299,
+      -38.493402
+    ],
+    [
+      -3.794476,
+      -38.493315
+    ],
+    [
+      -3.794087,
+      -38.493267
+    ],
+    [
+      -3.794177,
+      -38.492558
+    ],
+    [
+      -3.795633,
+      -38.492717
+    ],
+    [
+      -3.79562,
+      -38.49284
+    ],
+    [
+      -3.79562,
+      -38.49284
+    ],
+    [
+      -3.795593,
+      -38.493094
+    ],
+    [
+      -3.795587,
+      -38.493144
+    ],
+    [
+      -3.795585,
+      -38.493165
+    ],
+    [
+      -3.795573,
+      -38.493255
+    ],
+    [
+      -3.79555,
+      -38.493429
+    ],
+    [
+      -3.794476,
+      -38.493315
+    ],
+    [
+      -3.794087,
+      -38.493267
+    ],
+    [
+      -3.794177,
+      -38.492558
+    ],
+    [
+      -3.794251,
+      -38.491844
+    ],
+    [
+      -3.794313,
+      -38.491851
+    ],
+    [
+      -3.795646,
+      -38.492009
+    ],
+    [
+      -3.795653,
+      -38.49201
+    ],
+    [
+      -3.795662,
+      -38.492011
+    ],
+    [
+      -3.795715,
+      -38.492018
+    ],
+    [
+      -3.795633,
+      -38.492717
+    ],
+    [
+      -3.794567,
+      -38.492601
+    ],
+    [
+      -3.794177,
+      -38.492558
+    ],
+    [
+      -3.794251,
+      -38.491844
+    ],
+    [
+      -3.794256,
+      -38.49179
+    ],
+    [
+      -3.794324,
+      -38.491154
+    ],
+    [
+      -3.794388,
+      -38.491159
+    ],
+    [
+      -3.795718,
+      -38.491299
+    ],
+    [
+      -3.795748,
+      -38.491303
+    ],
+    [
+      -3.795799,
+      -38.491308
+    ],
+    [
+      -3.795715,
+      -38.492018
+    ],
+    [
+      -3.795662,
+      -38.492011
+    ],
+    [
+      -3.795653,
+      -38.49201
+    ],
+    [
+      -3.795646,
+      -38.492009
+    ],
+    [
+      -3.79463,
+      -38.491889
+    ],
+    [
+      -3.794313,
+      -38.491851
+    ],
+    [
+      -3.794251,
+      -38.491844
+    ],
+    [
+      -3.794239,
+      -38.491957
+    ],
+    [
+      -3.794239,
+      -38.491957
+    ],
+    [
+      -3.794177,
+      -38.492558
+    ],
+    [
+      -3.793774,
+      -38.492513
+    ],
+    [
+      -3.792667,
+      -38.49239
+    ],
+    [
+      -3.792669,
+      -38.492371
+    ],
+    [
+      -3.792711,
+      -38.492013
+    ],
+    [
+      -3.792734,
+      -38.49181
+    ],
+    [
+      -3.792738,
+      -38.491779
+    ],
+    [
+      -3.79275,
+      -38.491681
+    ],
+    [
+      -3.792833,
+      -38.490991
+    ],
+    [
+      -3.792884,
+      -38.490531
+    ],
+    [
+      -3.792922,
+      -38.490095
+    ],
+    [
+      -3.792964,
+      -38.489761
+    ],
+    [
+      -3.793006,
+      -38.489765
+    ],
+    [
+      -3.793015,
+      -38.489766
+    ],
+    [
+      -3.793508,
+      -38.489816
+    ],
+    [
+      -3.794368,
+      -38.489904
+    ],
+    [
+      -3.794402,
+      -38.489907
+    ],
+    [
+      -3.79446,
+      -38.489913
+    ],
+    [
+      -3.794457,
+      -38.489943
+    ],
+    [
+      -3.794424,
+      -38.490282
+    ],
+    [
+      -3.794417,
+      -38.490363
+    ],
+    [
+      -3.794413,
+      -38.490405
+    ],
+    [
+      -3.794375,
+      -38.490698
+    ],
+    [
+      -3.794332,
+      -38.491094
+    ],
+    [
+      -3.794324,
+      -38.491154
+    ],
+    [
+      -3.794388,
+      -38.491159
+    ],
+    [
+      -3.795453,
+      -38.491271
+    ],
+    [
+      -3.795718,
+      -38.491299
+    ],
+    [
+      -3.795748,
+      -38.491303
+    ],
+    [
+      -3.795799,
+      -38.491308
+    ],
+    [
+      -3.795715,
+      -38.492018
+    ],
+    [
+      -3.795633,
+      -38.492717
+    ],
+    [
+      -3.795593,
+      -38.493094
+    ],
+    [
+      -3.795587,
+      -38.493144
+    ],
+    [
+      -3.795585,
+      -38.493165
+    ],
+    [
+      -3.795573,
+      -38.493255
+    ],
+    [
+      -3.79555,
+      -38.493429
+    ],
+    [
+      -3.794476,
+      -38.493315
+    ],
+    [
+      -3.794087,
+      -38.493267
+    ],
+    [
+      -3.794081,
+      -38.493321
+    ],
+    [
+      -3.794002,
+      -38.494031
+    ],
+    [
+      -3.793995,
+      -38.494093
+    ],
+    [
+      -3.795402,
+      -38.494139
+    ],
+    [
+      -3.795465,
+      -38.494141
+    ],
+    [
+      -3.795531,
+      -38.494204
+    ],
+    [
+      -3.795548,
+      -38.494071
+    ],
+    [
+      -3.79557,
+      -38.493886
+    ],
+    [
+      -3.795602,
+      -38.493629
+    ],
+    [
+      -3.795644,
+      -38.493274
+    ],
+    [
+      -3.795645,
+      -38.493266
+    ],
+    [
+      -3.795656,
+      -38.493173
+    ],
+    [
+      -3.795664,
+      -38.493106
+    ],
+    [
+      -3.795672,
+      -38.493038
+    ],
+    [
+      -3.795688,
+      -38.492906
+    ],
+    [
+      -3.795716,
+      -38.49267
+    ],
+    [
+      -3.795775,
+      -38.492158
+    ],
+    [
+      -3.795872,
+      -38.491307
+    ],
+    [
+      -3.79589,
+      -38.491147
+    ],
+    [
+      -3.796007,
+      -38.490137
+    ],
+    [
+      -3.796034,
+      -38.489909
+    ],
+    [
+      -3.796057,
+      -38.489711
+    ],
+    [
+      -3.79606,
+      -38.489687
+    ],
+    [
+      -3.796065,
+      -38.489642
+    ],
+    [
+      -3.796071,
+      -38.489583
+    ],
+    [
+      -3.796129,
+      -38.489115
+    ],
+    [
+      -3.797155,
+      -38.489229
+    ],
+    [
+      -3.797842,
+      -38.489316
+    ],
+    [
+      -3.798166,
+      -38.489349
+    ],
+    [
+      -3.79823,
+      -38.488746
+    ],
+    [
+      -3.798272,
+      -38.488356
+    ],
+    [
+      -3.797233,
+      -38.488239
+    ],
+    [
+      -3.797155,
+      -38.489229
+    ],
+    [
+      -3.797842,
+      -38.489316
+    ],
+    [
+      -3.798166,
+      -38.489349
+    ],
+    [
+      -3.798684,
+      -38.489405
+    ],
+    [
+      -3.799181,
+      -38.489468
+    ],
+    [
+      -3.799071,
+      -38.490494
+    ],
+    [
+      -3.79902,
+      -38.490905
+    ],
+    [
+      -3.79902,
+      -38.490905
+    ],
+    [
+      -3.79895,
+      -38.491477
+    ],
+    [
+      -3.798563,
+      -38.491437
+    ],
+    [
+      -3.798395,
+      -38.491419
+    ],
+    [
+      -3.797924,
+      -38.49137
+    ],
+    [
+      -3.798054,
+      -38.490373
+    ],
+    [
+      -3.798258,
+      -38.490391
+    ],
+    [
+      -3.798346,
+      -38.490401
+    ],
+    [
+      -3.799071,
+      -38.490494
+    ],
+    [
+      -3.79895,
+      -38.491477
+    ],
+    [
+      -3.798835,
+      -38.492373
+    ],
+    [
+      -3.798831,
+      -38.492406
+    ],
+    [
+      -3.798818,
+      -38.492507
+    ],
+    [
+      -3.798798,
+      -38.492692
+    ],
+    [
+      -3.798776,
+      -38.492903
+    ],
+    [
+      -3.798743,
+      -38.493196
+    ],
+    [
+      -3.798732,
+      -38.493296
+    ],
+    [
+      -3.798705,
+      -38.493521
+    ],
+    [
+      -3.798362,
+      -38.493485
+    ],
+    [
+      -3.797698,
+      -38.49341
+    ],
+    [
+      -3.797775,
+      -38.492788
+    ],
+    [
+      -3.797821,
+      -38.492391
+    ],
+    [
+      -3.798312,
+      -38.492448
+    ],
+    [
+      -3.798818,
+      -38.492507
+    ],
+    [
+      -3.798776,
+      -38.492903
+    ],
+    [
+      -3.798743,
+      -38.493196
+    ],
+    [
+      -3.798732,
+      -38.493296
+    ],
+    [
+      -3.798705,
+      -38.493521
+    ],
+    [
+      -3.798362,
+      -38.493485
+    ],
+    [
+      -3.797698,
+      -38.49341
+    ],
+    [
+      -3.797224,
+      -38.493352
+    ],
+    [
+      -3.797192,
+      -38.493348
+    ],
+    [
+      -3.796681,
+      -38.493284
+    ],
+    [
+      -3.796632,
+      -38.493733
+    ],
+    [
+      -3.796571,
+      -38.494299
+    ],
+    [
+      -3.79758,
+      -38.494421
+    ],
+    [
+      -3.797933,
+      -38.49446
+    ],
+    [
+      -3.798595,
+      -38.494533
+    ],
+    [
+      -3.798692,
+      -38.494519
+    ],
+    [
+      -3.798742,
+      -38.494506
+    ],
+    [
+      -3.798951,
+      -38.494435
+    ],
+    [
+      -3.799233,
+      -38.495081
+    ],
+    [
+      -3.799416,
+      -38.495502
+    ],
+    [
+      -3.799614,
+      -38.495416
+    ],
+    [
+      -3.800102,
+      -38.495209
+    ],
+    [
+      -3.800704,
+      -38.494946
+    ],
+    [
+      -3.80073,
+      -38.494935
+    ],
+    [
+      -3.800781,
+      -38.494913
+    ],
+    [
+      -3.80064,
+      -38.494565
+    ],
+    [
+      -3.800382,
+      -38.493929
+    ],
+    [
+      -3.800348,
+      -38.493837
+    ],
+    [
+      -3.800341,
+      -38.493817
+    ],
+    [
+      -3.80036,
+      -38.493814
+    ],
+    [
+      -3.800376,
+      -38.493807
+    ],
+    [
+      -3.80039,
+      -38.493797
+    ],
+    [
+      -3.800401,
+      -38.493785
+    ],
+    [
+      -3.80041,
+      -38.49377
+    ],
+    [
+      -3.800415,
+      -38.493753
+    ],
+    [
+      -3.800415,
+      -38.493742
+    ],
+    [
+      -3.800416,
+      -38.493728
+    ],
+    [
+      -3.800413,
+      -38.493718
+    ],
+    [
+      -3.800408,
+      -38.493704
+    ],
+    [
+      -3.800396,
+      -38.493684
+    ],
+    [
+      -3.800377,
+      -38.493669
+    ],
+    [
+      -3.800355,
+      -38.49366
+    ],
+    [
+      -3.800345,
+      -38.493659
+    ],
+    [
+      -3.800332,
+      -38.493658
+    ],
+    [
+      -3.800309,
+      -38.493663
+    ],
+    [
+      -3.800303,
+      -38.493666
+    ],
+    [
+      -3.800291,
+      -38.493672
+    ],
+    [
+      -3.800277,
+      -38.493685
+    ],
+    [
+      -3.80027,
+      -38.493695
+    ],
+    [
+      -3.799995,
+      -38.49361
+    ],
+    [
+      -3.799645,
+      -38.493488
+    ],
+    [
+      -3.7988,
+      -38.493215
+    ],
+    [
+      -3.798743,
+      -38.493196
+    ],
+    [
+      -3.798732,
+      -38.493296
+    ],
+    [
+      -3.798705,
+      -38.493521
+    ],
+    [
+      -3.798362,
+      -38.493485
+    ],
+    [
+      -3.797698,
+      -38.49341
+    ],
+    [
+      -3.797775,
+      -38.492788
+    ],
+    [
+      -3.797821,
+      -38.492391
+    ],
+    [
+      -3.797924,
+      -38.49137
+    ],
+    [
+      -3.79895,
+      -38.491477
+    ],
+    [
+      -3.799699,
+      -38.491363
+    ],
+    [
+      -3.800168,
+      -38.491326
+    ],
+    [
+      -3.80029,
+      -38.491328
+    ],
+    [
+      -3.800404,
+      -38.491348
+    ],
+    [
+      -3.800469,
+      -38.491366
+    ],
+    [
+      -3.800824,
+      -38.491515
+    ],
+    [
+      -3.80091,
+      -38.491568
+    ],
+    [
+      -3.800932,
+      -38.491635
+    ],
+    [
+      -3.800926,
+      -38.491668
+    ],
+    [
+      -3.800909,
+      -38.491765
+    ],
+    [
+      -3.800794,
+      -38.492117
+    ],
+    [
+      -3.800697,
+      -38.492416
+    ],
+    [
+      -3.800486,
+      -38.492345
+    ],
+    [
+      -3.799635,
+      -38.492059
+    ],
+    [
+      -3.799662,
+      -38.491804
+    ],
+    [
+      -3.799699,
+      -38.491363
+    ],
+    [
+      -3.799787,
+      -38.491356
+    ],
+    [
+      -3.800168,
+      -38.491326
+    ],
+    [
+      -3.80029,
+      -38.491328
+    ],
+    [
+      -3.800404,
+      -38.491348
+    ],
+    [
+      -3.800469,
+      -38.491366
+    ],
+    [
+      -3.800824,
+      -38.491515
+    ],
+    [
+      -3.800911,
+      -38.491527
+    ],
+    [
+      -3.800978,
+      -38.491555
+    ],
+    [
+      -3.801016,
+      -38.49157
+    ],
+    [
+      -3.801039,
+      -38.491592
+    ],
+    [
+      -3.801107,
+      -38.491608
+    ],
+    [
+      -3.801125,
+      -38.491503
+    ],
+    [
+      -3.80154,
+      -38.490202
+    ],
+    [
+      -3.80158,
+      -38.490075
+    ],
+    [
+      -3.801595,
+      -38.490013
+    ],
+    [
+      -3.801602,
+      -38.489949
+    ],
+    [
+      -3.801604,
+      -38.489903
+    ],
+    [
+      -3.801599,
+      -38.489851
+    ],
+    [
+      -3.801591,
+      -38.489782
+    ],
+    [
+      -3.801577,
+      -38.489715
+    ],
+    [
+      -3.801552,
+      -38.489629
+    ],
+    [
+      -3.80145,
+      -38.489308
+    ],
+    [
+      -3.801366,
+      -38.489066
+    ],
+    [
+      -3.801281,
+      -38.488816
+    ],
+    [
+      -3.801278,
+      -38.488797
+    ],
+    [
+      -3.801273,
+      -38.488784
+    ],
+    [
+      -3.801274,
+      -38.488755
+    ],
+    [
+      -3.801284,
+      -38.488715
+    ],
+    [
+      -3.801293,
+      -38.488707
+    ],
+    [
+      -3.801304,
+      -38.488691
+    ],
+    [
+      -3.801315,
+      -38.488673
+    ],
+    [
+      -3.801324,
+      -38.488645
+    ],
+    [
+      -3.801325,
+      -38.488616
+    ],
+    [
+      -3.801319,
+      -38.488587
+    ],
+    [
+      -3.801315,
+      -38.488578
+    ],
+    [
+      -3.801307,
+      -38.48856
+    ],
+    [
+      -3.801288,
+      -38.488538
+    ],
+    [
+      -3.801271,
+      -38.488524
+    ],
+    [
+      -3.80124,
+      -38.48851
+    ],
+    [
+      -3.801194,
+      -38.488504
+    ],
+    [
+      -3.801172,
+      -38.488509
+    ],
+    [
+      -3.801141,
+      -38.488523
+    ],
+    [
+      -3.801115,
+      -38.488546
+    ],
+    [
+      -3.801098,
+      -38.488571
+    ],
+    [
+      -3.801088,
+      -38.488601
+    ],
+    [
+      -3.801085,
+      -38.488631
+    ],
+    [
+      -3.801038,
+      -38.488658
+    ],
+    [
+      -3.801023,
+      -38.488662
+    ],
+    [
+      -3.801015,
+      -38.488663
+    ],
+    [
+      -3.801001,
+      -38.488667
+    ],
+    [
+      -3.800962,
+      -38.488674
+    ],
+    [
+      -3.80092,
+      -38.488674
+    ],
+    [
+      -3.800857,
+      -38.488675
+    ],
+    [
+      -3.79977,
+      -38.48856
+    ],
+    [
+      -3.799573,
+      -38.488539
+    ],
+    [
+      -3.799267,
+      -38.488505
+    ],
+    [
+      -3.798272,
+      -38.488356
+    ],
+    [
+      -3.797233,
+      -38.488239
+    ],
+    [
+      -3.796319,
+      -38.488114
+    ],
+    [
+      -3.79624,
+      -38.488106
+    ],
+    [
+      -3.796163,
+      -38.488097
+    ],
+    [
+      -3.796147,
+      -38.48823
+    ],
+    [
+      -3.796041,
+      -38.488219
+    ],
+    [
+      -3.795605,
+      -38.488169
+    ],
+    [
+      -3.794737,
+      -38.488064
+    ],
+    [
+      -3.794668,
+      -38.488056
+    ],
+    [
+      -3.794674,
+      -38.487995
+    ],
+    [
+      -3.794734,
+      -38.487418
+    ],
+    [
+      -3.794741,
+      -38.487355
+    ],
+    [
+      -3.794746,
+      -38.487308
+    ],
+    [
+      -3.794749,
+      -38.487284
+    ],
+    [
+      -3.794812,
+      -38.486723
+    ],
+    [
+      -3.794815,
+      -38.486694
+    ],
+    [
+      -3.794819,
+      -38.486651
+    ],
+    [
+      -3.796208,
+      -38.486794
+    ],
+    [
+      -3.796262,
+      -38.4868
+    ],
+    [
+      -3.796264,
+      -38.487133
+    ],
+    [
+      -3.796236,
+      -38.487514
+    ],
+    [
+      -3.796186,
+      -38.487509
+    ],
+    [
+      -3.796167,
+      -38.487507
+    ],
+    [
+      -3.795206,
+      -38.487405
+    ],
+    [
+      -3.794803,
+      -38.487362
+    ],
+    [
+      -3.794741,
+      -38.487355
+    ],
+    [
+      -3.794746,
+      -38.487308
+    ],
+    [
+      -3.794749,
+      -38.487284
+    ],
+    [
+      -3.794812,
+      -38.486723
+    ],
+    [
+      -3.794815,
+      -38.486694
+    ],
+    [
+      -3.794819,
+      -38.486651
+    ],
+    [
+      -3.79441,
+      -38.486607
+    ],
+    [
+      -3.794284,
+      -38.486594
+    ],
+    [
+      -3.793829,
+      -38.486543
+    ],
+    [
+      -3.793665,
+      -38.486525
+    ],
+    [
+      -3.793335,
+      -38.486496
+    ],
+    [
+      -3.793141,
+      -38.486475
+    ],
+    [
+      -3.79248,
+      -38.486407
+    ],
+    [
+      -3.792474,
+      -38.486283
+    ],
+    [
+      -3.792157,
+      -38.48636
+    ],
+    [
+      -3.792103,
+      -38.486361
+    ],
+    [
+      -3.791958,
+      -38.486362
+    ],
+    [
+      -3.791624,
+      -38.486393
+    ],
+    [
+      -3.79144,
+      -38.486366
+    ],
+    [
+      -3.791306,
+      -38.486351
+    ],
+    [
+      -3.791276,
+      -38.486346
+    ],
+    [
+      -3.791252,
+      -38.48633
+    ],
+    [
+      -3.791231,
+      -38.486302
+    ],
+    [
+      -3.791222,
+      -38.486268
+    ],
+    [
+      -3.79122,
+      -38.486242
+    ],
+    [
+      -3.791181,
+      -38.48565
+    ],
+    [
+      -3.791177,
+      -38.485584
+    ],
+    [
+      -3.791213,
+      -38.485581
+    ],
+    [
+      -3.791236,
+      -38.485579
+    ],
+    [
+      -3.791804,
+      -38.485526
+    ],
+    [
+      -3.792323,
+      -38.485477
+    ],
+    [
+      -3.792408,
+      -38.48547
+    ],
+    [
+      -3.792397,
+      -38.485313
+    ],
+    [
+      -3.792343,
+      -38.484708
+    ],
+    [
+      -3.792337,
+      -38.484629
+    ],
+    [
+      -3.792254,
+      -38.484634
+    ],
+    [
+      -3.791186,
+      -38.484732
+    ],
+    [
+      -3.791109,
+      -38.484737
+    ],
+    [
+      -3.791105,
+      -38.484693
+    ],
+    [
+      -3.791102,
+      -38.484662
+    ],
+    [
+      -3.79109,
+      -38.484526
+    ],
+    [
+      -3.791031,
+      -38.483843
+    ],
+    [
+      -3.791015,
+      -38.483738
+    ],
+    [
+      -3.792167,
+      -38.483644
+    ],
+    [
+      -3.792246,
+      -38.483637
+    ],
+    [
+      -3.792255,
+      -38.483716
+    ],
+    [
+      -3.792308,
+      -38.48424
+    ],
+    [
+      -3.792326,
+      -38.484412
+    ],
+    [
+      -3.792328,
+      -38.484465
+    ],
+    [
+      -3.792333,
+      -38.484557
+    ],
+    [
+      -3.792337,
+      -38.484629
+    ],
+    [
+      -3.792343,
+      -38.484708
+    ],
+    [
+      -3.792397,
+      -38.485313
+    ],
+    [
+      -3.792408,
+      -38.48547
+    ],
+    [
+      -3.792474,
+      -38.486283
+    ],
+    [
+      -3.79248,
+      -38.486407
+    ],
+    [
+      -3.793141,
+      -38.486475
+    ],
+    [
+      -3.793335,
+      -38.486496
+    ],
+    [
+      -3.793665,
+      -38.486525
+    ],
+    [
+      -3.793829,
+      -38.486543
+    ],
+    [
+      -3.794284,
+      -38.486594
+    ],
+    [
+      -3.79441,
+      -38.486607
+    ],
+    [
+      -3.794819,
+      -38.486651
+    ],
+    [
+      -3.794815,
+      -38.486694
+    ],
+    [
+      -3.794812,
+      -38.486723
+    ],
+    [
+      -3.794749,
+      -38.487284
+    ],
+    [
+      -3.794746,
+      -38.487308
+    ],
+    [
+      -3.794741,
+      -38.487355
+    ],
+    [
+      -3.794734,
+      -38.487418
+    ],
+    [
+      -3.794674,
+      -38.487995
+    ],
+    [
+      -3.794668,
+      -38.488056
+    ],
+    [
+      -3.793234,
+      -38.487921
+    ],
+    [
+      -3.793161,
+      -38.487914
+    ],
+    [
+      -3.793087,
+      -38.487907
+    ],
+    [
+      -3.792469,
+      -38.487841
+    ],
+    [
+      -3.79164,
+      -38.487754
+    ],
+    [
+      -3.791362,
+      -38.487725
+    ],
+    [
+      -3.791282,
+      -38.487718
+    ],
+    [
+      -3.79124,
+      -38.487866
+    ],
+    [
+      -3.791222,
+      -38.487935
+    ],
+    [
+      -3.791098,
+      -38.488375
+    ],
+    [
+      -3.791025,
+      -38.488662
+    ],
+    [
+      -3.790928,
+      -38.489041
+    ],
+    [
+      -3.790913,
+      -38.489094
+    ],
+    [
+      -3.79099,
+      -38.489102
+    ],
+    [
+      -3.791439,
+      -38.489149
+    ],
+    [
+      -3.792287,
+      -38.489237
+    ],
+    [
+      -3.792939,
+      -38.489305
+    ],
+    [
+      -3.793005,
+      -38.489312
+    ],
+    [
+      -3.793011,
+      -38.489264
+    ],
+    [
+      -3.793012,
+      -38.489255
+    ],
+    [
+      -3.793079,
+      -38.488681
+    ],
+    [
+      -3.793082,
+      -38.488659
+    ],
+    [
+      -3.793085,
+      -38.488618
+    ],
+    [
+      -3.79301,
+      -38.488609
+    ],
+    [
+      -3.79116,
+      -38.488385
+    ],
+    [
+      -3.791151,
+      -38.488384
+    ],
+    [
+      -3.791098,
+      -38.488375
+    ],
+    [
+      -3.791025,
+      -38.488662
+    ],
+    [
+      -3.790928,
+      -38.489041
+    ],
+    [
+      -3.790913,
+      -38.489094
+    ],
+    [
+      -3.79099,
+      -38.489102
+    ],
+    [
+      -3.791439,
+      -38.489149
+    ],
+    [
+      -3.791434,
+      -38.489196
+    ],
+    [
+      -3.79143,
+      -38.489232
+    ],
+    [
+      -3.791407,
+      -38.489453
+    ],
+    [
+      -3.791585,
+      -38.489473
+    ],
+    [
+      -3.791959,
+      -38.489512
+    ]
+  ],
+  "entregues": [
+    0,
+    1
+  ],
+  "manual_sequences": {}
+}

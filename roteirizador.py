@@ -5,31 +5,50 @@ from streamlit_folium import st_folium
 import numpy as np
 from folium.features import DivIcon
 import requests
-import pickle
+import json
+import hashlib
+import time
+import logging
 import os
 
 # --- 1. PERSISTÊNCIA DE DADOS ---
-SAVE_FILE = "sessao_garapas.pkl"
+SAVE_FILE = "sessao_garapas.json"
+
+# logging
+logging.basicConfig(level=logging.INFO)
 
 def salvar_progresso():
+    # Serializa estado em JSON (DataFrame -> records)
+    df = st.session_state.get('df_final')
     dados = {
-        'df_final': st.session_state.get('df_final'),
+        'df_final': df.to_dict(orient='records') if df is not None else None,
         'road_path': st.session_state.get('road_path'),
-        'entregues': st.session_state.get('entregues'),
+        'entregues': list(st.session_state.get('entregues', set())),
         'manual_sequences': st.session_state.get('manual_sequences')
     }
-    with open(SAVE_FILE, 'wb') as f:
-        pickle.dump(dados, f)
+    try:
+        with open(SAVE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(dados, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logging.exception('Falha ao salvar progresso: %s', e)
 
 def carregar_progresso():
     if os.path.exists(SAVE_FILE):
         try:
-            with open(SAVE_FILE, 'rb') as f:
-                dados = pickle.load(f)
-                for k, v in dados.items():
-                    st.session_state[k] = v
+            with open(SAVE_FILE, 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+                # Reconstruir dataframe
+                if dados.get('df_final') is not None:
+                    st.session_state['df_final'] = pd.DataFrame(dados['df_final'])
+                else:
+                    st.session_state['df_final'] = None
+                st.session_state['road_path'] = dados.get('road_path', [])
+                st.session_state['entregues'] = set(dados.get('entregues', []))
+                st.session_state['manual_sequences'] = dados.get('manual_sequences', {})
                 return True
-        except: return False
+        except Exception as e:
+            logging.exception('Falha ao carregar progresso: %s', e)
+            return False
     return False
 
 # --- 2. FUNÇÕES TÉCNICAS (OTIMIZADAS COM CACHE) ---
@@ -39,18 +58,28 @@ def fast_haversine(lat1, lon1, lat2, lon2):
     return 12742 * np.arcsin(np.sqrt(a))
 
 @st.cache_data(show_spinner=False)
-def get_road_route_batch(points_tuple):
-    """Versão com cache para acelerar o carregamento do mapa"""
+def get_road_route_batch(points_tuple, max_retries: int = 3, backoff: float = 0.5):
+    """Versão com cache para acelerar o carregamento do mapa e retries simples"""
     points = list(points_tuple)
-    if len(points) < 2: return points
+    if len(points) < 2:
+        return points
     coords_str = ";".join([f"{p[1]},{p[0]}" for p in points])
     url = f"http://router.project-osrm.org/route/v1/driving/{coords_str}?overview=full&geometries=geojson"
-    try:
-        r = requests.get(url, timeout=10)
-        if r.status_code == 200:
-            coords = r.json()['routes'][0]['geometry']['coordinates']
-            return [[c[1], c[0]] for c in coords]
-    except: pass
+    for attempt in range(1, max_retries + 1):
+        try:
+            r = requests.get(url, timeout=10)
+            if r.status_code == 200:
+                data = r.json()
+                routes = data.get('routes')
+                if routes:
+                    coords = routes[0]['geometry']['coordinates']
+                    return [[c[1], c[0]] for c in coords]
+            else:
+                logging.warning('OSRM returned status %s on attempt %s', r.status_code, attempt)
+        except requests.RequestException as e:
+            logging.warning('OSRM request failed on attempt %s: %s', attempt, e)
+        time.sleep(backoff * attempt)
+    logging.info('Falling back to direct points for road path')
     return points
 
 # --- 3. DESIGN SYSTEM: USANDO GRID COM PIXELS FIXOS ---
@@ -339,10 +368,12 @@ def render_operacao():
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
-                    if entregue: st.session_state['entregues'].remove(i)
-                    else: st.session_state['entregues'].add(i)
+                    if entregue:
+                        st.session_state['entregues'].remove(i)
+                    else:
+                        st.session_state['entregues'].add(i)
                     salvar_progresso()
-                    st.rerun(scope="fragment") # Atualização suave do bloco
+                    # Removido st.rerun para evitar dupla rerun e reduzir flicker.
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
@@ -356,10 +387,26 @@ if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
     if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
-        df_raw = pd.read_excel(uploaded_file)
+        try:
+            df_raw = pd.read_excel(uploaded_file)
+        except Exception as e:
+            st.error(f"Falha ao ler o arquivo: {e}")
+            raise st.stop()
+
         df_raw.columns = df_raw.columns.str.strip().str.upper()
+        required_cols = {'LATITUDE', 'LONGITUDE', 'DESTINATION ADDRESS', 'SEQUENCE'}
+        missing = required_cols - set(df_raw.columns)
+        if missing:
+            st.error(f"Arquivo inválido. Faltam colunas: {', '.join(sorted(missing))}")
+            raise st.stop()
+
+        # Garantir LAT/LON numéricos e sem NaNs
+        df_raw['LATITUDE'] = pd.to_numeric(df_raw['LATITUDE'], errors='coerce')
+        df_raw['LONGITUDE'] = pd.to_numeric(df_raw['LONGITUDE'], errors='coerce')
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
-        df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean['SEQUENCE'].astype(str)
+
+        # UID robusto por hash (evita colisões simples)
+        df_clean['UID'] = df_clean.apply(lambda r: hashlib.sha1((str(r.get('DESTINATION ADDRESS','')) + str(r.get('SEQUENCE',''))).encode('utf-8')).hexdigest(), axis=1)
         df_temp = df_clean.copy().reset_index()
         rota = []
         p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
