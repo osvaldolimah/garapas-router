@@ -59,37 +59,37 @@ st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 st.markdown("""
     <style>
     /* 1. RESET TOTAL */
-    * { 
-        box-sizing: border-box !important; 
+    * {
+        box-sizing: border-box !important;
         margin: 0 !important;
     }
-    
-    html, body, [data-testid="stAppViewContainer"], 
+   
+    html, body, [data-testid="stAppViewContainer"],
     [data-testid="stApp"], .main, .block-container {
         overflow-x: hidden !important;
         width: 100% !important;
         max-width: 100vw !important;
         padding: 0 !important;
     }
-    
-    .block-container { 
-        padding: 0.5rem 0.3rem !important; 
+   
+    .block-container {
+        padding: 0.5rem 0.3rem !important;
     }
-    
+   
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
     /* 2. MÉTRICAS */
     .custom-metrics-container {
-        display: flex; 
-        justify-content: space-between; 
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        background: white; 
-        padding: 8px 10px; 
-        border-radius: 8px; 
+        background: white;
+        padding: 8px 10px;
+        border-radius: 8px;
         margin: 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        width: 100%; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        width: 100%;
     }
 
     /* 3. GRID COM PIXELS FIXOS - A ÚNICA SOLUÇÃO GARANTIDA */
@@ -102,70 +102,70 @@ st.markdown("""
         padding: 0 !important;
         margin: 0 !important;
     }
-    
+   
     [data-testid="column"] {
         min-width: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
     }
-    
+   
     [data-testid="column"]:nth-of-type(1) {
         width: 55px !important;
         max-width: 55px !important;
     }
-    
+   
     [data-testid="column"]:nth-of-type(2) {
         width: 55px !important;
         max-width: 55px !important;
     }
-    
+   
     [data-testid="column"]:nth-of-type(3) {
         width: 100% !important;
         min-width: 0 !important;
     }
 
     /* 4. CARDS */
-    .delivery-card { 
-        border-radius: 8px; 
-        padding: 8px 10px; 
-        background-color: white; 
+    .delivery-card {
+        border-radius: 8px;
+        padding: 8px 10px;
+        background-color: white;
         border-left: 4px solid #FF4B4B;
         margin: 8px 0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
-    .next-target { 
-        border-left: 4px solid #007BFF !important; 
+    .next-target {
+        border-left: 4px solid #007BFF !important;
         background-color: #f0f8ff !important;
         box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
     }
-    .address-header { 
-        font-size: 13px !important; 
-        font-weight: 700; 
-        color: #111; 
+    .address-header {
+        font-size: 13px !important;
+        font-weight: 700;
+        color: #111;
         line-height: 1.3;
         word-wrap: break-word;
         overflow-wrap: break-word;
     }
-    
+   
     /* 5. BOTÕES E INPUTS */
     .stTextInput input {
-        height: 40px !important; 
+        height: 40px !important;
         background-color: #f8f9fa !important;
-        color: #000 !important; 
+        color: #000 !important;
         font-size: 14px !important;
-        text-align: center; 
-        font-weight: 700 !important; 
+        text-align: center;
+        font-weight: 700 !important;
         border-radius: 6px !important;
-        padding: 0 4px !important; 
+        padding: 0 4px !important;
         border: 1px solid #dee2e6 !important;
         width: 100% !important;
         box-sizing: border-box !important;
     }
-    
-    .stButton button { 
-        height: 40px !important; 
-        font-size: 17px !important; 
-        width: 100% !important; 
+   
+    .stButton button {
+        height: 40px !important;
+        font-size: 17px !important;
+        width: 100% !important;
         border-radius: 6px !important;
         padding: 6px !important;
         box-sizing: border-box !important;
@@ -174,11 +174,11 @@ st.markdown("""
         background: transparent !important;
         box-shadow: none !important;
     }
-    
+   
     .stLinkButton a {
-        height: 40px !important; 
-        font-size: 17px !important; 
-        width: 100% !important; 
+        height: 40px !important;
+        font-size: 17px !important;
+        width: 100% !important;
         border-radius: 6px !important;
         padding: 6px !important;
         box-sizing: border-box !important;
@@ -198,19 +198,19 @@ st.markdown("""
             grid-template-columns: 50px 50px 1fr !important;
             gap: 3px !important;
         }
-        
+       
         [data-testid="column"]:nth-of-type(1) {
             width: 50px !important;
             max-width: 50px !important;
         }
-        
+       
         [data-testid="column"]:nth-of-type(2) {
             width: 50px !important;
             max-width: 50px !important;
         }
-        
-        .stButton button { 
-            font-size: 16px !important; 
+       
+        .stButton button {
+            font-size: 16px !important;
             height: 38px !important;
         }
         .stLinkButton a {
@@ -222,25 +222,25 @@ st.markdown("""
             height: 38px !important;
         }
     }
-    
+   
     @media screen and (max-width: 360px) {
         [data-testid="stHorizontalBlock"] {
             grid-template-columns: 45px 45px 1fr !important;
             gap: 2px !important;
         }
-        
+       
         [data-testid="column"]:nth-of-type(1) {
             width: 45px !important;
             max-width: 45px !important;
         }
-        
+       
         [data-testid="column"]:nth-of-type(2) {
             width: 45px !important;
             max-width: 45px !important;
         }
-        
-        .stButton button { 
-            font-size: 15px !important; 
+       
+        .stButton button {
+            font-size: 15px !important;
             height: 36px !important;
         }
         .stLinkButton a {
@@ -258,7 +258,7 @@ st.markdown("""
         [data-testid="stHorizontalBlock"] {
             grid-template-columns: 60px 60px 1fr !important;
         }
-        
+       
         [data-testid="column"]:nth-of-type(1),
         [data-testid="column"]:nth-of-type(2) {
             width: 60px !important;
@@ -272,9 +272,9 @@ st.markdown("""
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({
-            'df_final': None, 
-            'road_path': [], 
-            'entregues': set(), 
+            'df_final': None,
+            'road_path': [],
+            'entregues': set(),
             'manual_sequences': {},
             'first_render': True
         })
@@ -285,10 +285,11 @@ def render_operacao():
     df_res = st.session_state['df_final']
     entregues_set = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_set]
-    
-    # --- A. MAPA (PREPARAÇÃO OTIMIZADA) ---
+   
+    # --- A. MAPA (PREPARAÇÃO) ---
     all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
-    
+   
+    # Cálculo do centro para evitar o "bug do mapa do mundo"
     if all_coords:
         center_lat = sum(c[0] for c in all_coords) / len(all_coords)
         center_lon = sum(c[1] for c in all_coords) / len(all_coords)
@@ -296,60 +297,59 @@ def render_operacao():
         center_lat, center_lon = 0, 0
 
     m = folium.Map(
-        location=[center_lat, center_lon], 
-        zoom_start=13, 
-        tiles="cartodbpositron", 
+        location=[center_lat, center_lon],
+        zoom_start=13,
+        tiles="cartodbpositron",
         attribution_control=False
     )
 
     if st.session_state['road_path']:
-        # Otimização: Passo de 5 para leveza máxima no carregamento
+        # Otimização de renderização: Amostragem para leveza
         folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
-    
+   
     proximo_idx = restantes[0] if restantes else None
-    
+   
     for i, row in df_res.iterrows():
         foi = i in entregues_set
         cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
-        
-        # HTML Simplificado para renderização instantânea (menos código = menos piscada)
+       
+        # HTML Simplificado para renderização instantânea
         icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
-    
-    # ESTABILIZADOR: fit_bounds apenas na primeira vez. Mantém a posição durante a operação.
+   
+    # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada agressiva de Tiles)
     if all_coords and st.session_state.get('first_render', True):
         m.fit_bounds(all_coords, padding=(30, 30))
         st.session_state['first_render'] = False
-    
-    # returned_objects=[] evita a troca de dados pesados entre JS e Python
+   
+    # Uso de chave estática e sem retorno de objetos para performance total
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional", returned_objects=[])
 
     # --- B. MÉTRICAS ---
-    km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], 
-                              df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) 
+    km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'],
+                              df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE'])
               for k in range(len(restantes)-1)) if len(restantes) > 1 else 0
-    
+   
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
-    
+   
     # --- C. LISTA DE ENTREGAS ---
     with st.container(height=500):
         for i, row in df_res.iterrows():
-            rua = str(row.get('DESTINATION ADDRESS', '---'))
-            uid = str(row.get('UID', ''))
+            rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
             entregue, is_next = i in entregues_set, (i == proximo_idx)
             card_class = "next-target" if is_next else ""
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
-            
+           
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
                     salvar_progresso()
-                    # Removido o st.rerun(scope="fragment") manual: o widget já aciona o fragmento
+                    st.rerun(scope="fragment") # Atualização suave do bloco
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
