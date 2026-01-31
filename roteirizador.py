@@ -167,9 +167,12 @@ st.markdown("""
         font-size: 17px !important; 
         width: 100% !important; 
         border-radius: 6px !important;
-        padding: 0 !important;
+        padding: 6px !important;
         box-sizing: border-box !important;
         white-space: nowrap !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
     }
     
     .stLinkButton a {
@@ -177,12 +180,16 @@ st.markdown("""
         font-size: 17px !important; 
         width: 100% !important; 
         border-radius: 6px !important;
-        padding: 0 !important;
+        padding: 6px !important;
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
+        transition: background-color 160ms ease, transform 120ms ease;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
     }
 
     /* 6. MOBILE - BOTÕES AINDA MENORES */
@@ -355,7 +362,7 @@ def render_operacao():
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
+    if uploaded_file and st.button("🚀", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
