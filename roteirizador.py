@@ -286,10 +286,9 @@ def render_operacao():
     entregues_set = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_set]
     
-    # --- A. MAPA (PREPARAÇÃO) ---
-    all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
+    # --- A. MAPA (PREPARAÇÃO OTIMIZADA) ---
+    all_coords = [[row.LATITUDE, row.LONGITUDE] for row in df_res.itertuples()]
     
-    # Cálculo do centro para evitar o "bug do mapa do mundo"
     if all_coords:
         center_lat = sum(c[0] for c in all_coords) / len(all_coords)
         center_lon = sum(c[1] for c in all_coords) / len(all_coords)
@@ -298,32 +297,32 @@ def render_operacao():
 
     m = folium.Map(
         location=[center_lat, center_lon], 
-        zoom_start=13, 
+        zoom_start=14, 
         tiles="cartodbpositron", 
         attribution_control=False
     )
 
     if st.session_state['road_path']:
-        # Otimização de renderização: Amostragem para leveza
-        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
+        # Otimização: [::10] torna o mapa muito mais leve para o navegador mobile
+        folium.PolyLine(st.session_state['road_path'][::10], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
     proximo_idx = restantes[0] if restantes else None
     
-    for i, row in df_res.iterrows():
+    # Itertuples é muito mais rápido que iterrows()
+    for row in df_res.itertuples():
+        i = row.Index
         foi = i in entregues_set
         cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
-        loc = [row['LATITUDE'], row['LONGITUDE']]
+        loc = [row.LATITUDE, row.LONGITUDE]
         
-        # HTML Simplificado para renderização instantânea
-        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
+        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row.ORDEM_PARADA)}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada agressiva de Tiles)
+    # SÓ AJUSTA O ZOOM NO PRIMEIRO CARREGAMENTO (Evita piscada ao marcar check)
     if all_coords and st.session_state.get('first_render', True):
         m.fit_bounds(all_coords, padding=(30, 30))
         st.session_state['first_render'] = False
     
-    # Uso de chave estática e sem retorno de objetos para performance total
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional", returned_objects=[])
 
     # --- B. MÉTRICAS ---
@@ -335,13 +334,14 @@ def render_operacao():
     
     # --- C. LISTA DE ENTREGAS ---
     with st.container(height=500):
-        for i, row in df_res.iterrows():
-            rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
-            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
+        for row in df_res.itertuples():
+            i = row.Index
+            rua, uid = str(getattr(row, '_4', '---')), str(row.UID) # Posição segura da coluna endereço
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.SEQUENCE))
             entregue, is_next = i in entregues_set, (i == proximo_idx)
             card_class = "next-target" if is_next else ""
 
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row.ORDEM_PARADA)}ª - {rua}</div></div>', unsafe_allow_html=True)
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
@@ -349,9 +349,9 @@ def render_operacao():
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
                     salvar_progresso()
-                    st.rerun(scope="fragment") # Atualização suave do bloco
+                    # Removido st.rerun() manual para o fragmento gerir a atualização silenciosa
             with c_waze:
-                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+                st.link_button("🚗", f"https://waze.com/ul?ll={row.LATITUDE},{row.LONGITUDE}&navigate=yes", use_container_width=True)
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
@@ -383,7 +383,6 @@ if st.session_state['df_final'] is None:
         st.rerun()
 
 else:
-    # BOTÕES DE CONTROLE
     c_limpar, c_novo = st.columns(2)
     with c_limpar:
         if st.button("🗑️", use_container_width=True):
@@ -403,5 +402,4 @@ else:
             st.session_state.clear()
             st.rerun()
 
-    # Chamar o motor de operação (Mapa + Métricas + Lista)
     render_operacao()
