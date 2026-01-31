@@ -376,7 +376,7 @@ def render_operacao():
             with c_done:
                 # Checkbox persistente por UID (usa label não-vazio escondido por acessibilidade)
                 cb_label = f"Marcar entregue {int(row.get('ORDEM_PARADA', i))}"
-                checked = st.checkbox(cb_label, value=entregue, key=f"done_{uid}", label_visibility="collapsed", use_container_width=True)
+                checked = st.checkbox(cb_label, value=entregue, key=f"done_{uid}", label_visibility="collapsed")
                 if checked and uid not in st.session_state['entregues']:
                     st.session_state['entregues'].add(uid)
                     salvar_progresso()
