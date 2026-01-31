@@ -212,7 +212,9 @@ def render_dashboard():
     with st.container(height=500):
         for row in df_res.itertuples():
             i = row.Index
-            rua, uid = str(row._4), str(row.UID) # Posição baseada nas colunas do Excel/DataFrame
+            # Pandas converte "DESTINATION ADDRESS" para "DESTINATION_ADDRESS" em itertuples()
+            rua = str(getattr(row, 'DESTINATION_ADDRESS', '---'))
+            uid = str(row.UID)
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.SEQUENCE))
             entregue = i in entregues_set
             card_class = "next-target" if i == proximo_alvo_idx else ""
