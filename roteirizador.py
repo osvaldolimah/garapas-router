@@ -57,7 +57,7 @@ st.markdown("""
     <style>
     /* RESET GLOBAL */
     * { box-sizing: border-box !important; margin: 0 !important; }
-    html, body, [data-testid="stAppViewContainer"] { 
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"], .main, .block-container { 
         overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
     }
     .block-container { padding: 0.5rem 0.3rem !important; }
@@ -65,57 +65,233 @@ st.markdown("""
     .leaflet-control-attribution { display: none !important; }
 
     /* --- REGRA 1: LISTA DE ENTREGAS (3 COLUNAS TRAVADAS) --- */
-    /* Só afeta o bloco que estiver dentro da div 'delivery-item-row' */
     .delivery-item-row [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
-        gap: 4px !important;
+        gap: 3px !important;
         width: 100% !important;
-        align-items: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
     }
     
     .delivery-item-row [data-testid="column"] {
         min-width: 0 !important;
         padding: 0 !important;
+        margin: 0 !important;
         overflow: hidden !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+        width: 56px !important;
+        max-width: 56px !important;
+        min-width: 56px !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+        width: 64px !important;
+        max-width: 64px !important;
+        min-width: 64px !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-of-type(3) {
+        width: 100% !important;
+        min-width: 0 !important;
     }
 
     /* --- REGRA 2: BOTÕES DE TOPO (2 COLUNAS MEIO A MEIO) --- */
     .top-controls [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
-        gap: 8px !important;
+        gap: 6px !important;
         width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
     .top-controls [data-testid="column"] {
         flex: 1 !important;
         width: 50% !important;
         min-width: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* BOTÕES GERAIS */
-    .stButton > button, .stLinkButton > a {
-        height: 44px !important; width: 100% !important; padding: 0 !important;
-        display: flex !important; align-items: center !important; justify-content: center !important;
-        border-radius: 6px !important; border: 1px solid #dee2e6 !important;
+    .stButton, .stLinkButton, .stTextInput {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    .stButton > button div, .stLinkButton > a div {
-        display: flex !important; align-items: center !important; justify-content: center !important;
+    
+    .stButton > div, .stLinkButton > div, .stTextInput > div {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .stButton > button, .stLinkButton > a {
+        height: 44px !important; 
+        width: 100% !important; 
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important; 
+        align-items: center !important; 
+        justify-content: center !important;
+        border-radius: 6px !important; 
+        box-sizing: border-box !important;
+        line-height: 1 !important;
+        overflow: hidden !important;
+    }
+    
+    .stButton > button > div, .stLinkButton > a > div {
+        display: flex !important; 
+        align-items: center !important; 
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Botões específicos da lista */
+    .delivery-item-row [data-testid="column"]:nth-of-type(1) .stButton > button {
+        font-size: 16px !important;
+        height: 36px !important;
+    }
+    
+    .delivery-item-row [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
+        font-size: 17px !important;
+        height: 44px !important;
     }
 
     /* INPUT SEQUENCE */
     .stTextInput input {
-        height: 44px !important; background-color: #f8f9fa !important;
-        text-align: center; font-weight: 700 !important; border-radius: 6px !important;
-        font-size: 14px !important;
+        height: 44px !important; 
+        background-color: #f8f9fa !important;
+        color: #000 !important;
+        text-align: center; 
+        font-weight: 700 !important; 
+        border-radius: 6px !important;
+        font-size: 13px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0 2px !important;
+        border: 1px solid #dee2e6 !important;
+        margin: 0 !important;
     }
 
     /* CARDS */
-    .delivery-card { border-radius: 8px; padding: 6px; background-color: white; border-left: 4px solid #FF4B4B; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
-    .address-header { font-size: 12px !important; font-weight: 700; line-height: 1.3; color: #111; }
-    .custom-metrics-container { display: flex; justify-content: space-between; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .delivery-card { 
+        border-radius: 8px; 
+        padding: 6px; 
+        background-color: white; 
+        border-left: 4px solid #FF4B4B; 
+        margin: 6px 0; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        width: 100%;
+    }
+    .next-target { 
+        border-left: 4px solid #007BFF !important; 
+        background-color: #f0f8ff !important;
+        box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
+    }
+    .address-header { 
+        font-size: 12px !important; 
+        font-weight: 700; 
+        line-height: 1.3; 
+        color: #111;
+        margin-bottom: 4px !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .custom-metrics-container { 
+        display: flex; 
+        justify-content: space-between; 
+        padding: 8px; 
+        background: white; 
+        border-radius: 8px; 
+        margin: 8px 0; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        width: 100%;
+    }
+    
+    /* MEDIA QUERIES */
+    @media screen and (max-width: 400px) {
+        .delivery-item-row [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 50px 58px 1fr !important;
+            gap: 2px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            width: 50px !important;
+            max-width: 50px !important;
+            min-width: 50px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            width: 58px !important;
+            max-width: 58px !important;
+            min-width: 58px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(1) .stButton > button {
+            font-size: 15px !important;
+            height: 34px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(2) .stLinkButton > a {
+            font-size: 16px !important;
+            height: 42px !important;
+        }
+        
+        .stTextInput input {
+            font-size: 12px !important;
+            height: 42px !important;
+        }
+        
+        .address-header {
+            font-size: 11px !important;
+        }
+    }
+    
+    @media screen and (min-width: 401px) and (max-width: 600px) {
+        .delivery-item-row [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 58px 66px 1fr !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            width: 58px !important;
+            max-width: 58px !important;
+            min-width: 58px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            width: 66px !important;
+            max-width: 66px !important;
+            min-width: 66px !important;
+        }
+    }
+    
+    @media screen and (min-width: 601px) {
+        .delivery-item-row [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 62px 70px 1fr !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(1) {
+            width: 62px !important;
+            max-width: 62px !important;
+            min-width: 62px !important;
+        }
+        
+        .delivery-item-row [data-testid="column"]:nth-of-type(2) {
+            width: 70px !important;
+            max-width: 70px !important;
+            min-width: 70px !important;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
