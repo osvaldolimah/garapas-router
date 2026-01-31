@@ -5,50 +5,31 @@ from streamlit_folium import st_folium
 import numpy as np
 from folium.features import DivIcon
 import requests
-import json
-import hashlib
-import time
-import logging
+import pickle
 import os
 
 # --- 1. PERSISTÊNCIA DE DADOS ---
-SAVE_FILE = "sessao_garapas.json"
-
-# logging
-logging.basicConfig(level=logging.INFO)
+SAVE_FILE = "sessao_garapas.pkl"
 
 def salvar_progresso():
-    # Serializa estado em JSON (DataFrame -> records)
-    df = st.session_state.get('df_final')
     dados = {
-        'df_final': df.to_dict(orient='records') if df is not None else None,
+        'df_final': st.session_state.get('df_final'),
         'road_path': st.session_state.get('road_path'),
-        'entregues': list(st.session_state.get('entregues', set())),
+        'entregues': st.session_state.get('entregues'),
         'manual_sequences': st.session_state.get('manual_sequences')
     }
-    try:
-        with open(SAVE_FILE, 'w', encoding='utf-8') as f:
-            json.dump(dados, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        logging.exception('Falha ao salvar progresso: %s', e)
+    with open(SAVE_FILE, 'wb') as f:
+        pickle.dump(dados, f)
 
 def carregar_progresso():
     if os.path.exists(SAVE_FILE):
         try:
-            with open(SAVE_FILE, 'r', encoding='utf-8') as f:
-                dados = json.load(f)
-                # Reconstruir dataframe
-                if dados.get('df_final') is not None:
-                    st.session_state['df_final'] = pd.DataFrame(dados['df_final'])
-                else:
-                    st.session_state['df_final'] = None
-                st.session_state['road_path'] = dados.get('road_path', [])
-                st.session_state['entregues'] = set(dados.get('entregues', []))
-                st.session_state['manual_sequences'] = dados.get('manual_sequences', {})
+            with open(SAVE_FILE, 'rb') as f:
+                dados = pickle.load(f)
+                for k, v in dados.items():
+                    st.session_state[k] = v
                 return True
-        except Exception as e:
-            logging.exception('Falha ao carregar progresso: %s', e)
-            return False
+        except: return False
     return False
 
 # --- 2. FUNÇÕES TÉCNICAS (OTIMIZADAS COM CACHE) ---
@@ -58,28 +39,18 @@ def fast_haversine(lat1, lon1, lat2, lon2):
     return 12742 * np.arcsin(np.sqrt(a))
 
 @st.cache_data(show_spinner=False)
-def get_road_route_batch(points_tuple, max_retries: int = 3, backoff: float = 0.5):
-    """Versão com cache para acelerar o carregamento do mapa e retries simples"""
+def get_road_route_batch(points_tuple):
+    """Versão com cache para acelerar o carregamento do mapa"""
     points = list(points_tuple)
-    if len(points) < 2:
-        return points
+    if len(points) < 2: return points
     coords_str = ";".join([f"{p[1]},{p[0]}" for p in points])
     url = f"http://router.project-osrm.org/route/v1/driving/{coords_str}?overview=full&geometries=geojson"
-    for attempt in range(1, max_retries + 1):
-        try:
-            r = requests.get(url, timeout=10)
-            if r.status_code == 200:
-                data = r.json()
-                routes = data.get('routes')
-                if routes:
-                    coords = routes[0]['geometry']['coordinates']
-                    return [[c[1], c[0]] for c in coords]
-            else:
-                logging.warning('OSRM returned status %s on attempt %s', r.status_code, attempt)
-        except requests.RequestException as e:
-            logging.warning('OSRM request failed on attempt %s: %s', attempt, e)
-        time.sleep(backoff * attempt)
-    logging.info('Falling back to direct points for road path')
+    try:
+        r = requests.get(url, timeout=10)
+        if r.status_code == 200:
+            coords = r.json()['routes'][0]['geometry']['coordinates']
+            return [[c[1], c[0]] for c in coords]
+    except: pass
     return points
 
 # --- 3. DESIGN SYSTEM: USANDO GRID COM PIXELS FIXOS ---
