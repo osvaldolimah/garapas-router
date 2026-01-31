@@ -75,52 +75,51 @@ def padronizar_colunas(df):
     
     return df.rename(columns=novos_nomes)
 
-# --- 3. DESIGN SYSTEM (LAYOUT INTELIGENTE CORRIGIDO) ---
+# --- 3. DESIGN SYSTEM (LAYOUT TRAVADO E PROTEGIDO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
     /* RESET GLOBAL */
     * { box-sizing: border-box !important; margin: 0 !important; }
-    html, body, [data-testid="stAppViewContainer"] { 
+    html, body, [data-testid="stAppViewContainer"], .main, .block-container {
         overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
     }
     .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRA INTELIGENTE 1: LINHAS COM 3 COLUNAS (Lista e Topo Mapa) --- */
-    /* Aplica o Grid Travado: 55px | 55px | Resto */
-    [data-testid="stHorizontalBlock"]:has(> [data-testid="column"]:nth-child(3)) {
+    /* --- REGRA DA LISTA DE ENTREGAS (Grid Travado: 55px | 55px | Resto) --- */
+    .lista-entregas [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 55px 55px 1fr !important;
         gap: 4px !important;
         width: 100% !important;
         align-items: center !important;
     }
+    .lista-entregas [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
 
-    /* --- REGRA INTELIGENTE 2: LINHAS COM 2 COLUNAS (Tela Inicial) --- */
-    /* Garante 50% / 50% para os botões não sobreporem texto */
-    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) {
+    /* --- REGRA PARA BOTÕES DE COMANDO (Lado a Lado na Horizontal) --- */
+    /* Garante que os botões fiquem na horizontal e não empilhem */
+    [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
+        flex-wrap: nowrap !important;
         gap: 8px !important;
         width: 100% !important;
+        align-items: center !important;
     }
-    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) > [data-testid="column"] {
+    [data-testid="column"] {
         flex: 1 !important;
-        width: 50% !important;
         min-width: 0 !important;
     }
-
-    [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
 
     /* BOTÕES E INPUTS */
     .stButton > button, .stLinkButton > a {
         height: 44px !important; width: 100% !important; padding: 0 4px !important;
         display: flex !important; align-items: center !important; justify-content: center !important;
         border-radius: 6px !important; border: 1px solid #dee2e6 !important;
-        font-size: 14px !important; /* Ajuste para não sobrepor texto */
+        font-size: 14px !important;
     }
     .stButton > button div, .stLinkButton > a div {
         display: flex !important; align-items: center !important; justify-content: center !important;
@@ -209,7 +208,7 @@ def render_dashboard():
         
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes_idxs)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
 
-    # D. LISTA
+    # D. LISTA DE ENTREGAS (COM PROTEÇÃO DE CLASSE)
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
@@ -219,6 +218,8 @@ def render_dashboard():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
+            # --- DIV QUE APLICA O GRID TRAVADO APENAS AQUI ---
+            st.markdown('<div class="lista-entregas">', unsafe_allow_html=True)
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -232,6 +233,7 @@ def render_dashboard():
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
@@ -281,7 +283,7 @@ if st.session_state['df_final'] is None:
                         circuit_df.to_excel(writer, index=False)
                     
                     st.download_button(
-                        label="📥 Baixar Planilha Circuit",
+                        label="📥 Baixar Circuit",
                         data=output.getvalue(),
                         file_name="rota_para_circuit.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
