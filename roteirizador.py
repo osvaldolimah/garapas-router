@@ -11,7 +11,7 @@ import os
 # --- 1. PERSISTÊNCIA ---
 SAVE_FILE = "sessao_garapas.pkl"
 
-def save_state():
+def salvar_progresso():
     dados = {
         'df_final': st.session_state.get('df_final'),
         'road_path': st.session_state.get('road_path'),
