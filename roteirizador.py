@@ -50,12 +50,12 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM: CONTROLE DE LARGURA NUCLEAR ---
+# --- 3. DESIGN SYSTEM: USANDO GRID COM PIXELS FIXOS ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. RESET TOTAL - ZERANDO TUDO */
+    /* 1. RESET TOTAL */
     * { 
         box-sizing: border-box !important; 
         margin: 0 !important;
@@ -76,7 +76,7 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. BARRA DE MÉTRICAS (HTML ESTÁVEL) */
+    /* 2. MÉTRICAS */
     .custom-metrics-container {
         display: flex; 
         justify-content: space-between; 
@@ -87,44 +87,41 @@ st.markdown("""
         margin: 8px 0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
         width: 100%; 
-        max-width: 100%;
     }
 
-    /* 3. SISTEMA DE COLUNAS RESPONSIVO - AJUSTE PRECISO */
+    /* 3. GRID COM PIXELS FIXOS - A ÚNICA SOLUÇÃO GARANTIDA */
     [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 3px !important;
+        display: grid !important;
+        grid-template-columns: 55px 55px 1fr !important;
+        gap: 4px !important;
         width: 100% !important;
         max-width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
     }
     
-    /* Colunas com controle total */
     [data-testid="column"] {
         min-width: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
-        flex-shrink: 1 !important;
+    }
+    
+    [data-testid="column"]:nth-of-type(1) {
+        width: 55px !important;
+        max-width: 55px !important;
+    }
+    
+    [data-testid="column"]:nth-of-type(2) {
+        width: 55px !important;
+        max-width: 55px !important;
+    }
+    
+    [data-testid="column"]:nth-of-type(3) {
+        width: 100% !important;
+        min-width: 0 !important;
     }
 
-    /* Distribuição: 17% + 17% + 66% = 100% - mas com gap de 3px considerado */
-    [data-testid="column"]:nth-of-type(1) { 
-        flex: 0 0 17% !important; 
-        max-width: 17% !important;
-    }
-    [data-testid="column"]:nth-of-type(2) { 
-        flex: 0 0 17% !important; 
-        max-width: 17% !important;
-    }
-    [data-testid="column"]:nth-of-type(3) { 
-        flex: 1 1 66% !important; 
-        max-width: 66% !important;
-    }
-
-    /* 4. ESTILO DOS CARDS */
+    /* 4. CARDS */
     .delivery-card { 
         border-radius: 8px; 
         padding: 8px 10px; 
@@ -147,7 +144,7 @@ st.markdown("""
         overflow-wrap: break-word;
     }
     
-    /* 5. Inputs e Botões - AJUSTE CRÍTICO */
+    /* 5. BOTÕES E INPUTS */
     .stTextInput input {
         height: 40px !important; 
         background-color: #f8f9fa !important;
@@ -159,15 +156,13 @@ st.markdown("""
         padding: 0 4px !important; 
         border: 1px solid #dee2e6 !important;
         width: 100% !important;
-        max-width: 100% !important;
         box-sizing: border-box !important;
     }
     
     .stButton button { 
         height: 40px !important; 
-        font-size: 18px !important; 
+        font-size: 17px !important; 
         width: 100% !important; 
-        max-width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
         box-sizing: border-box !important;
@@ -176,9 +171,8 @@ st.markdown("""
     
     .stLinkButton a {
         height: 40px !important; 
-        font-size: 18px !important; 
+        font-size: 17px !important; 
         width: 100% !important; 
-        max-width: 100% !important;
         border-radius: 6px !important;
         padding: 0 !important;
         box-sizing: border-box !important;
@@ -188,23 +182,21 @@ st.markdown("""
         text-decoration: none !important;
     }
 
-    /* 6. MEDIA QUERIES PARA DISPOSITIVOS PEQUENOS */
+    /* 6. MOBILE - BOTÕES AINDA MENORES */
     @media screen and (max-width: 480px) {
         [data-testid="stHorizontalBlock"] {
-            gap: 2px !important;
+            grid-template-columns: 50px 50px 1fr !important;
+            gap: 3px !important;
         }
         
-        [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 19% !important; 
-            max-width: 19% !important;
+        [data-testid="column"]:nth-of-type(1) {
+            width: 50px !important;
+            max-width: 50px !important;
         }
-        [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 19% !important; 
-            max-width: 19% !important;
-        }
-        [data-testid="column"]:nth-of-type(3) { 
-            flex: 1 1 62% !important; 
-            max-width: 62% !important;
+        
+        [data-testid="column"]:nth-of-type(2) {
+            width: 50px !important;
+            max-width: 50px !important;
         }
         
         .stButton button { 
@@ -220,17 +212,47 @@ st.markdown("""
             height: 38px !important;
         }
     }
+    
+    @media screen and (max-width: 360px) {
+        [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 45px 45px 1fr !important;
+            gap: 2px !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(1) {
+            width: 45px !important;
+            max-width: 45px !important;
+        }
+        
+        [data-testid="column"]:nth-of-type(2) {
+            width: 45px !important;
+            max-width: 45px !important;
+        }
+        
+        .stButton button { 
+            font-size: 15px !important; 
+            height: 36px !important;
+        }
+        .stLinkButton a {
+            font-size: 15px !important;
+            height: 36px !important;
+        }
+        .stTextInput input {
+            font-size: 12px !important;
+            height: 36px !important;
+        }
+    }
 
-    /* 7. Para tablets em landscape */
-    @media screen and (min-width: 768px) and (max-width: 1024px) {
-        [data-testid="column"]:nth-of-type(1) { 
-            flex: 0 0 15% !important; 
+    /* 7. TABLETS */
+    @media screen and (min-width: 768px) {
+        [data-testid="stHorizontalBlock"] {
+            grid-template-columns: 60px 60px 1fr !important;
         }
-        [data-testid="column"]:nth-of-type(2) { 
-            flex: 0 0 15% !important; 
-        }
-        [data-testid="column"]:nth-of-type(3) { 
-            flex: 1 1 70% !important; 
+        
+        [data-testid="column"]:nth-of-type(1),
+        [data-testid="column"]:nth-of-type(2) {
+            width: 60px !important;
+            max-width: 60px !important;
         }
     }
     </style>
@@ -241,7 +263,7 @@ if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. FRAGMENTO DA LISTA (SUAVE E TRAVADO) ---
+# --- 5. FRAGMENTO DA LISTA ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -256,8 +278,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            # --- AS COLUNAS RESPONSIVAS ---
-            c_done, c_waze, c_seq = st.columns([0.17, 0.17, 0.66])
+            # USANDO COLUNAS IGUAIS - DEIXANDO O CSS CONTROLAR TUDO
+            c_done, c_waze, c_seq = st.columns(3)
             
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -296,7 +318,7 @@ if st.session_state['df_final'] is None:
         st.rerun()
 
 else:
-    # A. BOTÕES DE CONTROLE (NO TOPO)
+    # A. BOTÕES DE CONTROLE
     c_limpar, c_novo = st.columns(2)
     with c_limpar:
         if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
@@ -314,7 +336,7 @@ else:
             st.session_state.clear()
             st.rerun()
 
-    # B. MAPA (Fixado em 320px)
+    # B. MAPA
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     
@@ -330,9 +352,9 @@ else:
     if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True)
 
-    # C. MÉTRICAS (HTML)
+    # C. MÉTRICAS
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
     
-    # D. CHAMADA DA LISTA
+    # D. LISTA
     render_delivery_list()
