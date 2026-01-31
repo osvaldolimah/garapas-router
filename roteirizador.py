@@ -7,6 +7,7 @@ from folium.features import DivIcon
 import requests
 import pickle
 import os
+import io
 
 # --- 1. PERSISTÊNCIA DE DADOS ---
 SAVE_FILE = "sessao_garapas.pkl"
@@ -286,21 +287,59 @@ def render_dashboard():
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
-        df_raw = pd.read_excel(uploaded_file)
-        df_raw.columns = df_raw.columns.str.strip().str.upper()
-        df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
-        df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean['SEQUENCE'].astype(str)
-        df_temp = df_clean.copy().reset_index()
-        rota = []
-        p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
-        while not df_temp.empty:
-            dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
-            idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
-        st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
-        st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-        pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
-        st.session_state['road_path'] = get_road_route_batch(pts_tuple)
-        salvar_progresso(); st.rerun()
+    
+    if uploaded_file:
+        # Lógica para oferecer as duas opções
+        st.info("Planilha carregada! Escolha uma opção abaixo:")
+        
+        c_opt1, c_opt2 = st.columns(2)
+        
+        with c_opt1:
+            if st.button("🚀 Iniciar Rota", use_container_width=True):
+                df_raw = pd.read_excel(uploaded_file)
+                df_raw.columns = df_raw.columns.str.strip().str.upper()
+                df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
+                df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean['SEQUENCE'].astype(str)
+                df_temp = df_clean.copy().reset_index()
+                rota = []
+                p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
+                while not df_temp.empty:
+                    dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
+                    idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
+                st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
+                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+                pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
+                st.session_state['road_path'] = get_road_route_batch(pts_tuple)
+                salvar_progresso(); st.rerun()
+        
+        with c_opt2:
+            # Lógica do EXTRATOR CIRCUIT
+            if st.button("📄 Gerar para Circuit", use_container_width=True):
+                df_raw = pd.read_excel(uploaded_file)
+                df_raw.columns = df_raw.columns.str.strip().str.upper()
+                
+                # Mapeamento para o Circuit
+                # Circuit costuma pedir: Address, Latitude, Longitude, Notes, etc.
+                if 'DESTINATION ADDRESS' in df_raw.columns:
+                    circuit_df = df_raw.copy()
+                    # Garante colunas básicas
+                    cols_to_keep = ['DESTINATION ADDRESS', 'LATITUDE', 'LONGITUDE']
+                    circuit_df = circuit_df[[c for c in cols_to_keep if c in circuit_df.columns]]
+                    
+                    # Prepara para download
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        circuit_df.to_excel(writer, index=False, sheet_name='RotaCircuit')
+                    
+                    st.download_button(
+                        label="📥 Baixar Planilha Circuit",
+                        data=output.getvalue(),
+                        file_name="rota_para_circuit.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True
+                    )
+                else:
+                    st.error("Coluna 'DESTINATION ADDRESS' não encontrada!")
+
 else:
     render_dashboard()
