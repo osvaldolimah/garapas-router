@@ -286,10 +286,9 @@ def render_operacao():
     entregues_set = st.session_state['entregues']
     restantes = [i for i in range(len(df_res)) if i not in entregues_set]
     
-    # --- A. MAPA (PREPARAÇÃO) ---
+    # --- A. MAPA (PREPARAÇÃO OTIMIZADA) ---
     all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
     
-    # Cálculo do centro para manter o foco mesmo sem fit_bounds
     if all_coords:
         center_lat = sum(c[0] for c in all_coords) / len(all_coords)
         center_lon = sum(c[1] for c in all_coords) / len(all_coords)
@@ -304,7 +303,7 @@ def render_operacao():
     )
 
     if st.session_state['road_path']:
-        # Otimização: Passo de 5 para manter o caminho fiel mas leve
+        # Otimização: Passo de 5 para leveza máxima no carregamento
         folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
     proximo_idx = restantes[0] if restantes else None
@@ -314,16 +313,16 @@ def render_operacao():
         cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
         
-        # Ícone simplificado para evitar processamento pesado no iframe
+        # HTML Simplificado para renderização instantânea (menos código = menos piscada)
         icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    # ESTABILIZADOR: fit_bounds apenas na primeira vez ou após reset
+    # ESTABILIZADOR: fit_bounds apenas na primeira vez. Mantém a posição durante a operação.
     if all_coords and st.session_state.get('first_render', True):
         m.fit_bounds(all_coords, padding=(30, 30))
         st.session_state['first_render'] = False
     
-    # returned_objects=[] é a chave para evitar a piscada de sincronização de dados
+    # returned_objects=[] evita a troca de dados pesados entre JS e Python
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional", returned_objects=[])
 
     # --- B. MÉTRICAS ---
@@ -346,12 +345,11 @@ def render_operacao():
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
-                # O fragmento gerencia a atualização silenciosa sem precisar de st.rerun() de página toda
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
                     salvar_progresso()
-                    st.rerun(scope="fragment") 
+                    # Removido o st.rerun(scope="fragment") manual: o widget já aciona o fragmento
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
