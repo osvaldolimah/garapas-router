@@ -54,144 +54,97 @@ def get_road_route_batch(points_tuple):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT ORIGINAL RESTAURADO) ---
+def padronizar_colunas(df):
+    """Mapeia sinônimos para os nomes de coluna esperados pelo app"""
+    mapeamento = {
+        'DESTINATION ADDRESS': ['DESTINATION ADDRESS', 'ADDRESS', 'ENDEREÇO', 'LOGRADOURO', 'DESTINO', 'LOCAL', 'ENDERECO'],
+        'LATITUDE': ['LATITUDE', 'LAT'],
+        'LONGITUDE': ['LONGITUDE', 'LON', 'LONG'],
+        'SEQUENCE': ['SEQUENCE', 'ORDEM', 'SEQ', 'SEQUENCIA']
+    }
+    
+    cols_atuais = [str(c).strip().upper() for c in df.columns]
+    df.columns = cols_atuais
+    
+    novos_nomes = {}
+    for destino, aliases in mapeamento.items():
+        for alias in aliases:
+            if alias in cols_atuais:
+                novos_nomes[alias] = destino
+                break
+    
+    return df.rename(columns=novos_nomes)
+
+# --- 3. DESIGN SYSTEM (LAYOUT INTELIGENTE CORRIGIDO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. RESET TOTAL */
-    * { 
-        box-sizing: border-box !important; 
-        margin: 0 !important;
+    /* RESET GLOBAL */
+    * { box-sizing: border-box !important; margin: 0 !important; }
+    html, body, [data-testid="stAppViewContainer"] { 
+        overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
     }
-    
-    html, body, [data-testid="stAppViewContainer"], 
-    [data-testid="stApp"], .main, .block-container {
-        overflow-x: hidden !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-        padding: 0 !important;
-    }
-    
-    .block-container { 
-        padding: 0.5rem 0.3rem !important; 
-    }
-    
+    .block-container { padding: 0.5rem 0.3rem !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. MÉTRICAS */
-    .custom-metrics-container {
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-        background: white; 
-        padding: 8px 10px; 
-        border-radius: 8px; 
-        margin: 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        width: 100%; 
-    }
-
-    /* 3. GRID COM PIXELS FIXOS - LAYOUT ORIGINAL */
-    [data-testid="stHorizontalBlock"] {
+    /* --- REGRA INTELIGENTE 1: LINHAS COM 3 COLUNAS (Lista e Topo Mapa) --- */
+    /* Aplica o Grid Travado: 55px | 55px | Resto */
+    [data-testid="stHorizontalBlock"]:has(> [data-testid="column"]:nth-child(3)) {
         display: grid !important;
         grid-template-columns: 55px 55px 1fr !important;
         gap: 4px !important;
         width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-    [data-testid="column"] {
-        min-width: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-    [data-testid="column"]:nth-of-type(1) {
-        width: 55px !important;
-        max-width: 55px !important;
-    }
-    
-    [data-testid="column"]:nth-of-type(2) {
-        width: 55px !important;
-        max-width: 55px !important;
-    }
-    
-    [data-testid="column"]:nth-of-type(3) {
-        width: 100% !important;
-        min-width: 0 !important;
-    }
-
-    /* 4. CARDS */
-    .delivery-card { 
-        border-radius: 8px; 
-        padding: 8px 10px; 
-        background-color: white; 
-        border-left: 4px solid #FF4B4B;
-        margin: 8px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-    .next-target { 
-        border-left: 4px solid #007BFF !important; 
-        background-color: #f0f8ff !important;
-        box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
-    }
-    .address-header { 
-        font-size: 13px !important; 
-        font-weight: 700; 
-        color: #111; 
-        line-height: 1.3;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    /* 5. BOTÕES E INPUTS */
-    .stTextInput input {
-        height: 40px !important; 
-        background-color: #f8f9fa !important;
-        color: #000 !important; 
-        font-size: 14px !important;
-        text-align: center; 
-        font-weight: 700 !important; 
-        border-radius: 6px !important;
-        padding: 0 4px !important; 
-        border: 1px solid #dee2e6 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-    
-    .stButton button { 
-        height: 40px !important; 
-        font-size: 17px !important; 
-        width: 100% !important; 
-        border-radius: 6px !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        white-space: nowrap !important;
-    }
-    
-    .stLinkButton a {
-        height: 40px !important; 
-        font-size: 17px !important; 
-        width: 100% !important; 
-        border-radius: 6px !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        display: flex !important;
         align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
     }
 
-    /* 6. MOBILE RESPONSIVITY */
-    @media screen and (max-width: 480px) {
-        [data-testid="stHorizontalBlock"] {
-            grid-template-columns: 50px 50px 1fr !important;
-            gap: 3px !important;
-        }
+    /* --- REGRA INTELIGENTE 2: LINHAS COM 2 COLUNAS (Tela Inicial) --- */
+    /* Garante 50% / 50% para os botões não sobreporem texto */
+    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) > [data-testid="column"] {
+        flex: 1 !important;
+        width: 50% !important;
+        min-width: 0 !important;
+    }
+
+    [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; }
+
+    /* BOTÕES E INPUTS */
+    .stButton > button, .stLinkButton > a {
+        height: 44px !important; width: 100% !important; padding: 0 4px !important;
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        border-radius: 6px !important; border: 1px solid #dee2e6 !important;
+        font-size: 14px !important; /* Ajuste para não sobrepor texto */
+    }
+    .stButton > button div, .stLinkButton > a div {
+        display: flex !important; align-items: center !important; justify-content: center !important;
+    }
+    
+    .stTextInput input {
+        height: 44px !important; background-color: #f8f9fa !important;
+        text-align: center; font-weight: 700 !important; border-radius: 6px !important;
+        font-size: 14px !important; color: black !important;
+    }
+
+    /* CARDS */
+    .delivery-card { 
+        border-radius: 8px; padding: 8px 10px; background-color: white; 
+        border-left: 4px solid #FF4B4B; margin-top: 10px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08); 
+    }
+    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.3; }
+    
+    .custom-metrics-container {
+        display: flex; justify-content: space-between; align-items: center;
+        background: white; padding: 8px 10px; border-radius: 8px; margin: 8px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; 
     }
     </style>
     """, unsafe_allow_html=True)
@@ -211,7 +164,7 @@ def render_dashboard():
     proximo_alvo_idx = next((i for i in range(len(df_res)) if i not in entregues_set), None)
     restantes_idxs = [i for i in range(len(df_res)) if i not in entregues_set]
 
-    # A. BOTÕES DE CONTROLE - APENAS ÍCONES (CONFORME ORIGINAL)
+    # A. BOTÕES DE CONTROLE - APENAS ÍCONES
     c_limpar, c_novo, _c_empty = st.columns(3)
     with c_limpar:
         if st.button("🗑️", use_container_width=True):
@@ -227,11 +180,9 @@ def render_dashboard():
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear(); st.rerun()
 
-    # B. MAPA (OTIMIZADO PARA VELOCIDADE)
+    # B. MAPA (OTIMIZADO)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
-    
     if st.session_state['road_path']:
-        # Otimização: Passo de 10 reduz drasticamente o lag no mapa
         rota_leve = st.session_state['road_path'][::10] 
         folium.PolyLine(rota_leve, color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
@@ -247,7 +198,6 @@ def render_dashboard():
     if all_coords: 
         m.fit_bounds(all_coords, padding=(30, 30))
     
-    # st_folium sem retorno para acelerar a renderização do estado
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_principal", returned_objects=[])
 
     # C. MÉTRICAS
@@ -289,47 +239,46 @@ if st.session_state['df_final'] is None:
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
     
     if uploaded_file:
-        # Lógica para oferecer as duas opções
         st.info("Planilha carregada! Escolha uma opção abaixo:")
-        
         c_opt1, c_opt2 = st.columns(2)
         
         with c_opt1:
             if st.button("🚀 Iniciar Rota", use_container_width=True):
                 df_raw = pd.read_excel(uploaded_file)
-                df_raw.columns = df_raw.columns.str.strip().str.upper()
-                df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
-                df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean['SEQUENCE'].astype(str)
-                df_temp = df_clean.copy().reset_index()
-                rota = []
-                p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
-                while not df_temp.empty:
-                    dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
-                    idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
-                st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
-                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-                pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
-                st.session_state['road_path'] = get_road_route_batch(pts_tuple)
-                salvar_progresso(); st.rerun()
+                df_raw = padronizar_colunas(df_raw)
+                
+                if 'LATITUDE' in df_raw.columns and 'LONGITUDE' in df_raw.columns and 'DESTINATION ADDRESS' in df_raw.columns:
+                    df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
+                    df_clean['UID'] = df_clean['DESTINATION ADDRESS'].astype(str) + df_clean.get('SEQUENCE', range(len(df_clean))).astype(str)
+                    df_temp = df_clean.copy().reset_index()
+                    
+                    rota = []
+                    p_atual = df_temp.iloc[0]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[0])
+                    while not df_temp.empty:
+                        dists = fast_haversine(p_atual['LATITUDE'], p_atual['LONGITUDE'], df_temp['LATITUDE'].values, df_temp['LONGITUDE'].values)
+                        idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
+                    
+                    st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
+                    st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+                    pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
+                    st.session_state['road_path'] = get_road_route_batch(pts_tuple)
+                    salvar_progresso(); st.rerun()
+                else:
+                    st.error("Colunas obrigatórias não encontradas!")
         
         with c_opt2:
-            # Lógica do EXTRATOR CIRCUIT
             if st.button("📄 Gerar para Circuit", use_container_width=True):
                 df_raw = pd.read_excel(uploaded_file)
-                df_raw.columns = df_raw.columns.str.strip().str.upper()
+                df_raw = padronizar_colunas(df_raw)
                 
-                # Mapeamento para o Circuit
-                # Circuit costuma pedir: Address, Latitude, Longitude, Notes, etc.
                 if 'DESTINATION ADDRESS' in df_raw.columns:
                     circuit_df = df_raw.copy()
-                    # Garante colunas básicas
-                    cols_to_keep = ['DESTINATION ADDRESS', 'LATITUDE', 'LONGITUDE']
+                    cols_to_keep = ['DESTINATION ADDRESS', 'LATITUDE', 'LONGITUDE', 'SEQUENCE']
                     circuit_df = circuit_df[[c for c in cols_to_keep if c in circuit_df.columns]]
                     
-                    # Prepara para download
                     output = io.BytesIO()
                     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                        circuit_df.to_excel(writer, index=False, sheet_name='RotaCircuit')
+                        circuit_df.to_excel(writer, index=False)
                     
                     st.download_button(
                         label="📥 Baixar Planilha Circuit",
@@ -339,7 +288,6 @@ if st.session_state['df_final'] is None:
                         use_container_width=True
                     )
                 else:
-                    st.error("Coluna 'DESTINATION ADDRESS' não encontrada!")
-
+                    st.error("Coluna de endereço não encontrada!")
 else:
     render_dashboard()
