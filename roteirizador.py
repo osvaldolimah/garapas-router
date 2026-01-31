@@ -313,7 +313,7 @@ if 'df_final' not in st.session_state:
 def render_operacao():
     df_res = st.session_state['df_final']
     entregues_set = st.session_state['entregues']
-    restantes = [i for i in range(len(df_res)) if i not in entregues_set]
+    restantes = [i for i, row in df_res.iterrows() if row['UID'] not in entregues_set]
     
     # --- A. MAPA (PREPARAÇÃO) ---
     all_coords = [[row['LATITUDE'], row['LONGITUDE']] for _, row in df_res.iterrows()]
@@ -339,7 +339,7 @@ def render_operacao():
     proximo_idx = restantes[0] if restantes else None
     
     for i, row in df_res.iterrows():
-        foi = i in entregues_set
+        foi = row['UID'] in entregues_set
         cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
         
@@ -367,7 +367,7 @@ def render_operacao():
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
-            entregue, is_next = i in entregues_set, (i == proximo_idx)
+            entregue, is_next = (row['UID'] in entregues_set), (i == proximo_idx)
             card_class = "next-target" if is_next else ""
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
@@ -376,9 +376,9 @@ def render_operacao():
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue:
-                        st.session_state['entregues'].remove(i)
+                        st.session_state['entregues'].remove(uid)
                     else:
-                        st.session_state['entregues'].add(i)
+                        st.session_state['entregues'].add(uid)
                     salvar_progresso()
                     # Removido st.rerun para evitar dupla rerun e reduzir flicker.
             with c_waze:
