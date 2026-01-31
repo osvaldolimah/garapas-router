@@ -50,7 +50,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (SOLUÇÃO INTELIGENTE DE LAYOUT) ---
+# --- 3. DESIGN SYSTEM (LAYOUT TRAVADO E SEPARADO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -64,34 +64,35 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRAS DE LAYOUT INTELIGENTE --- */
-    
-    /* CASO 1: LISTA DE ENTREGAS (Tem 3 colunas) -> Usa o Grid Travado */
-    /* O seletor :has garante que só aplicamos isso onde existem 3 colunas */
-    [data-testid="stHorizontalBlock"]:has(> [data-testid="column"]:nth-child(3)) {
+    /* --- REGRA 1: LISTA DE ENTREGAS (3 COLUNAS TRAVADAS) --- */
+    /* Só afeta o bloco que estiver dentro da div 'delivery-item-row' */
+    .delivery-item-row [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
-        gap: 3px !important;
+        gap: 4px !important;
         width: 100% !important;
         align-items: center !important;
     }
+    
+    .delivery-item-row [data-testid="column"] {
+        min-width: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
 
-    /* CASO 2: BOTÕES DE TOPO (Tem 2 colunas) -> Usa Flexbox Meio a Meio */
-    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) {
+    /* --- REGRA 2: BOTÕES DE TOPO (2 COLUNAS MEIO A MEIO) --- */
+    .top-controls [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         gap: 8px !important;
         width: 100% !important;
     }
     
-    /* Garante que colunas simples ocupem espaço igual */
-    [data-testid="stHorizontalBlock"]:not(:has(> [data-testid="column"]:nth-child(3))) > [data-testid="column"] {
+    .top-controls [data-testid="column"] {
         flex: 1 !important;
         width: 50% !important;
+        min-width: 0 !important;
     }
-
-    /* ESTILO GERAL DE COLUNAS */
-    [data-testid="column"] { min-width: 0 !important; padding: 0 !important; }
 
     /* BOTÕES GERAIS */
     .stButton > button, .stLinkButton > a {
@@ -123,7 +124,7 @@ if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. FRAGMENTO DA LISTA (OTIMIZADO) ---
+# --- 5. FRAGMENTO DA LISTA (LAYOUT TRAVADO) ---
 @st.fragment
 def render_delivery_list():
     df_res = st.session_state['df_final']
@@ -138,7 +139,8 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            # 3 COLUNAS -> Ativa o Grid 56/64/fr
+            # --- AQUI ESTÁ A MÁGICA DO LADO A LADO ---
+            st.markdown('<div class="delivery-item-row">', unsafe_allow_html=True)
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
@@ -152,6 +154,7 @@ def render_delivery_list():
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FLUXO PRINCIPAL ---
 if st.session_state['df_final'] is None:
@@ -174,7 +177,25 @@ if st.session_state['df_final'] is None:
         salvar_progresso(); st.rerun()
 
 else:
-    # A. MAPA
+    # A. BOTÕES DE CONTROLE (AGORA NO TOPO E PROTEGIDOS)
+    st.markdown('<div class="top-controls">', unsafe_allow_html=True)
+    c_limpar, c_novo = st.columns(2)
+    with c_limpar:
+        if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
+            restantes_idxs = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
+            if restantes_idxs:
+                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
+                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+                st.session_state['entregues'] = set()
+                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+                salvar_progresso(); st.rerun()
+    with c_novo:
+        if st.button("📁 NOVA PLANILHA", use_container_width=True):
+            if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
+            st.session_state.clear(); st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # B. MAPA
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
         folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
@@ -188,25 +209,11 @@ else:
     if coords: m.fit_bounds(coords, padding=(30, 30))
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_estatico")
 
-    # B. MÉTRICAS
+    # C. MÉTRICAS
     df_res = st.session_state['df_final']
     restantes_idxs = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
     km_v = sum(fast_haversine(df_res.iloc[restantes_idxs[k]]['LATITUDE'], df_res.iloc[restantes_idxs[k]]['LONGITUDE'], df_res.iloc[restantes_idxs[k+1]]['LATITUDE'], df_res.iloc[restantes_idxs[k+1]]['LONGITUDE']) for k in range(len(restantes_idxs)-1))
     st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes_idxs)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
 
-    # C. BOTÕES DE CONTROLE (2 COLUNAS -> Ativa Flexbox 50/50)
-    col_limpar, col_novo = st.columns(2)
-    with col_limpar:
-        if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
-            if restantes_idxs:
-                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
-                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-                st.session_state['entregues'] = set()
-                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-                salvar_progresso(); st.rerun()
-    with col_novo:
-        if st.button("📁 NOVA PLANILHA", use_container_width=True):
-            if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
-            st.session_state.clear(); st.rerun()
-
+    # D. LISTA
     render_delivery_list()
