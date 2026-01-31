@@ -135,44 +135,46 @@ if 'df_final' not in st.session_state:
 @st.fragment
 def render_dashboard():
     df_res = st.session_state['df_final']
-    restantes_set = st.session_state['entregues']
+    entregues_set = st.session_state['entregues']
     
     # Identificar o próximo alvo uma única vez (otimização de busca)
-    proximo_alvo_idx = next((i for i in range(len(df_res)) if i not in restantes_set), None)
+    proximo_alvo_idx = next((i for i in range(len(df_res)) if i not in entregues_set), None)
+    restantes_idxs = [i for i in range(len(df_res)) if i not in entregues_set]
 
-    # A. MAPA NO TOPO
+    # A. MAPA NO TOPO (OTIMIZADO)
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     
-    # Rota leve (1/4 dos pontos para performance instantânea)
+    # Rota super leve (1/10 dos pontos para performance instantânea)
     if st.session_state['road_path']:
-        rota_leve = st.session_state['road_path'][::4] 
+        rota_leve = st.session_state['road_path'][::10] 
         folium.PolyLine(rota_leve, color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
     coords = []
-    # Loop de marcadores otimizado
-    for i, row in df_res.iterrows():
-        foi = i in restantes_set
+    # Loop de marcadores usando itertuples (muito mais rápido que iterrows)
+    for row in df_res.itertuples():
+        i = row.Index
+        foi = i in entregues_set
         cor = "#2ecc71" if foi else ("#007BFF" if i == proximo_alvo_idx else "#e74c3c")
-        loc = [row['LATITUDE'], row['LONGITUDE']]
+        loc = [row.LATITUDE, row.LONGITUDE]
         coords.append(loc)
-        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
+        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row.ORDEM_PARADA)}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
     if coords: 
         m.fit_bounds(coords, padding=(30, 30))
     
-    # st_folium configurado para não devolver objetos (ganho de velocidade no clique)
+    # st_folium sem retorno de dados para evitar latência no clique
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_principal", returned_objects=[])
 
     # B. PAINEL DE CONTROLE
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     
-    restantes_idxs = [i for i in range(len(df_res)) if i not in restantes_set]
     km_v = 0.0
     if len(restantes_idxs) > 1:
-        lats = df_res.iloc[restantes_idxs]['LATITUDE'].values
-        lons = df_res.iloc[restantes_idxs]['LONGITUDE'].values
-        # Cálculo de KM otimizado (Haversine em série)
+        # Cálculo de KM optimizado
+        sub_df = df_res.iloc[restantes_idxs]
+        lats = sub_df['LATITUDE'].values
+        lons = sub_df['LONGITUDE'].values
         km_v = sum(fast_haversine(lats[k], lons[k], lats[k+1], lons[k+1]) for k in range(len(restantes_idxs)-1))
     
     st.markdown(f"""
@@ -192,10 +194,9 @@ def render_dashboard():
     with c1:
         if st.button("🗑️ LIMPAR", use_container_width=True):
             if restantes_idxs:
-                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
+                st.session_state['df_final'] = df_res.iloc[restantes_idxs].reset_index(drop=True)
                 st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
                 st.session_state['entregues'] = set()
-                # Atualiza a rota com cache
                 pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
                 st.session_state['road_path'] = get_road_route_batch(pts_tuple)
                 salvar_progresso(); st.rerun()
@@ -209,13 +210,14 @@ def render_dashboard():
 
     # C. LISTA DE ENTREGAS
     with st.container(height=500):
-        for i, row in df_res.iterrows():
-            rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
-            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
-            entregue = i in restantes_set
+        for row in df_res.itertuples():
+            i = row.Index
+            rua, uid = str(row._4), str(row.UID) # Posição baseada nas colunas do Excel/DataFrame
+            val_padrao = st.session_state['manual_sequences'].get(uid, str(row.SEQUENCE))
+            entregue = i in entregues_set
             card_class = "next-target" if i == proximo_alvo_idx else ""
 
-            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row.ORDEM_PARADA)}ª - {rua}</div></div>', unsafe_allow_html=True)
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
@@ -224,7 +226,7 @@ def render_dashboard():
                     else: st.session_state['entregues'].add(i)
                     salvar_progresso(); st.rerun(scope="fragment")
             with c_waze:
-                st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
+                st.link_button("🚗", f"https://waze.com/ul?ll={row.LATITUDE},{row.LONGITUDE}&navigate=yes", use_container_width=True)
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
@@ -248,7 +250,6 @@ if st.session_state['df_final'] is None:
             idx = np.argmin(dists); p_atual = df_temp.iloc[idx]; rota.append(p_atual); df_temp = df_temp.drop(df_temp.index[idx])
         st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
         st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-        # Busca inicial da rota (convertido para tupla para o cache aceitar)
         pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
         st.session_state['road_path'] = get_road_route_batch(pts_tuple)
         salvar_progresso(); st.rerun()
