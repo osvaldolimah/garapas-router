@@ -264,31 +264,46 @@ st.markdown("""
 # --- 4. ESTADO ---
 if 'df_final' not in st.session_state:
     if not carregar_progresso():
-        st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
+        st.session_state.update({
+            'df_final': None, 
+            'road_path': [], 
+            'entregues': set(), 
+            'manual_sequences': {},
+            'first_render': True
+        })
 
 # --- 5. MOTOR DE OPERAÇÃO (SUAVIZAÇÃO DA ATUALIZAÇÃO) ---
 @st.fragment
 def render_operacao():
     df_res = st.session_state['df_final']
-    restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
+    entregues_set = st.session_state['entregues']
+    restantes = [i for i in range(len(df_res)) if i not in entregues_set]
     
-    # --- A. MAPA ---
+    # --- A. MAPA (OTIMIZADO) ---
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     if st.session_state['road_path']:
-        # Otimização de renderização: Amostragem de pontos para evitar lag
+        # Otimização de renderização: Amostragem para leveza
         folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
+    proximo_idx = restantes[0] if restantes else None
     all_coords = []
+    
     for i, row in df_res.iterrows():
-        foi = i in st.session_state['entregues']
-        cor = "#2ecc71" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#e74c3c")
+        foi = i in entregues_set
+        cor = "#2ecc71" if foi else ("#007BFF" if (i == proximo_idx) else "#e74c3c")
         loc = [row['LATITUDE'], row['LONGITUDE']]
         all_coords.append(loc)
-        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
+        
+        # HTML Simplificado para renderização instantânea
+        icon_html = f'<div style="background:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:8px;">{int(row["ORDEM_PARADA"])}</div>'
         folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
     
-    if all_coords: m.fit_bounds(all_coords, padding=(30, 30))
-    # Uso de chave estática e returned_objects=[] para eliminar a "piscada"
+    # ESTABILIZADOR: fit_bounds apenas quando necessário (evita piscada de Tiles)
+    if all_coords and st.session_state.get('first_render', True):
+        m.fit_bounds(all_coords, padding=(30, 30))
+        st.session_state['first_render'] = False
+    
+    # Uso de chave estática e sem retorno de objetos para performance total
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_operacional", returned_objects=[])
 
     # --- B. MÉTRICAS ---
@@ -303,7 +318,7 @@ def render_operacao():
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
             val_padrao = st.session_state['manual_sequences'].get(uid, str(row.get('SEQUENCE', '---')))
-            entregue, is_next = i in st.session_state['entregues'], (restantes and i == restantes[0])
+            entregue, is_next = i in entregues_set, (i == proximo_idx)
             card_class = "next-target" if is_next else ""
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
@@ -314,7 +329,7 @@ def render_operacao():
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
                     salvar_progresso()
-                    st.rerun(scope="fragment") # Atualiza tudo (Mapa + Lista) suavemente
+                    st.rerun(scope="fragment") # Atualização suave do bloco
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
@@ -341,6 +356,7 @@ if st.session_state['df_final'] is None:
         final_df = pd.DataFrame(rota).reset_index(drop=True)
         final_df['ORDEM_PARADA'] = range(1, len(final_df) + 1)
         st.session_state['df_final'] = final_df
+        st.session_state['first_render'] = True
         pts_tuple = tuple(map(tuple, final_df[['LATITUDE', 'LONGITUDE']].values.tolist()))
         st.session_state['road_path'] = get_road_route_batch(pts_tuple)
         salvar_progresso()
@@ -351,11 +367,12 @@ else:
     c_limpar, c_novo = st.columns(2)
     with c_limpar:
         if st.button("🗑️", use_container_width=True):
-            restantes = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
-            if restantes:
-                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes].reset_index(drop=True)
+            restantes_idxs = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
+            if restantes_idxs:
+                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
                 st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
                 st.session_state['entregues'] = set()
+                st.session_state['first_render'] = True
                 pts_tuple = tuple(map(tuple, st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist()))
                 st.session_state['road_path'] = get_road_route_batch(pts_tuple)
                 salvar_progresso()
