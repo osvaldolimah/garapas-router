@@ -50,7 +50,7 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT ISOLADO - MANTIDO IDÊNTICO) ---
+# --- 3. DESIGN SYSTEM (LAYOUT INTELIGENTE AUTOMÁTICO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
@@ -64,17 +64,34 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* --- REGRA ESPECIAL: LISTA DE ENTREGAS --- */
-    /* Apenas os blocos dentro da div 'lista-blindada' terão o layout forçado */
-    .lista-blindada [data-testid="stHorizontalBlock"] {
+    /* --- REGRA INTELIGENTE 1: LISTA DE ENTREGAS (Quando houver 3 colunas) --- */
+    /* Detecta linhas com 3 elementos e aplica o Grid Travado: 56px | 64px | Resto */
+    [data-testid="stHorizontalBlock"]:has([data-testid="column"]:nth-child(3)) {
         display: grid !important;
-        grid-template-columns: 56px 64px 1fr !important; /* LARGURAS FIXAS + RESTO */
+        grid-template-columns: 56px 64px 1fr !important;
         gap: 4px !important;
         width: 100% !important;
         align-items: center !important;
     }
+
+    /* --- REGRA INTELIGENTE 2: BOTÕES DE TOPO (Quando houver apenas 2 colunas) --- */
+    /* Detecta linhas que NÃO têm o 3º elemento e aplica Flexbox 50%/50% */
+    [data-testid="stHorizontalBlock"]:not(:has([data-testid="column"]:nth-child(3))) {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
     
-    .lista-blindada [data-testid="column"] {
+    /* Garante que os botões de topo dividam a tela igualmente */
+    [data-testid="stHorizontalBlock"]:not(:has([data-testid="column"]:nth-child(3))) > [data-testid="column"] {
+        flex: 1 !important;
+        width: 50% !important;
+        min-width: 0 !important;
+    }
+
+    /* LIMPEZA GERAL DE COLUNAS */
+    [data-testid="column"] {
         min-width: 0 !important;
         padding: 0 !important;
         overflow: visible !important;
@@ -108,7 +125,7 @@ st.markdown("""
     .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
     .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.3; }
 
-    /* MÉTRICAS E CONTROLES (FORA DA LISTA BLINDADA) */
+    /* MÉTRICAS E CONTROLES */
     .control-panel {
         padding: 10px; background-color: #fff; border-bottom: 1px solid #ddd;
     }
@@ -126,16 +143,13 @@ def render_dashboard():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
 
-    # A. MAPA NO TOPO (OTIMIZADO)
+    # A. MAPA NO TOPO
     m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     
-    # [OTIMIZAÇÃO] Reduzimos os pontos da linha para deixar o carregamento mais leve
-    # Usamos [::4] para pegar apenas 1 a cada 4 pontos, mantendo a forma geral mas com 25% do peso
     if st.session_state['road_path']:
         rota_leve = st.session_state['road_path'][::4] 
         folium.PolyLine(rota_leve, color="#007BFF", weight=4, opacity=0.7).add_to(m)
     
-    # Marcadores e Zoom Automático
     coords = []
     for i, row in df_res.iterrows():
         foi = i in st.session_state['entregues']
@@ -147,22 +161,33 @@ def render_dashboard():
     if coords: 
         m.fit_bounds(coords, padding=(30, 30))
     
-    # [OTIMIZAÇÃO] returned_objects=[] evita processamento desnecessário de retorno de dados
     st_folium(m, width=None, height=320, use_container_width=True, key="mapa_principal", returned_objects=[])
 
-    # B. PAINEL DE CONTROLE (MÉTRICAS + BOTÕES)
+    # B. PAINEL DE CONTROLE
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     
-    # Métricas
     km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
     
-    # Botões de Ação Global (Lado a Lado - 50% cada)
-    c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
-    c1.metric("📦 Faltam", f"{len(restantes)}")
-    c2.metric("🛤️ KM", f"{km_v * 1.3:.1f}")
+    # Botões de Ação Global (4 Colunas aqui seriam tratadas como GRID, mas vamos usar 2 linhas ou ajustar)
+    # Como queremos lado a lado, vamos usar métricas em HTML e Botões em 2 Colunas
     
-    with c3:
-        st.write("") # Espaço para alinhar com métrica
+    # Métricas HTML
+    st.markdown(f"""
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+        <div style="text-align: center; width: 48%;">
+            <span style="font-size: 10px; color: #888; font-weight: bold;">📦 RESTAM</span><br>
+            <span style="font-size: 16px; font-weight: 800;">{len(restantes)}</span>
+        </div>
+        <div style="text-align: center; width: 48%;">
+            <span style="font-size: 10px; color: #888; font-weight: bold;">🛤️ KM EST.</span><br>
+            <span style="font-size: 16px; font-weight: 800;">{km_v * 1.3:.1f}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Botões de Controle (2 Colunas -> CSS aplica Flexbox 50/50)
+    c1, c2 = st.columns(2)
+    with c1:
         if st.button("🗑️ LIMPAR", use_container_width=True):
             if restantes:
                 st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes].reset_index(drop=True)
@@ -171,15 +196,14 @@ def render_dashboard():
                 st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
                 salvar_progresso(); st.rerun()
     
-    with c4:
-        st.write("") # Espaço para alinhar
+    with c2:
         if st.button("📁 NOVA", use_container_width=True):
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear(); st.rerun()
             
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # C. LISTA DE ENTREGAS (COM A TRAVA CSS)
+    # C. LISTA DE ENTREGAS
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
@@ -189,10 +213,8 @@ def render_dashboard():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            # --- DIV ESPECIAL PARA PROTEGER O LAYOUT ---
-            st.markdown('<div class="lista-blindada">', unsafe_allow_html=True)
-            c_done, c_waze, c_seq = st.columns(3) # O CSS vai forçar 56px | 64px | Resto
-            
+            # 3 COLUNAS -> CSS aplica Grid 56/64/fr
+            c_done, c_waze, c_seq = st.columns(3)
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
@@ -205,7 +227,6 @@ def render_dashboard():
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
-            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
