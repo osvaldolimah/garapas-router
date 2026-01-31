@@ -8,7 +8,7 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA ---
+# --- 1. PERSISTÊNCIA DE DADOS ---
 SAVE_FILE = "sessao_garapas.pkl"
 
 def salvar_progresso():
@@ -50,89 +50,67 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (SOLUÇÃO NUCLEAR RESTAURADA) ---
+# --- 3. DESIGN SYSTEM (LAYOUT ISOLADO - MANTIDO IDÊNTICO) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* 1. RESET TOTAL */
+    /* RESET GLOBAL */
     * { box-sizing: border-box !important; margin: 0 !important; }
-    
-    html, body, [data-testid="stAppViewContainer"], 
-    [data-testid="stApp"], .main, .block-container {
-        overflow-x: hidden !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-        padding: 0 !important;
+    html, body, [data-testid="stAppViewContainer"] { 
+        overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; padding: 0 !important; 
     }
-    
-    .block-container { padding: 0.5rem 0.3rem !important; }
+    .block-container { padding: 0 !important; }
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
-    /* 2. MÉTRICAS */
-    .custom-metrics-container {
-        display: flex; justify-content: space-between; align-items: center;
-        background: white; padding: 8px 10px; border-radius: 8px; margin: 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; 
-    }
-
-    /* 3. GRID GLOBAL (A LÓGICA QUE FUNCIONOU) */
-    [data-testid="stHorizontalBlock"] {
+    /* --- REGRA ESPECIAL: LISTA DE ENTREGAS --- */
+    /* Apenas os blocos dentro da div 'lista-blindada' terão o layout forçado */
+    .lista-blindada [data-testid="stHorizontalBlock"] {
         display: grid !important;
-        grid-template-columns: 55px 55px 1fr !important;
+        grid-template-columns: 56px 64px 1fr !important; /* LARGURAS FIXAS + RESTO */
         gap: 4px !important;
         width: 100% !important;
-        padding: 0 !important; margin: 0 !important;
+        align-items: center !important;
     }
     
-    [data-testid="column"] { min-width: 0 !important; padding: 0 !important; margin: 0 !important; }
-    
-    /* Configuração padrão das colunas (Lista de Entregas) */
-    [data-testid="column"]:nth-of-type(1) { width: 55px !important; max-width: 55px !important; }
-    [data-testid="column"]:nth-of-type(2) { width: 55px !important; max-width: 55px !important; }
-    [data-testid="column"]:nth-of-type(3) { width: 100% !important; }
-
-    /* --- EXCEÇÃO PARA OS BOTÕES DE TOPO (Limpar / Nova Planilha) --- */
-    /* Isso garante que eles fiquem 50%/50% e não 55px/55px */
-    .top-controls [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 8px !important;
-    }
-    .top-controls [data-testid="column"] {
-        width: 50% !important; max-width: none !important; flex: 1 !important;
+    .lista-blindada [data-testid="column"] {
+        min-width: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
     }
 
-    /* 4. CARDS */
-    .delivery-card { 
-        border-radius: 8px; padding: 8px 10px; background-color: white; 
-        border-left: 4px solid #FF4B4B; margin: 8px 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-    .next-target { 
-        border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important;
-        box-shadow: 0 2px 6px rgba(0,123,255,0.15) !important;
-    }
-    .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.3; }
-    
-    /* 5. INPUTS E BOTÕES */
-    .stTextInput input {
-        height: 40px !important; background-color: #f8f9fa !important;
-        color: #000 !important; font-size: 14px !important;
-        text-align: center; font-weight: 700 !important; border-radius: 6px !important;
-        padding: 0 4px !important; border: 1px solid #dee2e6 !important;
-    }
-    
-    .stButton button, .stLinkButton a {
-        height: 40px !important; width: 100% !important; padding: 0 !important;
+    /* ESTILO DOS BOTÕES (Icones Centralizados) */
+    .stButton > button, .stLinkButton > a {
+        height: 44px !important; width: 100% !important; padding: 0 !important;
         display: flex !important; align-items: center !important; justify-content: center !important;
         border-radius: 6px !important; border: 1px solid #dee2e6 !important;
     }
-    /* Centralização dos ícones */
-    .stButton button div, .stLinkButton a div {
+    
+    /* Centraliza o conteúdo interno do botão (emoji/texto) */
+    .stButton > button div, .stLinkButton > a div {
         display: flex !important; align-items: center !important; justify-content: center !important;
-        width: 100% !important; height: 100% !important; font-size: 20px !important;
+    }
+    
+    /* INPUT SEQUENCE */
+    .stTextInput input {
+        height: 44px !important; background-color: #f8f9fa !important;
+        text-align: center; font-weight: 700 !important; border-radius: 6px !important;
+        font-size: 14px !important; color: black !important;
+    }
+
+    /* CARDS */
+    .delivery-card { 
+        border-radius: 8px; padding: 8px 10px; background-color: white; 
+        border-left: 4px solid #FF4B4B; margin-top: 10px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08); 
+    }
+    .next-target { border-left: 4px solid #007BFF !important; background-color: #f0f8ff !important; }
+    .address-header { font-size: 13px !important; font-weight: 700; color: #111; line-height: 1.3; }
+
+    /* MÉTRICAS E CONTROLES (FORA DA LISTA BLINDADA) */
+    .control-panel {
+        padding: 10px; background-color: #fff; border-bottom: 1px solid #ddd;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -142,12 +120,66 @@ if 'df_final' not in st.session_state:
     if not carregar_progresso():
         st.session_state.update({'df_final': None, 'road_path': [], 'entregues': set(), 'manual_sequences': {}})
 
-# --- 5. FRAGMENTO DA LISTA ---
+# --- 5. O MOTOR DO APP ---
 @st.fragment
-def render_delivery_list():
+def render_dashboard():
     df_res = st.session_state['df_final']
     restantes = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
+
+    # A. MAPA NO TOPO (OTIMIZADO)
+    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
     
+    # [OTIMIZAÇÃO] Reduzimos os pontos da linha para deixar o carregamento mais leve
+    # Usamos [::4] para pegar apenas 1 a cada 4 pontos, mantendo a forma geral mas com 25% do peso
+    if st.session_state['road_path']:
+        rota_leve = st.session_state['road_path'][::4] 
+        folium.PolyLine(rota_leve, color="#007BFF", weight=4, opacity=0.7).add_to(m)
+    
+    # Marcadores e Zoom Automático
+    coords = []
+    for i, row in df_res.iterrows():
+        foi = i in st.session_state['entregues']
+        cor = "#2ecc71" if foi else ("#007BFF" if (restantes and i == restantes[0]) else "#e74c3c")
+        loc = [row['LATITUDE'], row['LONGITUDE']]; coords.append(loc)
+        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
+        folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
+    
+    if coords: 
+        m.fit_bounds(coords, padding=(30, 30))
+    
+    # [OTIMIZAÇÃO] returned_objects=[] evita processamento desnecessário de retorno de dados
+    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_principal", returned_objects=[])
+
+    # B. PAINEL DE CONTROLE (MÉTRICAS + BOTÕES)
+    st.markdown('<div class="control-panel">', unsafe_allow_html=True)
+    
+    # Métricas
+    km_v = sum(fast_haversine(df_res.iloc[restantes[k]]['LATITUDE'], df_res.iloc[restantes[k]]['LONGITUDE'], df_res.iloc[restantes[k+1]]['LATITUDE'], df_res.iloc[restantes[k+1]]['LONGITUDE']) for k in range(len(restantes)-1))
+    
+    # Botões de Ação Global (Lado a Lado - 50% cada)
+    c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
+    c1.metric("📦 Faltam", f"{len(restantes)}")
+    c2.metric("🛤️ KM", f"{km_v * 1.3:.1f}")
+    
+    with c3:
+        st.write("") # Espaço para alinhar com métrica
+        if st.button("🗑️ LIMPAR", use_container_width=True):
+            if restantes:
+                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes].reset_index(drop=True)
+                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
+                st.session_state['entregues'] = set()
+                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
+                salvar_progresso(); st.rerun()
+    
+    with c4:
+        st.write("") # Espaço para alinhar
+        if st.button("📁 NOVA", use_container_width=True):
+            if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
+            st.session_state.clear(); st.rerun()
+            
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # C. LISTA DE ENTREGAS (COM A TRAVA CSS)
     with st.container(height=500):
         for i, row in df_res.iterrows():
             rua, uid = str(row.get('DESTINATION ADDRESS', '---')), str(row.get('UID', ''))
@@ -157,7 +189,10 @@ def render_delivery_list():
 
             st.markdown(f'<div class="delivery-card {card_class}"><div class="address-header">{int(row["ORDEM_PARADA"])}ª - {rua}</div></div>', unsafe_allow_html=True)
             
-            c_done, c_waze, c_seq = st.columns(3)
+            # --- DIV ESPECIAL PARA PROTEGER O LAYOUT ---
+            st.markdown('<div class="lista-blindada">', unsafe_allow_html=True)
+            c_done, c_waze, c_seq = st.columns(3) # O CSS vai forçar 56px | 64px | Resto
+            
             with c_done:
                 if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
@@ -170,8 +205,9 @@ def render_delivery_list():
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
                     salvar_progresso()
+            st.markdown('</div>', unsafe_allow_html=True)
 
-# --- 6. FLUXO PRINCIPAL ---
+# --- 6. FLUXO DE ENTRADA ---
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
@@ -192,43 +228,4 @@ if st.session_state['df_final'] is None:
         salvar_progresso(); st.rerun()
 
 else:
-    # A. BOTÕES DE CONTROLE (NO TOPO) - PROTEGIDOS
-    st.markdown('<div class="top-controls">', unsafe_allow_html=True)
-    c_limpar, c_novo = st.columns(2)
-    with c_limpar:
-        if st.button("🗑️", use_container_width=True):
-            restantes_idxs = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
-            if restantes_idxs:
-                st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes_idxs].reset_index(drop=True)
-                st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
-                st.session_state['entregues'] = set()
-                st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-                salvar_progresso(); st.rerun()
-    with c_novo:
-        if st.button("📁", use_container_width=True):
-            if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
-            st.session_state.clear(); st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # B. MAPA
-    m = folium.Map(tiles="cartodbpositron", attribution_control=False)
-    if st.session_state['road_path']:
-        folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=4, opacity=0.7).add_to(m)
-    coords = []
-    for i, row in st.session_state['df_final'].iterrows():
-        foi = i in st.session_state['entregues']
-        cor = "#2ecc71" if foi else ("#007BFF" if (i not in st.session_state['entregues']) else "#e74c3c")
-        loc = [row['LATITUDE'], row['LONGITUDE']]; coords.append(loc)
-        icon_html = f'<div style="background-color:{cor};border:1px solid white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:7px;">{int(row["ORDEM_PARADA"])}</div>'
-        folium.Marker(location=loc, icon=DivIcon(icon_size=(18,18), icon_anchor=(9,9), html=icon_html)).add_to(m)
-    if coords: m.fit_bounds(coords, padding=(30, 30))
-    st_folium(m, width=None, height=320, use_container_width=True, key="mapa_estatico")
-
-    # C. MÉTRICAS
-    df_res = st.session_state['df_final']
-    restantes_idxs = [i for i in range(len(df_res)) if i not in st.session_state['entregues']]
-    km_v = sum(fast_haversine(df_res.iloc[restantes_idxs[k]]['LATITUDE'], df_res.iloc[restantes_idxs[k]]['LONGITUDE'], df_res.iloc[restantes_idxs[k+1]]['LATITUDE'], df_res.iloc[restantes_idxs[k+1]]['LONGITUDE']) for k in range(len(restantes_idxs)-1))
-    st.markdown(f'<div class="custom-metrics-container"><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">📦 Restam</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{len(restantes_idxs)}</span></div><div style="text-align:center; flex:1;"><span style="font-size:8px; color:#888; font-weight:bold; text-transform:uppercase;">🛤️ KM</span><span style="font-size:14px; color:#111; font-weight:800; display:block;">{km_v * 1.3:.1f} km</span></div></div>', unsafe_allow_html=True)
-
-    # D. LISTA
-    render_delivery_list()
+    render_dashboard()
