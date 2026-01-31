@@ -318,10 +318,10 @@ if st.session_state['df_final'] is None:
         st.rerun()
 
 else:
-    # A. BOTÕES DE CONTROLE
+    # A. BOTÕES DE CONTROLE - APENAS ÍCONES
     c_limpar, c_novo = st.columns(2)
     with c_limpar:
-        if st.button("🗑️ LIMPAR FEITAS", use_container_width=True):
+        if st.button("🗑️", use_container_width=True):
             restantes = [i for i in range(len(st.session_state['df_final'])) if i not in st.session_state['entregues']]
             if restantes:
                 st.session_state['df_final'] = st.session_state['df_final'].iloc[restantes].reset_index(drop=True)
@@ -331,7 +331,7 @@ else:
                 salvar_progresso()
                 st.rerun()
     with c_novo:
-        if st.button("📁 NOVA PLANILHA", use_container_width=True):
+        if st.button("📁", use_container_width=True):
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
             st.session_state.clear()
             st.rerun()
