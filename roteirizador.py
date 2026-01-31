@@ -8,10 +8,10 @@ import requests
 import pickle
 import os
 
-# --- 1. PERSISTÊNCIA (PARA NÃO PERDER DADOS NO WAZE) ---
+# --- 1. PERSISTÊNCIA (MEMÓRIA BLINDADA) ---
 SAVE_FILE = "sessao_garapas.pkl"
 
-def salvar_progresso():
+def save_state():
     dados = {
         'df_final': st.session_state.get('df_final'),
         'road_path': st.session_state.get('road_path'),
@@ -49,12 +49,12 @@ def get_road_route_batch(points):
     except: pass
     return points
 
-# --- 3. DESIGN SYSTEM (LAYOUT DA ETAPA 24 - 100% PRESERVADO) ---
+# --- 3. DESIGN SYSTEM (VISUAL LIMPO E SEM BORDAS) ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
 
 st.markdown("""
     <style>
-    /* RESET TOTAL */
+    /* RESET GLOBAL */
     * { box-sizing: border-box !important; margin: 0 !important; }
     
     html, body, [data-testid="stAppViewContainer"], 
@@ -69,12 +69,14 @@ st.markdown("""
     header, footer, #MainMenu { visibility: hidden; }
     .leaflet-control-attribution { display: none !important; }
 
+    /* BARRA DE MÉTRICAS */
     .custom-metrics-container {
         display: flex; justify-content: space-between; align-items: center;
         background: white; padding: 8px 10px; border-radius: 8px; margin: 8px 0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; 
     }
 
+    /* CARDS */
     .delivery-card { 
         border-radius: 8px; padding: 6px 6px; background-color: white; 
         border-left: 4px solid #FF4B4B; margin: 6px 0;
@@ -89,6 +91,7 @@ st.markdown("""
         word-wrap: break-word; overflow-wrap: break-word; margin-bottom: 4px !important; padding: 0 !important;
     }
     
+    /* GRID TRAVADO (56px 64px 1fr) */
     [data-testid="stHorizontalBlock"] {
         display: grid !important;
         grid-template-columns: 56px 64px 1fr !important;
@@ -97,30 +100,34 @@ st.markdown("""
     }
     
     [data-testid="column"] { padding: 0 !important; margin: 0 !important; min-width: 0 !important; overflow: hidden !important; }
-    [data-testid="column"]:nth-of-type(1) { width: 56px !important; max-width: 56px !important; min-width: 56px !important; }
-    [data-testid="column"]:nth-of-type(2) { width: 64px !important; max-width: 64px !important; min-width: 64px !important; }
-    [data-testid="column"]:nth-of-type(3) { width: 100% !important; min-width: 0 !important; }
     
-    .stButton, .stLinkButton, .stTextInput { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+    /* --- MUDANÇA: BOTÕES TRANSPARENTES (SEM CAIXA) --- */
+    .stButton > button, .stLinkButton > a {
+        background-color: transparent !important; /* Fundo invisível */
+        border: none !important; /* Sem borda */
+        box-shadow: none !important; /* Sem sombra */
+        height: 44px !important; width: 100% !important; 
+        display: flex !important; align-items: center !important; justify-content: center !important;
+        padding: 0 !important; margin: 0 !important;
+    }
+
+    /* Efeito suave ao tocar */
+    .stButton > button:active, .stLinkButton > a:active {
+        background-color: rgba(0,0,0,0.05) !important;
+        transform: scale(0.95);
+    }
+
+    /* Aumentando os ícones para compensar a falta de borda */
+    .stButton > button p, .stLinkButton > a div {
+        font-size: 24px !important; /* Ícones maiores */
+        line-height: 1 !important;
+    }
     
+    /* INPUT SEQUENCE */
     .stTextInput input {
         height: 44px !important; background-color: #f8f9fa !important; color: #000 !important; 
         font-size: 13px !important; text-align: center; font-weight: 700 !important; 
         border-radius: 6px !important; padding: 0 2px !important; border: 1px solid #dee2e6 !important;
-    }
-    
-    /* AJUSTE DE CENTRALIZAÇÃO DOS ÍCONES */
-    [data-testid="column"]:nth-of-type(1) .stButton > button,
-    [data-testid="column"]:nth-of-type(2) .stLinkButton > a { 
-        height: 44px !important; width: 100% !important; display: flex !important;
-        align-items: center !important; justify-content: center !important;
-        padding: 0 !important; margin: 0 !important;
-    }
-
-    [data-testid="column"]:nth-of-type(1) .stButton > button div,
-    [data-testid="column"]:nth-of-type(2) .stLinkButton > a div {
-        display: flex !important; align-items: center !important; justify-content: center !important;
-        width: 100% !important; height: 100% !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -147,21 +154,24 @@ def render_delivery_list():
             
             c_done, c_waze, c_seq = st.columns(3)
             with c_done:
-                if st.button("✅" if not entregue else "🔄", key=f"d_{i}", use_container_width=True):
+                # Ícone solto, sem texto extra
+                label = "✅" if not entregue else "🔄"
+                if st.button(label, key=f"d_{i}", use_container_width=True):
                     if entregue: st.session_state['entregues'].remove(i)
                     else: st.session_state['entregues'].add(i)
-                    salvar_progresso(); st.rerun(scope="fragment")
+                    save_state()
+                    st.rerun(scope="fragment")
             with c_waze:
                 st.link_button("🚗", f"https://waze.com/ul?ll={row['LATITUDE']},{row['LONGITUDE']}&navigate=yes", use_container_width=True)
             with c_seq:
                 nova_seq = st.text_input("", value=val_padrao, key=f"s_{i}", label_visibility="collapsed")
                 if nova_seq != val_padrao:
                     st.session_state['manual_sequences'][uid] = nova_seq
-                    salvar_progresso()
+                    save_state()
 
 # --- 6. INTERFACE PRINCIPAL ---
 
-# Botão de Reset na Sidebar para não quebrar o layout principal
+# Botão de Nova Planilha na Sidebar para segurança
 if st.session_state['df_final'] is not None:
     if st.sidebar.button("📁 CARREGAR NOVA PLANILHA", use_container_width=True):
         if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
@@ -169,8 +179,8 @@ if st.session_state['df_final'] is not None:
 
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
-    uploaded_file = st.file_uploader("", type=['xlsx'])
-    if uploaded_file and st.button("🚀 Otimizar Rota", use_container_width=True):
+    uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
+    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
@@ -184,7 +194,7 @@ if st.session_state['df_final'] is None:
         st.session_state['df_final'] = pd.DataFrame(rota).reset_index(drop=True)
         st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
         st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-        salvar_progresso(); st.rerun()
+        save_state(); st.rerun()
 
 if st.session_state['df_final'] is not None:
     df_res = st.session_state['df_final']
@@ -212,6 +222,6 @@ if st.session_state['df_final'] is not None:
             st.session_state['df_final']['ORDEM_PARADA'] = range(1, len(st.session_state['df_final']) + 1)
             st.session_state['entregues'] = set()
             st.session_state['road_path'] = get_road_route_batch(st.session_state['df_final'][['LATITUDE', 'LONGITUDE']].values.tolist())
-            salvar_progresso(); st.rerun()
+            save_state(); st.rerun()
 
     render_delivery_list()
