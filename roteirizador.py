@@ -210,11 +210,3 @@ else:
             st.session_state.clear(); st.rerun()
 
     render_delivery_list()
-```
-
-### O que essa lógica resolve:
-1.  **Lista Perfeita:** Quando o app desenha a lista de entregas (3 colunas), ele usa o layout travado (56px 64px).
-2.  **Topo Organizado:** Quando ele desenha os botões de controle (2 colunas), ele usa o layout padrão (50% / 50%), permitindo que os botões de "Limpar" e "Nova Planilha" fiquem grandes e lado a lado.
-3.  **Sem Conflitos:** O CSS usa `:has(> :nth-child(3))` para saber automaticamente qual regra aplicar, sem a gente precisar criar classes manuais complicadas.
-
-Agora sim, Osvaldo! Pode subir para o GitHub. O layout deve estar impecável em todas as partes da tela.
