@@ -304,8 +304,8 @@ def render_operacao():
     )
 
     if st.session_state['road_path']:
-        # Otimização de renderização: Amostragem para leveza
-        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=4, opacity=0.7).add_to(m)
+        # Otimização de renderização: Amostragem para leveza + Espessura reduzida (weight=2)
+        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=2, opacity=0.7).add_to(m)
    
     proximo_idx = restantes[0] if restantes else None
    
