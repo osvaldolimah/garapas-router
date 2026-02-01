@@ -304,8 +304,8 @@ def render_operacao():
     )
 
     if st.session_state['road_path']:
-        # Otimização de renderização: Amostragem para leveza + Espessura reduzida (weight=2)
-        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=2, opacity=0.7).add_to(m)
+        # Otimização de renderização: Amostragem para leveza + Espessura reduzida (weight=1)
+        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=1, opacity=0.7).add_to(m)
    
     proximo_idx = restantes[0] if restantes else None
    
@@ -362,7 +362,7 @@ def render_operacao():
 if st.session_state['df_final'] is None:
     st.subheader("🚚 Garapas Router")
     uploaded_file = st.file_uploader("Subir Manifestos", type=['xlsx'])
-    if uploaded_file and st.button("🚀", use_container_width=True):
+    if uploaded_file and st.button("🚀 Iniciar Rota", use_container_width=True):
         df_raw = pd.read_excel(uploaded_file)
         df_raw.columns = df_raw.columns.str.strip().str.upper()
         df_clean = df_raw.dropna(subset=['LATITUDE', 'LONGITUDE'])
