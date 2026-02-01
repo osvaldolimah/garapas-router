@@ -40,31 +40,39 @@ def fast_haversine(lat1, lon1, lat2, lon2):
 
 @st.cache_data(show_spinner=False)
 def get_road_route_batch(points_tuple):
-    """Gera a rota seguindo as ruas através de requisições segmentadas mais robustas"""
+    """Gera a rota com alta precisão seguindo o traçado das ruas usando batching da API"""
     points = list(points_tuple)
     if len(points) < 2: return points
     
     full_path = []
-    # Processamos em pedaços pequenos para garantir que a API siga as ruas com precisão
-    for i in range(len(points) - 1):
-        p1 = points[i]
-        p2 = points[i+1]
+    # OSRM aceita múltiplos pontos em uma única chamada. 
+    # Enviamos em blocos de 40 para garantir que a API processe o fluxo das ruas corretamente entre paradas.
+    chunk_size = 40
+    for i in range(0, len(points), chunk_size - 1):
+        chunk = points[i:i + chunk_size]
+        if len(chunk) < 2: break
         
-        url = f"https://router.project-osrm.org/route/v1/driving/{p1[1]},{p1[0]};{p2[1]},{p2[0]}?overview=full&geometries=geojson"
+        coords_str = ";".join([f"{p[1]},{p[0]}" for p in chunk])
+        # Usamos overview=full para garantir que nenhuma curva da rua seja ignorada
+        url = f"https://router.project-osrm.org/route/v1/driving/{coords_str}?overview=full&geometries=geojson"
+        
         try:
-            r = requests.get(url, timeout=5)
+            r = requests.get(url, timeout=10)
             if r.status_code == 200:
                 coords = r.json()['routes'][0]['geometry']['coordinates']
                 path_segment = [[c[1], c[0]] for c in coords]
                 if full_path:
-                    full_path.extend(path_segment[1:]) # Evita duplicar o ponto de conexão
+                    full_path.extend(path_segment[1:]) # Evita duplicar pontos de conexão
                 else:
                     full_path.extend(path_segment)
             else:
-                full_path.extend([list(p1), list(p2)])
+                # Caso a API falhe, mantém a conexão direta entre os pontos do bloco
+                for j in range(len(chunk)-1):
+                    full_path.extend([list(chunk[j]), list(chunk[j+1])])
         except:
-            full_path.extend([list(p1), list(p2)])
-            
+            for j in range(len(chunk)-1):
+                full_path.extend([list(chunk[j]), list(chunk[j+1])])
+                
     return full_path if full_path else points
 
 # --- 3. DESIGN SYSTEM: USANDO GRID COM PIXELS FIXOS ---
@@ -318,8 +326,8 @@ def render_operacao():
     )
 
     if st.session_state['road_path']:
-        # Amostragem reduzida (::2) para seguir as curvas das ruas com precisão
-        folium.PolyLine(st.session_state['road_path'][::2], color="#007BFF", weight=1, opacity=0.7).add_to(m)
+        # Amostragem removida para seguir cada curva das ruas com 100% de precisão
+        folium.PolyLine(st.session_state['road_path'], color="#007BFF", weight=1, opacity=0.7).add_to(m)
    
     proximo_idx = restantes[0] if restantes else None
    
