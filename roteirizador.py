@@ -40,18 +40,32 @@ def fast_haversine(lat1, lon1, lat2, lon2):
 
 @st.cache_data(show_spinner=False)
 def get_road_route_batch(points_tuple):
-    """Versão com cache para acelerar o carregamento do mapa"""
+    """Gera a rota seguindo as ruas através de requisições segmentadas mais robustas"""
     points = list(points_tuple)
     if len(points) < 2: return points
-    coords_str = ";".join([f"{p[1]},{p[0]}" for p in points])
-    url = f"http://router.project-osrm.org/route/v1/driving/{coords_str}?overview=full&geometries=geojson"
-    try:
-        r = requests.get(url, timeout=10)
-        if r.status_code == 200:
-            coords = r.json()['routes'][0]['geometry']['coordinates']
-            return [[c[1], c[0]] for c in coords]
-    except: pass
-    return points
+    
+    full_path = []
+    # Processamos em pedaços pequenos para garantir que a API siga as ruas com precisão
+    for i in range(len(points) - 1):
+        p1 = points[i]
+        p2 = points[i+1]
+        
+        url = f"https://router.project-osrm.org/route/v1/driving/{p1[1]},{p1[0]};{p2[1]},{p2[0]}?overview=full&geometries=geojson"
+        try:
+            r = requests.get(url, timeout=5)
+            if r.status_code == 200:
+                coords = r.json()['routes'][0]['geometry']['coordinates']
+                path_segment = [[c[1], c[0]] for c in coords]
+                if full_path:
+                    full_path.extend(path_segment[1:]) # Evita duplicar o ponto de conexão
+                else:
+                    full_path.extend(path_segment)
+            else:
+                full_path.extend([list(p1), list(p2)])
+        except:
+            full_path.extend([list(p1), list(p2)])
+            
+    return full_path if full_path else points
 
 # --- 3. DESIGN SYSTEM: USANDO GRID COM PIXELS FIXOS ---
 st.set_page_config(page_title="Garapas Router", layout="wide", page_icon="🚚")
@@ -304,8 +318,8 @@ def render_operacao():
     )
 
     if st.session_state['road_path']:
-        # Otimização de renderização: Amostragem para leveza + Espessura reduzida (weight=1)
-        folium.PolyLine(st.session_state['road_path'][::5], color="#007BFF", weight=1, opacity=0.7).add_to(m)
+        # Amostragem reduzida (::2) para seguir as curvas das ruas com precisão
+        folium.PolyLine(st.session_state['road_path'][::2], color="#007BFF", weight=1, opacity=0.7).add_to(m)
    
     proximo_idx = restantes[0] if restantes else None
    
